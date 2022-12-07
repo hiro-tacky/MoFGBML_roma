@@ -1,0 +1,15 @@
+bin/
+target/
+copy/
+python/
+results/
+doc/
+dataset/
+
+.DS_Store
+jMetal.log
+jMetal.log.1
+jMetal.*
+FUN.csv
+VAR.csv
+

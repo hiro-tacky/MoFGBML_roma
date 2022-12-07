@@ -1,0 +1,274 @@
+#
+# There is insufficient memory for the Java Runtime Environment to continue.
+# Native memory allocation (malloc) failed to allocate 32744 bytes for ChunkPool::allocate
+# Possible reasons:
+#   The system is out of physical RAM or swap space
+#   In 32 bit mode, the process size limit was hit
+# Possible solutions:
+#   Reduce memory load on the system
+#   Increase physical memory or swap space
+#   Check if swap backing store is full
+#   Use 64 bit Java on a 64 bit OS
+#   Decrease Java heap size (-Xmx/-Xms)
+#   Decrease number of Java threads
+#   Decrease Java thread stack sizes (-Xss)
+#   Set larger code cache with -XX:ReservedCodeCacheSize=
+# This output file may be truncated or incomplete.
+#
+#  Out of Memory Error (allocation.cpp:273), pid=23404, tid=0x0000000000005648
+#
+# JRE version: Java(TM) SE Runtime Environment (8.0_172-b11) (build 1.8.0_172-b11)
+# Java VM: Java HotSpot(TM) 64-Bit Server VM (25.172-b11 mixed mode windows-amd64 compressed oops)
+# Failed to write core dump. Minidumps are not enabled by default on client versions of Windows
+#
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x00000000252f4800):  JavaThread "C2 CompilerThread2" daemon [_thread_in_native, id=22088, stack(0x00000000259f0000,0x0000000025af0000)]
+
+Stack: [0x00000000259f0000,0x0000000025af0000]
+[error occurred during error reporting (printing stack bounds), id 0xc0000005]
+
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+
+
+Current CompileTask:
+C2:   1831  624 %     4       org.eclipse.jdt.launching.internal.org.objectweb.asm.ClassReader::readCode @ 2165 (5071 bytes)
+
+
+---------------  P R O C E S S  ---------------
+
+Java Threads: ( => current thread )
+  0x00000000267a8800 JavaThread "ForkJoinPool-2-worker-12" daemon [_thread_blocked, id=19288, stack(0x0000000028d00000,0x0000000028e00000)]
+  0x00000000267a8000 JavaThread "ForkJoinPool-2-worker-3" daemon [_thread_blocked, id=14420, stack(0x0000000028c00000,0x0000000028d00000)]
+  0x00000000267a7000 JavaThread "ForkJoinPool-2-worker-10" daemon [_thread_blocked, id=14652, stack(0x0000000028b00000,0x0000000028c00000)]
+  0x00000000267aa800 JavaThread "ForkJoinPool-2-worker-1" daemon [_thread_blocked, id=5412, stack(0x0000000028900000,0x0000000028a00000)]
+  0x0000000026d66000 JavaThread "ForkJoinPool-2-worker-8" daemon [_thread_blocked, id=3220, stack(0x0000000028790000,0x0000000028890000)]
+  0x00000000268cd000 JavaThread "ForkJoinPool-2-worker-15" daemon [_thread_blocked, id=23684, stack(0x0000000028690000,0x0000000028790000)]
+  0x000000002671a800 JavaThread "ForkJoinPool-2-worker-6" daemon [_thread_blocked, id=14156, stack(0x0000000028590000,0x0000000028690000)]
+  0x0000000026719800 JavaThread "ForkJoinPool-2-worker-13" daemon [_thread_blocked, id=12156, stack(0x0000000028490000,0x0000000028590000)]
+  0x000000002664e800 JavaThread "ForkJoinPool-2-worker-4" daemon [_thread_blocked, id=17304, stack(0x0000000028390000,0x0000000028490000)]
+  0x000000002681b000 JavaThread "ForkJoinPool-2-worker-11" daemon [_thread_blocked, id=25496, stack(0x0000000028190000,0x0000000028290000)]
+  0x000000002681a800 JavaThread "ForkJoinPool-2-worker-2" daemon [_thread_blocked, id=18632, stack(0x0000000028090000,0x0000000028190000)]
+  0x00000000268cf000 JavaThread "ForkJoinPool-2-worker-9" daemon [_thread_blocked, id=22984, stack(0x0000000027f90000,0x0000000028090000)]
+  0x00000000252df800 JavaThread "Service Thread" daemon [_thread_blocked, id=4900, stack(0x0000000025bf0000,0x0000000025cf0000)]
+  0x000000002522c800 JavaThread "C1 CompilerThread3" daemon [_thread_blocked, id=1656, stack(0x0000000025af0000,0x0000000025bf0000)]
+=>0x00000000252f4800 JavaThread "C2 CompilerThread2" daemon [_thread_in_native, id=22088, stack(0x00000000259f0000,0x0000000025af0000)]
+  0x00000000252f3800 JavaThread "C2 CompilerThread1" daemon [_thread_blocked, id=27636, stack(0x00000000258f0000,0x00000000259f0000)]
+  0x00000000252e8800 JavaThread "C2 CompilerThread0" daemon [_thread_blocked, id=23912, stack(0x00000000257f0000,0x00000000258f0000)]
+  0x000000002371b800 JavaThread "JDWP Command Reader" daemon [_thread_in_native, id=15244, stack(0x0000000024ef0000,0x0000000024ff0000)]
+  0x0000000023715000 JavaThread "JDWP Event Helper Thread" daemon [_thread_blocked, id=27816, stack(0x0000000024df0000,0x0000000024ef0000)]
+  0x0000000023709800 JavaThread "JDWP Transport Listener: dt_socket" daemon [_thread_blocked, id=16552, stack(0x0000000024c90000,0x0000000024d90000)]
+  0x00000000236b3800 JavaThread "Attach Listener" daemon [_thread_blocked, id=7852, stack(0x0000000024b90000,0x0000000024c90000)]
+  0x0000000023705800 JavaThread "Signal Dispatcher" daemon [_thread_blocked, id=29460, stack(0x0000000024a90000,0x0000000024b90000)]
+  0x0000000023693000 JavaThread "Finalizer" daemon [_thread_blocked, id=29044, stack(0x00000000248f0000,0x00000000249f0000)]
+  0x0000000021fa0800 JavaThread "Reference Handler" daemon [_thread_blocked, id=22544, stack(0x00000000247f0000,0x00000000248f0000)]
+  0x0000000003582800 JavaThread "main" [_thread_blocked, id=13364, stack(0x0000000003480000,0x0000000003580000)]
+
+Other Threads:
+  0x0000000021f96800 VMThread [stack: 0x00000000246f0000,0x00000000247f0000] [id=20996]
+  0x00000000252e0000 WatcherThread [stack: 0x0000000025cf0000,0x0000000025df0000] [id=29472]
+
+VM state:not at safepoint (normal execution)
+
+VM Mutex/Monitor currently owned by a thread: None
+
+Heap:
+ PSYoungGen      total 114688K, used 90897K [0x0000000740600000, 0x0000000748600000, 0x00000007c0000000)
+  eden space 98304K, 88% used [0x0000000740600000,0x0000000745abedd8,0x0000000746600000)
+  from space 16384K, 25% used [0x0000000747600000,0x0000000747a05690,0x0000000748600000)
+  to   space 16384K, 0% used [0x0000000746600000,0x0000000746600000,0x0000000747600000)
+ ParOldGen       total 262144K, used 88K [0x0000000641200000, 0x0000000651200000, 0x0000000740600000)
+  object space 262144K, 0% used [0x0000000641200000,0x0000000641216010,0x0000000651200000)
+ Metaspace       used 10440K, capacity 10738K, committed 11008K, reserved 1058816K
+  class space    used 1154K, capacity 1225K, committed 1280K, reserved 1048576K
+
+Card table byte_map: [0x0000000012bc0000,0x00000000137c0000] byte_map_base: 0x000000000f9b7000
+
+Marking Bits: (ParMarkBitMap*) 0x0000000074a53c10
+ Begin Bits: [0x00000000149c0000, 0x000000001a978000)
+ End Bits:   [0x000000001a978000, 0x0000000020930000)
+
+Polling page: 0x0000000001750000
+
+CodeCache: size=245760Kb used=4197Kb max_used=4209Kb free=241562Kb
+ bounds [0x0000000003800000, 0x0000000003c30000, 0x0000000012800000]
+ total_blobs=1463 nmethods=1107 adapters=276
+ compilation: enabled
+
+Compilation events (10 events):
+Event: 1.735 Thread 0x00000000252e8800 1114       4       org.uma.jmetal.solution.AbstractSolution::getNumberOfVariables (10 bytes)
+Event: 1.736 Thread 0x00000000252e8800 nmethod 1114 0x0000000003c16d90 code [0x0000000003c16ee0, 0x0000000003c16f98]
+Event: 1.737 Thread 0x00000000252f3800 1115       4       cilabo.fuzzy.rule.consequent.classLabel.impl.ClassLabel_Basic::equals (32 bytes)
+Event: 1.738 Thread 0x00000000252f3800 nmethod 1115 0x0000000003c16950 code [0x0000000003c16aa0, 0x0000000003c16bd8]
+Event: 1.741 Thread 0x00000000252e8800 1116       4       java.lang.Class::getName (21 bytes)
+Event: 1.741 Thread 0x00000000252f3800 1117       4       java.util.HashMap::newNode (13 bytes)
+Event: 1.741 Thread 0x00000000252e8800 nmethod 1116 0x0000000003bda950 code [0x0000000003bdaaa0, 0x0000000003bdab48]
+Event: 1.742 Thread 0x00000000252f3800 nmethod 1117 0x0000000003c1ead0 code [0x0000000003c1ec20, 0x0000000003c1ed38]
+Event: 1.743 Thread 0x00000000252e8800 1118       4       cilabo.data.DataSet::getPattern (12 bytes)
+Event: 1.744 Thread 0x00000000252e8800 nmethod 1118 0x0000000003c16450 code [0x0000000003c165a0, 0x0000000003c16738]
+
+GC Heap History (4 events):
+Event: 1.392 GC heap before
+{Heap before GC invocations=1 (full 0):
+ PSYoungGen      total 114688K, used 98304K [0x0000000740600000, 0x0000000748600000, 0x00000007c0000000)
+  eden space 98304K, 100% used [0x0000000740600000,0x0000000746600000,0x0000000746600000)
+  from space 16384K, 0% used [0x0000000747600000,0x0000000747600000,0x0000000748600000)
+  to   space 16384K, 0% used [0x0000000746600000,0x0000000746600000,0x0000000747600000)
+ ParOldGen       total 262144K, used 0K [0x0000000641200000, 0x0000000651200000, 0x0000000740600000)
+  object space 262144K, 0% used [0x0000000641200000,0x0000000641200000,0x0000000651200000)
+ Metaspace       used 10405K, capacity 10668K, committed 10752K, reserved 1058816K
+  class space    used 1151K, capacity 1224K, committed 1280K, reserved 1048576K
+Event: 1.395 GC heap after
+Heap after GC invocations=1 (full 0):
+ PSYoungGen      total 114688K, used 4352K [0x0000000740600000, 0x0000000748600000, 0x00000007c0000000)
+  eden space 98304K, 0% used [0x0000000740600000,0x0000000740600000,0x0000000746600000)
+  from space 16384K, 26% used [0x0000000746600000,0x0000000746a40330,0x0000000747600000)
+  to   space 16384K, 0% used [0x0000000747600000,0x0000000747600000,0x0000000748600000)
+ ParOldGen       total 262144K, used 80K [0x0000000641200000, 0x0000000651200000, 0x0000000740600000)
+  object space 262144K, 0% used [0x0000000641200000,0x0000000641214010,0x0000000651200000)
+ Metaspace       used 10405K, capacity 10668K, committed 10752K, reserved 1058816K
+  class space    used 1151K, capacity 1224K, committed 1280K, reserved 1048576K
+}
+Event: 1.628 GC heap before
+{Heap before GC invocations=2 (full 0):
+ PSYoungGen      total 114688K, used 102656K [0x0000000740600000, 0x0000000748600000, 0x00000007c0000000)
+  eden space 98304K, 100% used [0x0000000740600000,0x0000000746600000,0x0000000746600000)
+  from space 16384K, 26% used [0x0000000746600000,0x0000000746a40330,0x0000000747600000)
+  to   space 16384K, 0% used [0x0000000747600000,0x0000000747600000,0x0000000748600000)
+ ParOldGen       total 262144K, used 80K [0x0000000641200000, 0x0000000651200000, 0x0000000740600000)
+  object space 262144K, 0% used [0x0000000641200000,0x0000000641214010,0x0000000651200000)
+ Metaspace       used 10414K, capacity 10668K, committed 10752K, reserved 1058816K
+  class space    used 1151K, capacity 1224K, committed 1280K, reserved 1048576K
+Event: 1.631 GC heap after
+Heap after GC invocations=2 (full 0):
+ PSYoungGen      total 114688K, used 4117K [0x0000000740600000, 0x0000000748600000, 0x00000007c0000000)
+  eden space 98304K, 0% used [0x0000000740600000,0x0000000740600000,0x0000000746600000)
+  from space 16384K, 25% used [0x0000000747600000,0x0000000747a05690,0x0000000748600000)
+  to   space 16384K, 0% used [0x0000000746600000,0x0000000746600000,0x0000000747600000)
+ ParOldGen       total 262144K, used 88K [0x0000000641200000, 0x0000000651200000, 0x0000000740600000)
+  object space 262144K, 0% used [0x0000000641200000,0x0000000641216010,0x0000000651200000)
+ Metaspace       used 10414K, capacity 10668K, committed 10752K, reserved 1058816K
+  class space    used 1151K, capacity 1224K, committed 1280K, reserved 1048576K
+}
+
+Deoptimization events (9 events):
+Event: 0.946 Thread 0x0000000003582800 Uncommon trap: reason=unstable_if action=reinterpret pc=0x0000000003a55b08 method=sun.misc.MetaIndex.mayContain(Ljava/lang/String;)Z @ 38
+Event: 0.976 Thread 0x0000000003582800 Uncommon trap: reason=unstable_if action=reinterpret pc=0x000000000398c4f0 method=org.eclipse.jdt.launching.internal.org.objectweb.asm.ClassReader.readUTF(II[C)Ljava/lang/String; @ 41
+Event: 0.976 Thread 0x0000000003582800 Uncommon trap: reason=unstable_if action=reinterpret pc=0x0000000003a8a9d4 method=org.eclipse.jdt.launching.internal.org.objectweb.asm.ByteVector.putUTF8(Ljava/lang/String;)Lorg/eclipse/jdt/launching/internal/org/objectweb/asm/ByteVector; @ 98
+Event: 0.976 Thread 0x0000000003582800 Uncommon trap: reason=unstable_if action=reinterpret pc=0x0000000003993534 method=org.eclipse.jdt.launching.internal.org.objectweb.asm.ByteVector.putUTF8(Ljava/lang/String;)Lorg/eclipse/jdt/launching/internal/org/objectweb/asm/ByteVector; @ 98
+Event: 1.012 Thread 0x0000000003582800 Uncommon trap: reason=unstable_if action=reinterpret pc=0x00000000039ac760 method=org.eclipse.jdt.launching.internal.org.objectweb.asm.ClassReader.readUTF8(I[C)Ljava/lang/String; @ 11
+Event: 1.086 Thread 0x0000000003582800 Uncommon trap: reason=unstable_if action=reinterpret pc=0x0000000003920800 method=java.lang.CharacterData.of(I)Ljava/lang/CharacterData; @ 4
+Event: 1.195 Thread 0x0000000026719800 Uncommon trap: reason=unstable_if action=reinterpret pc=0x0000000003b441f8 method=java.util.concurrent.ForkJoinPool.signalWork([Ljava/util/concurrent/ForkJoinPool$WorkQueue;Ljava/util/concurrent/ForkJoinPool$WorkQueue;)V @ 16
+Event: 1.195 Thread 0x00000000267a7000 Uncommon trap: reason=unstable_if action=reinterpret pc=0x0000000003b441f8 method=java.util.concurrent.ForkJoinPool.signalWork([Ljava/util/concurrent/ForkJoinPool$WorkQueue;Ljava/util/concurrent/ForkJoinPool$WorkQueue;)V @ 16
+Event: 1.678 Thread 0x0000000003582800 Uncommon trap: reason=unstable_if action=reinterpret pc=0x0000000003bde738 method=java.util.ArrayList$ArrayListSpliterator.forEachRemaining(Ljava/util/function/Consumer;)V @ 39
+
+Classes redefined (0 events):
+No events
+
+Internal exceptions (10 events):
+Event: 0.457 Thread 0x0000000003582800 Exception <a 'java/security/PrivilegedActionException'> (0x0000000740b4a738) thrown at [C:\re\workspace\8-2-build-windows-amd64-cygwin\jdk8u172\10810\hotspot\src\share\vm\prims\jvm.cpp, line 1435]
+Event: 0.466 Thread 0x0000000003582800 Exception <a 'java/security/PrivilegedActionException'> (0x0000000740b6f4d8) thrown at [C:\re\workspace\8-2-build-windows-amd64-cygwin\jdk8u172\10810\hotspot\src\share\vm\prims\jvm.cpp, line 1435]
+Event: 0.466 Thread 0x0000000003582800 Exception <a 'java/security/PrivilegedActionException'> (0x0000000740b6f6e8) thrown at [C:\re\workspace\8-2-build-windows-amd64-cygwin\jdk8u172\10810\hotspot\src\share\vm\prims\jvm.cpp, line 1435]
+Event: 0.781 Thread 0x0000000003582800 Exception <a 'java/security/PrivilegedActionException'> (0x000000074132e630) thrown at [C:\re\workspace\8-2-build-windows-amd64-cygwin\jdk8u172\10810\hotspot\src\share\vm\prims\jvm.cpp, line 1435]
+Event: 0.781 Thread 0x0000000003582800 Exception <a 'java/security/PrivilegedActionException'> (0x000000074132e840) thrown at [C:\re\workspace\8-2-build-windows-amd64-cygwin\jdk8u172\10810\hotspot\src\share\vm\prims\jvm.cpp, line 1435]
+Event: 0.782 Thread 0x0000000003582800 Exception <a 'java/security/PrivilegedActionException'> (0x0000000741335930) thrown at [C:\re\workspace\8-2-build-windows-amd64-cygwin\jdk8u172\10810\hotspot\src\share\vm\prims\jvm.cpp, line 1435]
+Event: 0.783 Thread 0x0000000003582800 Exception <a 'java/security/PrivilegedActionException'> (0x0000000741335b40) thrown at [C:\re\workspace\8-2-build-windows-amd64-cygwin\jdk8u172\10810\hotspot\src\share\vm\prims\jvm.cpp, line 1435]
+Event: 0.876 Thread 0x0000000003582800 Exception <a 'java/lang/NoSuchFieldError': method resolution failed> (0x00000007416807c0) thrown at [C:\re\workspace\8-2-build-windows-amd64-cygwin\jdk8u172\10810\hotspot\src\share\vm\prims\methodHandles.cpp, line 1167]
+Event: 0.880 Thread 0x0000000003582800 Exception <a 'java/lang/NoSuchFieldError': method resolution failed> (0x000000074168e380) thrown at [C:\re\workspace\8-2-build-windows-amd64-cygwin\jdk8u172\10810\hotspot\src\share\vm\prims\methodHandles.cpp, line 1167]
+Event: 1.078 Thread 0x0000000003582800 Exception <a 'sun/nio/fs/WindowsException'> (0x0000000741f9e818) thrown at [C:\re\workspace\8-2-build-windows-amd64-cygwin\jdk8u172\10810\hotspot\src\share\vm\prims\jni.cpp, line 709]
+
+Events (10 events):
+Event: 1.685 Thread 0x0000000003582800 DEOPT PACKING pc=0x00000000039ec25c sp=0x000000000357da90
+Event: 1.685 Thread 0x0000000003582800 DEOPT UNPACKING pc=0x0000000003847890 sp=0x000000000357d8b0 mode 1
+Event: 1.753 Executing VM operation: GetOwnedMonitorInfo
+Event: 1.754 Executing VM operation: GetOwnedMonitorInfo done
+Event: 1.754 Executing VM operation: GetCurrentContendedMonitor
+Event: 1.754 Executing VM operation: GetCurrentContendedMonitor done
+Event: 1.754 Executing VM operation: GetOwnedMonitorInfo
+Event: 1.754 Executing VM operation: GetOwnedMonitorInfo done
+Event: 1.754 Executing VM operation: GetCurrentContendedMonitor
+Event: 1.754 Executing VM operation: GetCurrentContendedMonitor done
+
+
+Dynamic libraries:
+0x00007ff72c6f0000 - 0x00007ff72c727000 	C:\Users\hirot\Downloads\set up\programing\IDE\pleiades-4.8.0-java-win-64bit-jre_20180923\pleiades\eclipse\jre\bin\javaw.exe
+0x00007ffbd3d90000 - 0x00007ffbd3f88000 	C:\WINDOWS\SYSTEM32\ntdll.dll
+0x00007ffbd2680000 - 0x00007ffbd273f000 	C:\WINDOWS\System32\KERNEL32.DLL
+0x00007ffbd17f0000 - 0x00007ffbd1ac2000 	C:\WINDOWS\System32\KERNELBASE.dll
+0x00007ffbd2920000 - 0x00007ffbd29ce000 	C:\WINDOWS\System32\ADVAPI32.dll
+0x00007ffbd21e0000 - 0x00007ffbd227e000 	C:\WINDOWS\System32\msvcrt.dll
+0x00007ffbd25e0000 - 0x00007ffbd267c000 	C:\WINDOWS\System32\sechost.dll
+0x00007ffbd39d0000 - 0x00007ffbd3af5000 	C:\WINDOWS\System32\RPCRT4.dll
+0x00007ffbd1fb0000 - 0x00007ffbd214d000 	C:\WINDOWS\System32\USER32.dll
+0x00007ffbd1db0000 - 0x00007ffbd1dd2000 	C:\WINDOWS\System32\win32u.dll
+0x00007ffbd28f0000 - 0x00007ffbd291b000 	C:\WINDOWS\System32\GDI32.dll
+0x00007ffbd1490000 - 0x00007ffbd159f000 	C:\WINDOWS\System32\gdi32full.dll
+0x00007ffbd1ad0000 - 0x00007ffbd1b6d000 	C:\WINDOWS\System32\msvcp_win.dll
+0x00007ffbd1b70000 - 0x00007ffbd1c70000 	C:\WINDOWS\System32\ucrtbase.dll
+0x00007ffbbb160000 - 0x00007ffbbb3fa000 	C:\WINDOWS\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.19041.1110_none_60b5254171f9507e\COMCTL32.dll
+0x00007ffbd3cb0000 - 0x00007ffbd3ce2000 	C:\WINDOWS\System32\IMM32.DLL
+0x0000000070250000 - 0x0000000070322000 	C:\Users\hirot\Downloads\set up\programing\IDE\pleiades-4.8.0-java-win-64bit-jre_20180923\pleiades\eclipse\jre\jre\bin\msvcr100.dll
+0x0000000074230000 - 0x0000000074ad3000 	C:\Users\hirot\Downloads\set up\programing\IDE\pleiades-4.8.0-java-win-64bit-jre_20180923\pleiades\eclipse\jre\jre\bin\server\jvm.dll
+0x00007ffbd2880000 - 0x00007ffbd2888000 	C:\WINDOWS\System32\PSAPI.DLL
+0x00007ffbbfb80000 - 0x00007ffbbfba7000 	C:\WINDOWS\SYSTEM32\WINMM.dll
+0x00007ffbc8890000 - 0x00007ffbc889a000 	C:\WINDOWS\SYSTEM32\VERSION.dll
+0x00007ffbcbca0000 - 0x00007ffbcbca9000 	C:\WINDOWS\SYSTEM32\WSOCK32.dll
+0x00007ffbd29d0000 - 0x00007ffbd2a3b000 	C:\WINDOWS\System32\WS2_32.dll
+0x00000000753d0000 - 0x00000000753df000 	C:\Users\hirot\Downloads\set up\programing\IDE\pleiades-4.8.0-java-win-64bit-jre_20180923\pleiades\eclipse\jre\jre\bin\verify.dll
+0x00000000753a0000 - 0x00000000753c9000 	C:\Users\hirot\Downloads\set up\programing\IDE\pleiades-4.8.0-java-win-64bit-jre_20180923\pleiades\eclipse\jre\jre\bin\java.dll
+0x00000000752b0000 - 0x00000000752e5000 	C:\Users\hirot\Downloads\set up\programing\IDE\pleiades-4.8.0-java-win-64bit-jre_20180923\pleiades\eclipse\jre\jre\bin\jdwp.dll
+0x00000000752a0000 - 0x00000000752a8000 	C:\Users\hirot\Downloads\set up\programing\IDE\pleiades-4.8.0-java-win-64bit-jre_20180923\pleiades\eclipse\jre\jre\bin\npt.dll
+0x0000000075130000 - 0x0000000075153000 	C:\Users\hirot\Downloads\set up\programing\IDE\pleiades-4.8.0-java-win-64bit-jre_20180923\pleiades\eclipse\jre\jre\bin\instrument.dll
+0x0000000075110000 - 0x0000000075126000 	C:\Users\hirot\Downloads\set up\programing\IDE\pleiades-4.8.0-java-win-64bit-jre_20180923\pleiades\eclipse\jre\jre\bin\zip.dll
+0x00007ffbd31a0000 - 0x00007ffbd38e3000 	C:\WINDOWS\System32\SHELL32.dll
+0x00007ffbcf530000 - 0x00007ffbcfcc2000 	C:\WINDOWS\SYSTEM32\windows.storage.dll
+0x00007ffbd2280000 - 0x00007ffbd25d4000 	C:\WINDOWS\System32\combase.dll
+0x00007ffbd0e10000 - 0x00007ffbd0e40000 	C:\WINDOWS\SYSTEM32\Wldp.dll
+0x00007ffbd2a50000 - 0x00007ffbd2afd000 	C:\WINDOWS\System32\SHCORE.dll
+0x00007ffbd2890000 - 0x00007ffbd28e5000 	C:\WINDOWS\System32\shlwapi.dll
+0x00007ffbd13d0000 - 0x00007ffbd13ef000 	C:\WINDOWS\SYSTEM32\profapi.dll
+0x0000000075290000 - 0x0000000075299000 	C:\Users\hirot\Downloads\set up\programing\IDE\pleiades-4.8.0-java-win-64bit-jre_20180923\pleiades\eclipse\jre\jre\bin\dt_socket.dll
+0x00007ffbb6430000 - 0x00007ffbb6447000 	C:\WINDOWS\system32\napinsp.dll
+0x00007ffbb6410000 - 0x00007ffbb642b000 	C:\WINDOWS\system32\pnrpnsp.dll
+0x00007ffbcbee0000 - 0x00007ffbcbef5000 	C:\WINDOWS\system32\wshbth.dll
+0x00007ffbcd060000 - 0x00007ffbcd07d000 	C:\WINDOWS\system32\NLAapi.dll
+0x00007ffbd08b0000 - 0x00007ffbd08eb000 	C:\WINDOWS\SYSTEM32\IPHLPAPI.DLL
+0x00007ffbd0bf0000 - 0x00007ffbd0c5a000 	C:\WINDOWS\System32\mswsock.dll
+0x00007ffbd08f0000 - 0x00007ffbd09ba000 	C:\WINDOWS\SYSTEM32\DNSAPI.dll
+0x00007ffbd2870000 - 0x00007ffbd2878000 	C:\WINDOWS\System32\NSI.dll
+0x00007ffbb63f0000 - 0x00007ffbb6402000 	C:\WINDOWS\System32\winrnr.dll
+0x0000000076600000 - 0x0000000076626000 	C:\Program Files\Bonjour\mdnsNSP.dll
+0x00007ffbc62e0000 - 0x00007ffbc6360000 	C:\WINDOWS\System32\fwpuclnt.dll
+0x00007ffbd1750000 - 0x00007ffbd1777000 	C:\WINDOWS\System32\bcrypt.dll
+0x00007ffbc9860000 - 0x00007ffbc986a000 	C:\Windows\System32\rasadhlp.dll
+0x00000000750f0000 - 0x000000007510a000 	C:\Users\hirot\Downloads\set up\programing\IDE\pleiades-4.8.0-java-win-64bit-jre_20180923\pleiades\eclipse\jre\jre\bin\net.dll
+0x00000000750d0000 - 0x00000000750e1000 	C:\Users\hirot\Downloads\set up\programing\IDE\pleiades-4.8.0-java-win-64bit-jre_20180923\pleiades\eclipse\jre\jre\bin\nio.dll
+
+VM Arguments:
+jvm_args: -agentlib:jdwp=transport=dt_socket,suspend=y,address=localhost:58305 -javaagent:C:\Users\hirot\Downloads\set up\programing\IDE\pleiades-4.8.0-java-win-64bit-jre_20180923\pleiades\eclipse\configuration\org.eclipse.osgi\418\0\.cp\lib\javaagent-shaded.jar -Dfile.encoding=UTF-8 
+java_command: cilabo.main.impl.basic.FAN2021_Main iris default trial00 12 dataset\iris\a1_0_iris-10tra.dat dataset\iris\a1_0_iris-10tst.dat
+java_class_path (initial): C:\Users\hirot\Downloads\set up\programing\IDE\pleiades-4.8.0-java-win-64bit-jre_20180923\pleiades\eclipse\jre\jre\lib\resources.jar;C:\Users\hirot\Downloads\set up\programing\IDE\pleiades-4.8.0-java-win-64bit-jre_20180923\pleiades\eclipse\jre\jre\lib\rt.jar;C:\Users\hirot\Downloads\set up\programing\IDE\pleiades-4.8.0-java-win-64bit-jre_20180923\pleiades\eclipse\jre\jre\lib\jsse.jar;C:\Users\hirot\Downloads\set up\programing\IDE\pleiades-4.8.0-java-win-64bit-jre_20180923\pleiades\eclipse\jre\jre\lib\jce.jar;C:\Users\hirot\Downloads\set up\programing\IDE\pleiades-4.8.0-java-win-64bit-jre_20180923\pleiades\eclipse\jre\jre\lib\charsets.jar;C:\Users\hirot\Downloads\set up\programing\IDE\pleiades-4.8.0-java-win-64bit-jre_20180923\pleiades\eclipse\jre\jre\lib\jfr.jar;C:\Users\hirot\Downloads\set up\programing\IDE\pleiades-4.8.0-java-win-64bit-jre_20180923\pleiades\eclipse\jre\jre\lib\ext\access-bridge-64.jar;C:\Users\hirot\Downloads\set up\programing\IDE\pleiades-4.8.0-java-win-64bit-jre_20180923\pleiades\eclipse\jre\jre\lib\ext\cldrdata.jar;C:\Users\hirot\Downloads\set up\programing\IDE\pleiades-4.8.0-java-win-64bit-jre_20180923\pleiades\eclipse\jre\jre\lib\ext\dnsns.jar;C:\Users\hirot\Downloads\set up\programing\IDE\pleiades-4.8.0-java-win-64bit-jre_20180923\pleiades\eclipse\jre\jre\lib\ext\jaccess.jar;C:\Users\hirot\Downloads\set up\programing\IDE\pleiades-4.8.0-java-win-64bit-jre_20180923\pleiades\eclipse\jre\jre\lib\ext\jfxrt.jar;C:\Users\hirot\Downloads\set up\programing\IDE\pleiades-4.8.0-java-win-64bit-jre_20180923\pleiades\eclipse\jre\jre\lib\ext\localedata.jar;C:\Users\hirot\Downloads\set up\programing\IDE\pleiades-4.8.0-java-win-64bit-jre_20180923\pleiades\eclipse\jre\jre\lib\ext\nashorn.jar;C:\Users\hirot\Downloads\set up\programing\IDE\pleiades-4.8.0-java-win-64bit-jre_20180923\pleiades\eclipse\jre\jre\lib\ext\sunec.jar;C:\Users\hirot\Downloads\set up\programing\IDE\pleiades-4.8.0-java-win-64bit-jre_20180923\pleiades\eclipse\jre\
+Launcher Type: SUN_STANDARD
+
+Environment Variables:
+PATH=C:\Users\hirot\Downloads\set up\programing\IDE\pleiades-4.8.0-java-win-64bit-jre_20180923\pleiades\eclipse\jre\bin;C:/Users/hirot/Downloads/set up/programing/IDE/pleiades-4.8.0-java-win-64bit-jre_20180923/pleiades/eclipse/jre/bin/../jre/bin/server;C:/Users/hirot/Downloads/set up/programing/IDE/pleiades-4.8.0-java-win-64bit-jre_20180923/pleiades/eclipse/jre/bin/../jre/bin;C:/Users/hirot/Downloads/set up/programing/IDE/pleiades-4.8.0-java-win-64bit-jre_20180923/pleiades/eclipse/jre/bin/../jre/lib/amd64;C:\Python310\Scripts\;C:\Python310\;C:\Program Files\Common Files\Oracle\Java\javapath;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\Program Files\mingw-w64\x86_64-8.1.0-posix-seh-rt_v6-rev0\mingw64\bin;C:\Program Files\WinMerge;E:\setup\NSQ\nsq-1.2.1.windows-amd64.go1.16.6\bin;C:\Program Files\MongoDB\Server\6.0\bin;C:\Program Files\nodejs\;C:\ProgramData\chocolatey\bin;C:\Program Files\Go\bin;C:\Program Files\Git\cmd;C:\Program Files\MySQL\MySQL Shell 8.0\bin\;C:\Users\hirot\AppData\Local\Microsoft\WindowsApps;C:\Users\hirot\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\hirot\AppData\Roaming\npm;C:\Users\hirot\Downloads\gactions-sdk_windows;C:\Users\hirot\go\bin;C:\Users\hirot\AppData\Local\GitHubDesktop\bin;C:\Users\hirot\Downloads\set up\programing\IDE\pleiades-4.8.0-java-win-64bit-jre_20180923\pleiades\eclipse;
+USERNAME=hirot
+OS=Windows_NT
+PROCESSOR_IDENTIFIER=Intel64 Family 6 Model 62 Stepping 4, GenuineIntel
+
+
+
+---------------  S Y S T E M  ---------------
+
+OS: Windows 10.0 , 64 bit Build 19041 (10.0.19041.2251)
+
+CPU:total 12 (initial active 12) (6 cores per cpu, 2 threads per core) family 6 model 62 stepping 4, cmov, cx8, fxsr, mmx, sse, sse2, sse3, ssse3, sse4.1, sse4.2, popcnt, avx, aes, clmul, erms, ht, tsc, tscinvbit
+
+Memory: 4k page, physical 25087716k(9741216k free), swap 100585188k(4108k free)
+
+vm_info: Java HotSpot(TM) 64-Bit Server VM (25.172-b11) for windows-amd64 JRE (1.8.0_172-b11), built on Mar 28 2018 21:21:52 by "java_re" with MS VC++ 10.0 (VS2010)
+
+time: Mon Dec 05 15:20:53 2022
+elapsed time: 1 seconds (0d 0h 0m 1s)
+
