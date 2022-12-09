@@ -13,6 +13,7 @@ import cilabo.fuzzy.knowledge.Knowledge;
 import cilabo.fuzzy.rule.Rule;
 import cilabo.fuzzy.rule.Rule.RuleBuilder;
 import cilabo.fuzzy.rule.consequent.classLabel.ClassLabel;
+import cilabo.fuzzy.rule.consequent.ruleWeight.RuleWeight;
 
 public abstract class AbstractMichiganSolution<RuleObject extends Rule> extends AbstractSolution<Integer> implements MichiganSolution<RuleObject>{
 
@@ -105,9 +106,14 @@ public abstract class AbstractMichiganSolution<RuleObject extends Rule> extends 
 	public boolean equalsClassLabel(ClassLabel classLabel) {
 		return this.rule.equalsClassLabel(classLabel);
 	}
+
 	@Override
 	public ClassLabel getClassLabel() {
 		return this.rule.getClassLabel();
+	}
+
+	public RuleWeight getRuleWeight() {
+		return this.rule.getRuleWeight();
 	}
 
 	public abstract static class AbstractMichiganSolutionBuilder

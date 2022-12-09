@@ -17,4 +17,9 @@ public abstract class AbstractConsequent <ClassLabelObject extends ClassLabel<T1
 
 	@Override
 	public abstract AbstractConsequent<ClassLabelObject, T1, RuleWeightObject, T2> copy();
+
+	@Override
+	public boolean isRejectedClassLabel() {
+		return this.classLabel.isRejectedClassLabel();
+	}
 }

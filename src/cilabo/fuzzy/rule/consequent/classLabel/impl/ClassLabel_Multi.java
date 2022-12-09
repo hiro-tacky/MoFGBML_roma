@@ -115,4 +115,12 @@ public final class ClassLabel_Multi extends AbstractClassLabel <Integer[]> {
 		return consequentClass;
 	}
 
+	@Override
+	public boolean isRejectedClassLabel() {
+		boolean flag = true;
+		for(Integer buf: this.classLabel) {
+			if(buf == AbstractClassLabel.RejectedClassLabel) flag = false;
+		}
+		return flag;
+	}
 }

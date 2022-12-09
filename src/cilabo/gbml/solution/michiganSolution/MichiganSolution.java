@@ -5,6 +5,7 @@ import org.uma.jmetal.solution.integersolution.IntegerSolution;
 import cilabo.data.InputVector;
 import cilabo.fuzzy.rule.Rule;
 import cilabo.fuzzy.rule.consequent.classLabel.ClassLabel;
+import cilabo.fuzzy.rule.consequent.ruleWeight.RuleWeight;
 
 /** MichiganSolutionのインターフェイス．
  * @author Takigawa Hiroki
@@ -39,6 +40,10 @@ public interface MichiganSolution<RuleObject extends Rule> extends IntegerSoluti
 	/** 後件部の結論部クラスラベルを返す
 	 * @return このインスタンスが持つ後件部の結論部クラスラベル */
 	public ClassLabel getClassLabel();
+
+	/** 後件部のルール重みを返す
+	 * @return このインスタンスが持つ後件部のルール重み */
+	public RuleWeight getRuleWeight();
 
 	/** 入力された後件部クラスラベルとこのインスタンスが持つ後件部のクラスラベルを比較する
 	 * @param classLabel 比較対象となる結論部クラスラベル

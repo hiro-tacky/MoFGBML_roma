@@ -55,4 +55,9 @@ public final class ClassLabel_Basic extends AbstractClassLabel <Integer>{
 		Element consequentClass = XML_manager.createElement(XML_TagName.ClassLabel, String.valueOf(this.classLabel));
 		return consequentClass;
 	}
+
+	@Override
+	public boolean isRejectedClassLabel() {
+		return this.classLabel == AbstractClassLabel.RejectedClassLabel;
+	}
 }

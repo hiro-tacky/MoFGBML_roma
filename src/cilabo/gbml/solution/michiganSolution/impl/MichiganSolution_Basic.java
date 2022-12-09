@@ -44,7 +44,7 @@ public final class MichiganSolution_Basic<RuleObject extends Rule> extends Abstr
 			RuleBuilder<RuleObject> ruleBuilder) {
 		this(AbstractMichiganSolution.makeBounds(), numberOfObjectives, numberOfConstraints, ruleBuilder);
 	}
-	
+
 	/** コピーコンストラクタ
 	 * @param solution コピー元となるインスタンス */
 	public MichiganSolution_Basic(MichiganSolution_Basic<RuleObject> solution) {

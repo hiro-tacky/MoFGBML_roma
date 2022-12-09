@@ -101,7 +101,5 @@ public class PittsburghMutation implements MutationOperator<PittsburghSolution> 
 				}
 			}
 		}
-
 	}
-
 }

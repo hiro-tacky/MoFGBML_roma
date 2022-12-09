@@ -31,6 +31,10 @@ public interface ClassLabel<ClassLabelValue> {
 	 */
 	public boolean equalsValueOf(ClassLabelValue classLabelValue);
 
+	/** このインスタンスが拒否クラスラベルかを判断する
+	 * @return 拒否クラスラベルである場合:true <br>拒否クラスラベルでない場合:false*/
+	public boolean isRejectedClassLabel();
+
 	/**	このインスタンスのディープコピーを返す
 	 * @return ディープコピーされたこのインスタンス */
 	public ClassLabel<ClassLabelValue> copy();
