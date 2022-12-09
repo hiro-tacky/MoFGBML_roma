@@ -2,7 +2,7 @@ package cilabo.metric.multilabel;
 
 import cilabo.data.DataSet;
 import cilabo.data.InputVector;
-import cilabo.fuzzy.classifier.impl.RuleBasedClassifier;
+import cilabo.fuzzy.classifier.impl.Classifier_basic;
 import cilabo.metric.Metric;
 import cilabo.utility.GeneralFunctions;
 
@@ -23,11 +23,11 @@ public class HammingLoss implements Metric {
 	 */
 	@Override
 	public Double metric(Object... objects) {
-		RuleBasedClassifier classifier = null;
+		Classifier_basic classifier = null;
 		DataSet dataset = null;
 		for(Object object : objects) {
-			if(object.getClass() == RuleBasedClassifier.class) {
-				classifier = (RuleBasedClassifier)object;
+			if(object.getClass() == Classifier_basic.class) {
+				classifier = (Classifier_basic)object;
 			}
 			else if(object.getClass() == DataSet.class) {
 				dataset = (DataSet)object;
@@ -46,7 +46,7 @@ public class HammingLoss implements Metric {
 		}
 	}
 
-	public Double metric(RuleBasedClassifier classifier, DataSet dataset) {
+	public Double metric(Classifier_basic classifier, DataSet dataset) {
 		double size = dataset.getDataSize();	// Number of instances;
 		double noClass = dataset.getCnum();		// Number of classes;
 

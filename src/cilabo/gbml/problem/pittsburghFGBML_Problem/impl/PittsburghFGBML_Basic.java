@@ -3,7 +3,7 @@ package cilabo.gbml.problem.pittsburghFGBML_Problem.impl;
 import org.uma.jmetal.problem.Problem;
 
 import cilabo.data.DataSet;
-import cilabo.fuzzy.classifier.classification.Classification;
+import cilabo.fuzzy.classifier.Classifier;
 import cilabo.gbml.objectivefunction.pittsburgh.ErrorRate;
 import cilabo.gbml.objectivefunction.pittsburgh.NumberOfRules;
 import cilabo.gbml.problem.pittsburghFGBML_Problem.AbstractPittsburghFGBML;
@@ -21,9 +21,9 @@ public class PittsburghFGBML_Basic <michiganSolution extends MichiganSolution>
 			int numberOfConstraints,
 			DataSet train,
 			MichiganSolutionBuilder<michiganSolution> michiganSolutionBuilder,
-			Classification<michiganSolution> classification) {
+			Classifier<michiganSolution> classifier) {
 		super(numberOfVariables, numberOfObjectives, numberOfConstraints,
-					train, michiganSolutionBuilder, classification);
+					train, michiganSolutionBuilder, classifier);
 		this.setName("PittsburghFGBML_Basic");
 	}
 
@@ -42,14 +42,21 @@ public class PittsburghFGBML_Basic <michiganSolution extends MichiganSolution>
 	}
 
 	public void removeNoWinnerMichiganSolution(PittsburghSolution_Basic<michiganSolution> solution) {
-		PittsburghSolution_Basic<michiganSolution> tmp = solution.copy();
 		for(int i=0; i<solution.getNumberOfVariables(); i++) {
 			if((int)solution.getVariable(i).getAttribute((new NumberOfWinner()).getAttributeId()) < 1) {
 				solution.removeVariable(i); i--;
 			}
 		}
-		if(solution.getNumberOfVariables() == 0) {
-			throw new ArithmeticException("This PittsburghSolution has no michiganSolution");
+		//ルール数がゼロになった場合，初期個体性法を適用する
+		while(solution.getNumberOfVariables() == 0) {
+			solution.clearVariable(this.getNumberOfVariables());
+			michiganSolution[] solutionArray = this.michiganSolutionBuilder.createMichiganSolutions(this.getNumberOfVariables());
+			for(int i=0; i<this.getNumberOfVariables(); i++) {
+				solution.setVariable(i, solutionArray[i]);
+			}
+			this.evaluate(solution);
+			this.removeNoWinnerMichiganSolution(solution);
+//			throw new ArithmeticException("This PittsburghSolution has no michiganSolution");
 		}
 	}
 
@@ -60,7 +67,7 @@ public class PittsburghFGBML_Basic <michiganSolution extends MichiganSolution>
 				this.getNumberOfObjectives(),
 				this.getNumberOfConstraints(),
 				this.michiganSolutionBuilder.copy(),
-				this.classification.copy());
+				this.classifier.copy());
 
 		michiganSolution[] solutionArray = this.michiganSolutionBuilder.createMichiganSolutions(this.getNumberOfVariables());
 		for(int i=0; i<this.getNumberOfVariables(); i++) {
@@ -72,6 +79,6 @@ public class PittsburghFGBML_Basic <michiganSolution extends MichiganSolution>
 	@Override
 	public String toString() {
 		return "PittsburghFGBML_Basic [michiganSolutionBuilder=" + michiganSolutionBuilder
-				+ ", classifier=" + classification + "]";
+				+ ", classifier=" + classifier + "]";
 	}
 }

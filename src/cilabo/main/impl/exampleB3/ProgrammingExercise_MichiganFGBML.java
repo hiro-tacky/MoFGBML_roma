@@ -18,7 +18,7 @@ import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
 import cilabo.data.DataSet;
-import cilabo.fuzzy.classifier.impl.RuleBasedClassifier;
+import cilabo.fuzzy.classifier.impl.Classifier_basic;
 import cilabo.fuzzy.classifier.operator.postProcessing.PostProcessing;
 import cilabo.fuzzy.classifier.operator.postProcessing.factory.RemoveNotBeWinnerProcessing;
 import cilabo.fuzzy.knowledge.Knowledge;
@@ -130,9 +130,9 @@ public class ProgrammingExercise_MichiganFGBML {
 		algorithm.run();
 
 		// Result
-		List<RuleBasedClassifier> totalClassifiers = algorithm.getTotalClassifier();
+		List<Classifier_basic> totalClassifiers = algorithm.getTotalClassifier();
 		Metric metric = new ErrorRate();
-		RuleBasedClassifier bestClassifier = null;
+		Classifier_basic bestClassifier = null;
 		double minValue = Double.MAX_VALUE;
 		for(int i = 0; i < totalClassifiers.size(); i++) {
 			double errorRate = (double)metric.metric(totalClassifiers.get(i), train);

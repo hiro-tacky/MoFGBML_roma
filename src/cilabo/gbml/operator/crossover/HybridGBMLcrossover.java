@@ -92,7 +92,7 @@ public class HybridGBMLcrossover implements CrossoverOperator<PittsburghSolution
 		if(crossoverRandomGenerator.getRandomValue() < probability) {/* Do crossover */
 			/* Judge if two parents are same. */
 			double p;
-			if(EqualsSolution.equals(parent1, parent2)) p = 1.0;
+			if(EqualsSolution.equalsPittsburghSolution(parent1, parent2)) p = 1.0;
 			else p = michiganOperationProbability;
 
 			if(crossoverRandomGenerator.getRandomValue() < p) {

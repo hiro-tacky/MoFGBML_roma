@@ -9,7 +9,7 @@ import cilabo.fuzzy.classifier.classification.impl.SingleWinnerRuleSelection;
 import cilabo.fuzzy.classifier.factory.ClassifierFactory;
 import cilabo.fuzzy.classifier.factory.impl.FuzzyClassifierFactory;
 import cilabo.fuzzy.classifier.factory.impl.LoadClassifierString;
-import cilabo.fuzzy.classifier.impl.RuleBasedClassifier;
+import cilabo.fuzzy.classifier.impl.Classifier_basic;
 import cilabo.fuzzy.classifier.operator.postProcessing.PostProcessing;
 import cilabo.fuzzy.classifier.operator.postProcessing.factory.SimplePostProcessing;
 import cilabo.fuzzy.classifier.operator.preProcessing.PreProcessing;
@@ -47,7 +47,7 @@ public class Test {
 
 	public static void checkClassifierToString() {
 		Knowledge knowledge = makeTestKnowledge();
-		RuleBasedClassifier classifier = makeTestClassifier();
+		Classifier_basic classifier = makeTestClassifier();
 
 		String classifierString = classifier.toString();
 		classifierString = GeneralFunctions.uniformLineSeparator(classifierString);
@@ -68,7 +68,7 @@ public class Test {
 									.classifierString(classifierString)
 									.knowledge(knowledge)
 									.build();
-		RuleBasedClassifier newClassifier = (RuleBasedClassifier)factory.create();
+		Classifier_basic newClassifier = (Classifier_basic)factory.create();
 
 
 	}
@@ -111,7 +111,7 @@ public class Test {
 		return Knowledge.getInstance();
 	}
 
-	private static RuleBasedClassifier makeTestClassifier() {
+	private static Classifier_basic makeTestClassifier() {
 		String sep = File.separator;
 		String dataName = "dataset" + sep + "cilabo" + sep + "kadai5_pattern1.txt";
 		DataSet train = new DataSet();
@@ -149,7 +149,7 @@ public class Test {
 										.ruleNum(ruleNum)
 										.build();
 
-		RuleBasedClassifier classifier = (RuleBasedClassifier)factory.create();
+		Classifier_basic classifier = (Classifier_basic)factory.create();
 		return classifier;
 	}
 }

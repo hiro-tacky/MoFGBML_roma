@@ -23,8 +23,10 @@ import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
 import cilabo.data.DataSet;
 import cilabo.data.TrainTestDatasetManager;
+import cilabo.fuzzy.classifier.Classifier;
 import cilabo.fuzzy.classifier.classification.Classification;
 import cilabo.fuzzy.classifier.classification.impl.SingleWinnerRuleSelection;
+import cilabo.fuzzy.classifier.impl.Classifier_basic;
 import cilabo.fuzzy.knowledge.Knowledge;
 import cilabo.fuzzy.knowledge.factory.impl.HomoTriangleKnowledgeFactory;
 import cilabo.fuzzy.knowledge.membershipParams.HomoTriangle_2_3_4_5;
@@ -170,6 +172,9 @@ public class FAN2021_Main {
 					ruleBuilder);
 
 		Classification<MichiganSolution_Basic<Rule_Basic>> classification = new SingleWinnerRuleSelection<MichiganSolution_Basic<Rule_Basic>>();
+
+		Classifier<MichiganSolution_Basic<Rule_Basic>> classifier = new Classifier_basic<>(classification);
+
 		/* MOP: Multi-objective Optimization Problem */
 		Problem<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>> problem =
 				new PittsburghFGBML_Basic<MichiganSolution_Basic<Rule_Basic>>(
@@ -178,7 +183,7 @@ public class FAN2021_Main {
 						numberOfConstraints_Pittsburgh,
 						train,
 						michiganSolutionBuilder,
-						classification);
+						classifier);
 
 
 		/* Crossover: Hybrid-style GBML specific crossover operator. */

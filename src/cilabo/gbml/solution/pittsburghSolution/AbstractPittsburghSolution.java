@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import org.uma.jmetal.solution.AbstractSolution;
 
-import cilabo.fuzzy.classifier.classification.Classification;
+import cilabo.fuzzy.classifier.Classifier;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution.MichiganSolutionBuilder;
 
@@ -13,7 +13,7 @@ public abstract class AbstractPittsburghSolution <michiganSolution extends Michi
 		implements PittsburghSolution<michiganSolution>{
 
 	/** 識別器 */
-	protected Classification<michiganSolution> classification;
+	protected Classifier<michiganSolution> classifier;
 	public MichiganSolutionBuilder<michiganSolution> michiganSolutionBuilder;
 
 	/** Constructor */
@@ -21,10 +21,10 @@ public abstract class AbstractPittsburghSolution <michiganSolution extends Michi
 			int numberOfObjectives,
 			int numberOfConstraints,
 			MichiganSolutionBuilder<michiganSolution> michiganSolutionBuilder,
-			Classification<michiganSolution> classification) {
+			Classifier<michiganSolution> classifier) {
 		super(numberOfVariables, numberOfObjectives, numberOfConstraints);
 		this.michiganSolutionBuilder = michiganSolutionBuilder;
-		this.classification = classification;
+		this.classifier = classifier;
 	}
 
 	@Override

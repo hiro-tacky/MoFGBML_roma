@@ -78,5 +78,4 @@ public class Consequent_Basic extends AbstractConsequent <ClassLabel_Basic, Inte
 		// TODO 自動生成されたメソッド・スタブ
 		return null;
 	}
-
 }

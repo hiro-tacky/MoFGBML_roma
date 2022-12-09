@@ -3,7 +3,7 @@ package cilabo.gbml.solution.pittsburghSolution.impl;
 import java.util.HashMap;
 
 import cilabo.data.InputVector;
-import cilabo.fuzzy.classifier.classification.Classification;
+import cilabo.fuzzy.classifier.Classifier;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution.MichiganSolutionBuilder;
 import cilabo.gbml.solution.pittsburghSolution.AbstractPittsburghSolution;
@@ -15,9 +15,9 @@ public final class PittsburghSolution_Basic <michiganSolution extends MichiganSo
 			int numberOfObjectives,
 			int numberOfConstraints,
 			MichiganSolutionBuilder<michiganSolution> michiganSolutionBuilder,
-			Classification<michiganSolution> classification) {
+			Classifier<michiganSolution> classifier) {
 		super(numberOfVariables, numberOfObjectives, numberOfConstraints,
-				michiganSolutionBuilder, classification);
+				michiganSolutionBuilder, classifier);
 		for(int i=0; i<this.getNumberOfVariables(); i++) {
 			michiganSolution michiganSolution = michiganSolutionBuilder.createMichiganSolution();
 			this.setVariable(i, michiganSolution);
@@ -26,7 +26,7 @@ public final class PittsburghSolution_Basic <michiganSolution extends MichiganSo
 
 	private PittsburghSolution_Basic(PittsburghSolution_Basic<michiganSolution> solution) {
 	    super(solution.getNumberOfVariables(), solution.getNumberOfObjectives(), solution.getNumberOfConstraints(),
-	    		solution.michiganSolutionBuilder, solution.classification.copy());
+	    		solution.michiganSolutionBuilder, solution.classifier.copy());
 
 	    for (int i = 0; i < solution.getNumberOfVariables(); i++) {
 	      setVariable(i, (michiganSolution) solution.getVariable(i).copy());
@@ -50,7 +50,7 @@ public final class PittsburghSolution_Basic <michiganSolution extends MichiganSo
 
 	@Override
 	public MichiganSolution classify(InputVector x) {
-		return this.classification.classify(this.getVariables(), x);
+		return this.classifier.classify(this.getVariables(), x);
 	}
 
 	@Override
@@ -65,9 +65,9 @@ public final class PittsburghSolution_Basic <michiganSolution extends MichiganSo
 		str += "}" + ln;
 
 		for(michiganSolution tmp: this.variables) {
-			str += "->" + tmp + ln;
+			str += " ->" + tmp + ln;
 		}
-		str += "[classification=" + classification + ", attributes=" + attributes + "]" + ln + ln;
+		str += "[classifier=" + classifier + ", attributes=" + attributes + "]" + ln + ln;
 		return str;
 	}
 

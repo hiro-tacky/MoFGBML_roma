@@ -26,9 +26,12 @@ import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.operator.mutation.MutationOperator;
 import org.uma.jmetal.operator.selection.SelectionOperator;
 import org.uma.jmetal.problem.Problem;
+import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.SolutionListUtils;
 import org.uma.jmetal.util.comparator.MultiComparator;
+import org.uma.jmetal.util.fileoutput.SolutionListOutput;
+import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.util.observable.Observable;
 import org.uma.jmetal.util.observable.ObservableEntity;
 import org.uma.jmetal.util.observable.impl.DefaultObservable;
@@ -140,7 +143,7 @@ public class HybridMoFGBMLwithNSGAII <S extends PittsburghSolution>extends Abstr
 			/* 子個体群評価 - Offsprign Evaluation */
 			offspringPopulation = evaluatePopulation(offspringPopulation);
 			/* 未勝利個体削除*/
-			population = removeNoWinnerMichiganSolution(population);
+			offspringPopulation = removeNoWinnerMichiganSolution(offspringPopulation);
 			/* 個体群更新・環境選択 - Environmental Selection */
 			population = replacement(population, offspringPopulation);
 
@@ -179,9 +182,22 @@ public class HybridMoFGBMLwithNSGAII <S extends PittsburghSolution>extends Abstr
 	    Integer evaluations = (Integer)algorithmStatusData.get("EVALUATIONS");
 	    if(evaluations != null) {
 	    	if(evaluations % frequency == 0) {
+	    		System.out.print(" ->");
+	    		for(int i=0; i<getPopulation().get(0).getNumberOfObjectives(); i++) {
+	    			double tmp=0;
+	    			for(int j=0; j<getPopulation().size(); j++) {
+	    				tmp += getPopulation().get(j).getObjective(i);
+	    			}
+	    			tmp /= getPopulation().size();
+		    		System.out.print(String.format("objectives[%d]: %.8f.. ", i, tmp));
+	    		}
+	    		System.out.println(); System.out.println();
+
 	    		String path = outputRootDir+sep+ "solutions-"+evaluations+".txt";
-//	    		new PittsburghSolutionListOutput(getPopulation())
-//	    			.printSolutionsToFile(new DefaultFileOutputContext(path), getPopulation());
+	    	    new SolutionListOutput((List<? extends Solution<?>>) this.getResult())
+		            .setVarFileOutputContext(new DefaultFileOutputContext(outputRootDir + sep + String.format("VAR-%010d.csv", evaluations), ","))
+		            .setFunFileOutputContext(new DefaultFileOutputContext(outputRootDir + sep + String.format("FUN-%010d.csv", evaluations), ","))
+		            .print();
 //
 //	    		Element population = new PittsburghSolutionListOutput(getPopulation())
 //		    			.printSolutionsToElement(getPopulation());

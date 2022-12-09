@@ -14,7 +14,7 @@ import cilabo.data.TrainTestDatasetManager;
 import cilabo.fuzzy.classifier.Classifier;
 import cilabo.fuzzy.classifier.classification.Classification;
 import cilabo.fuzzy.classifier.classification.impl.SingleWinnerRuleSelection;
-import cilabo.fuzzy.classifier.impl.RuleBasedClassifier;
+import cilabo.fuzzy.classifier.impl.Classifier_basic;
 import cilabo.fuzzy.knowledge.factory.impl.HomoTriangleKnowledgeFactory;
 import cilabo.fuzzy.knowledge.membershipParams.HomoTriangle_2_3_4_5;
 import cilabo.fuzzy.rule.Rule.RuleBuilder;
@@ -74,7 +74,7 @@ class PittsburghFGBML_BasicTest {
 				ruleBuilder);
 
 		Classification<Rule_Basic> classification = new SingleWinnerRuleSelection<Rule_Basic>();
-		Classifier<Rule_Basic> classifier = new RuleBasedClassifier<Rule_Basic>(classification);
+		Classifier<Rule_Basic> classifier = new Classifier_basic<Rule_Basic>(classification);
 		problem = new PittsburghFGBML_Basic<MichiganSolution_Basic<Rule_Basic>, Rule_Basic>(
 				numberOfvariables_Pittsburgh,
 				numberOfObjectives_Pittsburgh,

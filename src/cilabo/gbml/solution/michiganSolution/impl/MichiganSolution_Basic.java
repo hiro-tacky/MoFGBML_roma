@@ -144,15 +144,18 @@ public final class MichiganSolution_Basic<RuleObject extends Rule> extends Abstr
 
 	@Override
 	public String toString() {
-		String str = "MichiganSolution_Basic [rule=" + this.rule.getClass().getSimpleName() + ", variables= {";
+		String str = "MichiganSolution_Basic [rule=" + this.rule.getClass().getSimpleName() + "],variables=,";
 		str += String.format("%3d", this.getVariable(0));
 		for(int i=1; i<this.getNumberOfVariables(); i++) {str += String.format(", %3d", this.getVariable(i));}
-		str += "}, " + String.format("Objectives[%d]=%.4f..", 0, this.getObjective(0));
+
+		str += ",RuleWeight=," + this.rule.getRuleWeight().toString() + ",ClassLabel=," + this.rule.getClassLabel().toString();
+
+		str += "," + String.format("Objectives[%d]=,%.4f..", 0, this.getObjective(0));
 		for(int i=1; i<this.getNumberOfObjectives(); i++) {
-			str += String.format(", Objectives[%d]=%.4f..", i, this.getObjective(i));
+			str += String.format(",Objectives[%d]=,%.4f..", i, this.getObjective(i));
 		}
-		str += ", RuleWeight=" + this.rule.getRuleWeight().toString() + ", ClassLabel=" + this.rule.getClassLabel().toString();
-		str += ", attributes=" + attributes + "]";
+
+		str += ",attributes=," + attributes;
 
 		return str;
 	}
