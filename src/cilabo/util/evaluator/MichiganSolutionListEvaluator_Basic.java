@@ -6,10 +6,10 @@ import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
 
 import cilabo.gbml.problem.michiganFGBML_Problem.impl.MichiganFGBML_Basic;
-import cilabo.gbml.solution.michiganSolution.AbstractMichiganSolution;
-import cilabo.main.ExperienceMethods.ObjectivesIndexMichigan;
+import cilabo.gbml.solution.michiganSolution.MichiganSolution;
+import cilabo.main.ExperienceParameter.ObjectivesForMichigan;
 
-public class MichiganSolutionListEvaluator_Basic<michiganSolution extends AbstractMichiganSolution> implements SolutionListEvaluator<michiganSolution> {
+public class MichiganSolutionListEvaluator_Basic<michiganSolution extends MichiganSolution> implements SolutionListEvaluator<michiganSolution> {
 
 	@Override
 	public void shutdown() {
@@ -22,7 +22,7 @@ public class MichiganSolutionListEvaluator_Basic<michiganSolution extends Abstra
 		if(!(problem instanceof MichiganFGBML_Basic)) {throw new IllegalArgumentException();}
 
 	    solutionList.stream().forEach(s -> problem.evaluate(s));
-	    solutionList.stream().forEach(s -> s.setObjective(ObjectivesIndexMichigan.FitnessValue.toInt(), 0));
+	    solutionList.stream().forEach(s -> s.setObjective(ObjectivesForMichigan.FitnessValue.toInt(), 0));
 	    ((MichiganFGBML_Basic) problem).calculateNumberOfWinnerRule();
 
 		return solutionList;

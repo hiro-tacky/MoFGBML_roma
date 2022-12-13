@@ -107,12 +107,12 @@ public final class ClassLabel_Multi extends AbstractClassLabel <Integer[]> {
 
 	@Override
 	public Element toElement() {
-		Element consequentClass = XML_manager.createElement(XML_TagName.ClassLabelList);
+		Element classLabel = XML_manager.getInstance().createElement(XML_TagName.classLabelMulti);
 		for(int i=0; i<this.classLabel.length; i++) {
-			XML_manager.addChildNode(consequentClass, XML_TagName.ClassLabel, String.valueOf(this.classLabel[i]),
-					XML_TagName.ClassID, String.valueOf(i));
+			XML_manager.addElement(classLabel, XML_TagName.classLabel, String.valueOf(this.classLabel[i]),
+					XML_TagName.id, String.valueOf(i));
 		}
-		return consequentClass;
+		return classLabel;
 	}
 
 	@Override

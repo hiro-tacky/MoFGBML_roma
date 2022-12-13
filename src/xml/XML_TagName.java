@@ -1,36 +1,36 @@
 package xml;
 
 public enum XML_TagName {
-	population,
-	evaluations,
-	individual,
-	classifier,
-	singleRule,
+	id,//汎用
+	dimension,//汎用
 
-	antecedent,
-		dimentionID,
+	evaluations, evaluation,
+		population,
+			pittsburghSolution,
+				michiganSolution,
+					fuzzySets,
+						fuzzySetID,
 
-	consequent,
+					rule,
+						antecedent,
+						consequent,
+							classLabel,
+							ruleWeight,
 
-		ClassLabelList,
-		ClassLabel,
-		ClassID,
+							classLabelMulti,
+							ruleWeightMulti,
 
-		ruleWeightList,
-		ruleWeight,
-		ruleWeightID,
+				objectivesSet,
+					objective, objectiveName,
 
-	knowledge,
-	fuzzySets,
-	partionNum,
-	partion_i,
-	partionType,
-	fuzzyTerm,
-	fuzzyTermID,
-	fuzzyTermName,
-	ShapeTypeID,
-	ShapeTypeName,
-	parameters,
-	parameter,
+	knowledgeBase,
+		//fuzzySets,
+			fuzzyTerm,
+				fuzzyTermID,
+				fuzzyTermName,
+				ShapeTypeID,
+				ShapeTypeName,
+				parameterSet,
+					parameter,
 	consts,
 }

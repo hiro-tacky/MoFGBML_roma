@@ -9,8 +9,10 @@ import cilabo.gbml.objectivefunction.pittsburgh.NumberOfRules;
 import cilabo.gbml.problem.pittsburghFGBML_Problem.AbstractPittsburghFGBML;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution.MichiganSolutionBuilder;
+import cilabo.gbml.solution.michiganSolution.impl.MichiganSolution_Rejected;
 import cilabo.gbml.solution.pittsburghSolution.impl.PittsburghSolution_Basic;
 import cilabo.gbml.solution.util.attribute.NumberOfWinner;
+import cilabo.main.ExperienceParameter.ObjectivesForPittsburgh;
 
 public class PittsburghFGBML_Basic <michiganSolution extends MichiganSolution>
 		extends AbstractPittsburghFGBML<PittsburghSolution_Basic<michiganSolution>, michiganSolution> implements Problem<PittsburghSolution_Basic<michiganSolution>>{
@@ -36,8 +38,8 @@ public class PittsburghFGBML_Basic <michiganSolution extends MichiganSolution>
 		NumberOfRules<PittsburghSolution_Basic<michiganSolution>> function2 = new NumberOfRules<PittsburghSolution_Basic<michiganSolution>>();
 		double f2 = function2.function(solution);
 
-		solution.setObjective(0, f1);
-		solution.setObjective(1, f2);
+		solution.setObjective(ObjectivesForPittsburgh.ErrorRateDtra.toInt(), f1);
+		solution.setObjective(ObjectivesForPittsburgh.NumberOfRule.toInt(), f2);
 
 	}
 
@@ -47,15 +49,14 @@ public class PittsburghFGBML_Basic <michiganSolution extends MichiganSolution>
 				solution.removeVariable(i); i--;
 			}
 		}
-		//ルール数がゼロになった場合，初期個体性法を適用する
-		while(solution.getNumberOfVariables() == 0) {
+		//ルール数がゼロになった場合，ダミールールで満たした個体で置換する
+		if(solution.getNumberOfVariables() == 0) {
 			solution.clearVariable(this.getNumberOfVariables());
-			michiganSolution[] solutionArray = this.michiganSolutionBuilder.createMichiganSolutions(this.getNumberOfVariables());
 			for(int i=0; i<this.getNumberOfVariables(); i++) {
-				solution.setVariable(i, solutionArray[i]);
+				solution.setVariable(i, (michiganSolution) MichiganSolution_Rejected.getInstance());
 			}
-			this.evaluate(solution);
-			this.removeNoWinnerMichiganSolution(solution);
+			solution.setObjective(0, 1);
+			solution.setObjective(1, this.getNumberOfVariables());
 //			throw new ArithmeticException("This PittsburghSolution has no michiganSolution");
 		}
 	}

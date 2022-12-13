@@ -52,8 +52,8 @@ public final class ClassLabel_Basic extends AbstractClassLabel <Integer>{
 
 	@Override
 	public Element toElement() {
-		Element consequentClass = XML_manager.createElement(XML_TagName.ClassLabel, String.valueOf(this.classLabel));
-		return consequentClass;
+		Element classLabel = XML_manager.createElement(XML_TagName.classLabel, String.valueOf(this.classLabel));
+		return classLabel;
 	}
 
 	@Override

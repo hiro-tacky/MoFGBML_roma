@@ -1,5 +1,7 @@
 package cilabo.fuzzy.rule;
 
+import org.w3c.dom.Element;
+
 import cilabo.data.InputVector;
 import cilabo.fuzzy.rule.antecedent.Antecedent;
 import cilabo.fuzzy.rule.consequent.Consequent;
@@ -38,6 +40,9 @@ public interface Rule<AntecedentObject extends Antecedent, ConsequentObject exte
 	/** Consequentオブジェクトを取得
 	 * @return Consequentオブジェクト */
 	public ConsequentObject getConsequent();
+
+	@Override
+	public Element toElement();
 
 	@Override
 	public Rule<AntecedentObject, ConsequentObject> copy();

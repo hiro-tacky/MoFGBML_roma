@@ -12,10 +12,9 @@ import cilabo.gbml.solution.util.attribute.NumberOfWinner;
 
 public final class ErrorRate <S extends PittsburghSolution>{
 
-
 	public ErrorRate() {}
 
-	public Double function(S solution, DataSet train) {
+	public double function(S solution, DataSet train) {
 		// Classification
 		int numberOfErrorPatterns = 0;
 

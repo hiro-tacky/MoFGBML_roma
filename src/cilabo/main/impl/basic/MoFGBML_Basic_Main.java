@@ -58,14 +58,14 @@ import xml.XML_manager;
  *
  * FAN2021時点
  */
-public class FAN2021_Main {
+public class MoFGBML_Basic_Main {
 	public static void main(String[] args) throws JMetalException, FileNotFoundException {
 		String sep = File.separator;
 
 		/* ********************************************************* */
 		System.out.println();
 		System.out.println("==== INFORMATION ====");
-		System.out.println("main: " + FAN2021_Main.class.getCanonicalName());
+		System.out.println("main: " + MoFGBML_Basic_Main.class.getCanonicalName());
 		String version = "1.0";
 		System.out.println("version: " + version);
 		System.out.println();
@@ -118,7 +118,6 @@ public class FAN2021_Main {
 
 		/** XML ファイル出力ようインスタンスの生成*/
 		XML_manager.getInstance();
-		XML_manager.getInstance().setDtst(test);
 
 		HybridStyleMoFGBML(train, test);
 		/* ===================================== */
@@ -206,7 +205,7 @@ public class FAN2021_Main {
 		Termination termination = new TerminationByEvaluations(Consts.terminateEvaluation);
 
 		//knowlwdge出力用
-		XML_manager.addElement(XML_manager.getRoot(), Knowledge.getInstance(). knowledgeToElement());
+		XML_manager.addElement(XML_manager.getRoot(), Knowledge.getInstance().toElement());
 
 		/* Algorithm: Hybrid-style MoFGBML with NSGA-II */
 		HybridMoFGBMLwithNSGAII<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>> algorithm
@@ -230,8 +229,8 @@ public class FAN2021_Main {
 		/* Non-dominated solutions in final generation */
 		List<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>> nonDominatedSolutions = algorithm.getResult();
 	    new SolutionListOutput(nonDominatedSolutions)
-        	.setVarFileOutputContext(new DefaultFileOutputContext(Consts.EXPERIMENT_ID_DIR+sep+"VAR.csv", ","))
-        	.setFunFileOutputContext(new DefaultFileOutputContext(Consts.EXPERIMENT_ID_DIR+sep+"FUN.csv", ","))
+        	.setVarFileOutputContext(new DefaultFileOutputContext(Consts.EXPERIMENT_ID_DIR+sep+"VAR-final.csv", ","))
+        	.setFunFileOutputContext(new DefaultFileOutputContext(Consts.EXPERIMENT_ID_DIR+sep+"FUN-final.csv", ","))
         	.print();
 
 	    // Test data

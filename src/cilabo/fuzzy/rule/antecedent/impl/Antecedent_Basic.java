@@ -2,7 +2,11 @@ package cilabo.fuzzy.rule.antecedent.impl;
 
 import java.util.Arrays;
 
+import org.w3c.dom.Element;
+
 import cilabo.fuzzy.rule.antecedent.AbstractAntecedent;
+import xml.XML_TagName;
+import xml.XML_manager;
 
 public final class Antecedent_Basic extends AbstractAntecedent{
 
@@ -56,5 +60,11 @@ public final class Antecedent_Basic extends AbstractAntecedent{
 	@Override
 	public Antecedent_Basic copy() {
 		return new Antecedent_Basic();
+	}
+
+	@Override
+	public Element toElement() {
+		Element antecedent = XML_manager.createElement(XML_TagName.antecedent);
+		return antecedent;
 	}
 }

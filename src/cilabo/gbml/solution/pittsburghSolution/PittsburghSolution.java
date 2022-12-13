@@ -1,6 +1,7 @@
 package cilabo.gbml.solution.pittsburghSolution;
 
 import org.uma.jmetal.solution.Solution;
+import org.w3c.dom.Element;
 
 import cilabo.data.InputVector;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution;
@@ -26,6 +27,8 @@ public interface PittsburghSolution <michiganSolution extends MichiganSolution>
 	public void clearVariable(int numberOfVariables);
 
 	public MichiganSolution classify(InputVector x);
+
+	public Element toElement();
 
 	@Override
 	public PittsburghSolution<michiganSolution> copy();

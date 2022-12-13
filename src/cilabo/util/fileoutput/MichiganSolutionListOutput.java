@@ -4,20 +4,19 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.List;
 
-import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.JMetalException;
 import org.uma.jmetal.util.fileoutput.FileOutputContext;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 
-import cilabo.gbml.solution.michiganSolution.impl.MichiganSolution_Basic;
+import cilabo.gbml.solution.michiganSolution.MichiganSolution;
 
 public class MichiganSolutionListOutput extends SolutionListOutput {
 
 	private FileOutputContext michiganFileContext;
 	private FileOutputContext solutionFileContext;
-	private List<? extends Solution<?>> solutionList;
+	private List<MichiganSolution> solutionList;
 
-	public MichiganSolutionListOutput(List<? extends Solution<?>> solutionList) {
+	public MichiganSolutionListOutput(List<MichiganSolution> solutionList) {
 		super(solutionList);
 		this.solutionList = solutionList;
 	}
@@ -39,7 +38,7 @@ public class MichiganSolutionListOutput extends SolutionListOutput {
 		this.printSolutionsToFile(solutionFileContext, solutionList);
 	}
 
-	public void printSolutionsToFile(FileOutputContext context, List<? extends Solution<?>> solutionList) {
+	public void printSolutionsToFile(FileOutputContext context, List<MichiganSolution> solutionList) {
 		BufferedWriter bufferedWriter = context.getFileWriter();
 		try {
 			if(solutionList.size() > 0) {
@@ -54,12 +53,12 @@ public class MichiganSolutionListOutput extends SolutionListOutput {
 		}
 	}
 
-	public void printMichiganSolutionFormatsToFile(FileOutputContext context, List<? extends Solution<?>> solutionList) {
+	public void printMichiganSolutionFormatsToFile(FileOutputContext context, List<MichiganSolution> solutionList) {
 		BufferedWriter bufferedWriter = context.getFileWriter();
 		try {
 			if(solutionList.size() > 0) {
 				for(int i = 0; i < solutionList.size(); i++) {
-					bufferedWriter.write(((MichiganSolution_Basic)solutionList.get(i)).getRule().toString());
+					bufferedWriter.write(solutionList.get(i).toString());
 					bufferedWriter.newLine();
 				}
 				bufferedWriter.close();

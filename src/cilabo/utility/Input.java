@@ -14,7 +14,7 @@ import cilabo.data.pattern.impl.Pattern_Basic;
 import cilabo.data.pattern.impl.Pattern_MultiClass;
 import cilabo.fuzzy.rule.consequent.classLabel.impl.ClassLabel_Basic;
 import cilabo.fuzzy.rule.consequent.classLabel.impl.ClassLabel_Multi;
-import cilabo.main.ExperienceMethods;
+import cilabo.main.ExperienceParameter;
 
 public class Input {
 
@@ -25,7 +25,7 @@ public class Input {
 	 */
 
 	public static DataSet inputDataSet(String fileName) {
-		switch(ExperienceMethods.classlabel) {
+		switch(ExperienceParameter.classlabel) {
 			case Multi:
 				return inputMultiLabelDataSet(fileName);
 			case Single:

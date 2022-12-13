@@ -1,5 +1,7 @@
 package cilabo.fuzzy.rule.antecedent;
 
+import org.w3c.dom.Element;
+
 /** 前件部クラスのインターフェイス．但し，遺伝子情報は持たない．
  * @author Takigawa Hiroki
  * @see cilabo.gbml.solution.michiganSolution.MichiganSolution
@@ -26,4 +28,6 @@ public interface Antecedent {
 	/** このインスタンスのコピーを返す
 	 * @return このインスタンスのコピー */
 	public Antecedent copy();
+
+	public Element toElement();
 }

@@ -35,11 +35,14 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.util.observable.Observable;
 import org.uma.jmetal.util.observable.ObservableEntity;
 import org.uma.jmetal.util.observable.impl.DefaultObservable;
+import org.w3c.dom.Element;
 
 import cilabo.gbml.component.variation.CrossoverAndMutationAndPittsburghLearningVariation;
 import cilabo.gbml.problem.pittsburghFGBML_Problem.impl.PittsburghFGBML_Basic;
 import cilabo.gbml.solution.pittsburghSolution.PittsburghSolution;
 import cilabo.gbml.solution.pittsburghSolution.impl.PittsburghSolution_Basic;
+import xml.XML_TagName;
+import xml.XML_manager;
 
 public class HybridMoFGBMLwithNSGAII <S extends PittsburghSolution>extends AbstractEvolutionaryAlgorithm<S, List<S>>
 										implements ObservableEntity {
@@ -181,6 +184,7 @@ public class HybridMoFGBMLwithNSGAII <S extends PittsburghSolution>extends Abstr
 	    String sep = File.separator;
 	    Integer evaluations = (Integer)algorithmStatusData.get("EVALUATIONS");
 	    if(evaluations != null) {
+	    	if(evaluations * 10 % frequency == 0 && evaluations % frequency != 0) System.out.print(". ");
 	    	if(evaluations % frequency == 0) {
 	    		System.out.print(" ->");
 	    		for(int i=0; i<getPopulation().get(0).getNumberOfObjectives(); i++) {
@@ -193,18 +197,22 @@ public class HybridMoFGBMLwithNSGAII <S extends PittsburghSolution>extends Abstr
 	    		}
 	    		System.out.println(); System.out.println();
 
-	    		String path = outputRootDir+sep+ "solutions-"+evaluations+".txt";
 	    	    new SolutionListOutput((List<? extends Solution<?>>) this.getResult())
 		            .setVarFileOutputContext(new DefaultFileOutputContext(outputRootDir + sep + String.format("VAR-%010d.csv", evaluations), ","))
 		            .setFunFileOutputContext(new DefaultFileOutputContext(outputRootDir + sep + String.format("FUN-%010d.csv", evaluations), ","))
 		            .print();
-//
-//	    		Element population = new PittsburghSolutionListOutput(getPopulation())
-//		    			.printSolutionsToElement(getPopulation());
-//
-//		    	XML_manager xml_manager = XML_manager.getInstance();
-//		    	XML_manager.addElement(XML_manager.getRoot(), population,
-//		    			xml_manager.generationName, String.valueOf(evaluations));
+
+	    		Element population = XML_manager.createElement(XML_TagName.population);
+
+	    		for(S solution: this.getResult()) {
+	    			Element pittsburghSolution = solution.toElement();
+	    			XML_manager.addElement(population, pittsburghSolution);
+	    		}
+
+	    		Element evaluationsElement = XML_manager.createElement(XML_TagName.evaluations, XML_TagName.evaluation, String.valueOf(evaluations));
+
+	    		XML_manager.addElement(evaluationsElement, population);
+		    	XML_manager.addElement(XML_manager.getRoot(), evaluationsElement);
 	    	}
 	    }
 		else {

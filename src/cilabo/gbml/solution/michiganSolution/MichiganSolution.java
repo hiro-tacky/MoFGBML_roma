@@ -1,6 +1,7 @@
 package cilabo.gbml.solution.michiganSolution;
 
 import org.uma.jmetal.solution.integersolution.IntegerSolution;
+import org.w3c.dom.Element;
 
 import cilabo.data.InputVector;
 import cilabo.fuzzy.rule.Rule;
@@ -49,6 +50,8 @@ public interface MichiganSolution<RuleObject extends Rule> extends IntegerSoluti
 	 * @param classLabel 比較対象となる結論部クラスラベル
 	 * @return true:同値であった．false: 異なる結論部クラスラベルであった．*/
 	public boolean equalsClassLabel(ClassLabel classLabel);
+
+	public Element toElement();
 
 	/** MichiganSolutionオブジェクトを生成するfactoryのインターフェイス．
 	 * @author Takigawa Hiroki

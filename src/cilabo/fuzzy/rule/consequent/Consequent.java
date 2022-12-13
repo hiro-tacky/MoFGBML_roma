@@ -1,5 +1,7 @@
 package cilabo.fuzzy.rule.consequent;
 
+import org.w3c.dom.Element;
+
 import cilabo.fuzzy.rule.consequent.classLabel.ClassLabel;
 import cilabo.fuzzy.rule.consequent.ruleWeight.RuleWeight;
 
@@ -24,4 +26,6 @@ public interface Consequent<ClassLabelObject extends ClassLabel, RuleWeightObjec
 	public RuleWeightObject getRuleWeight();
 
 	public Consequent<ClassLabelObject, RuleWeightObject> copy();
+
+	public Element toElement();
 }

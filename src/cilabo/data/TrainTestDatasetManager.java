@@ -3,6 +3,7 @@ package cilabo.data;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import cilabo.main.ExperienceParameter;
 import cilabo.utility.Input;
 
 /** 学習用データ1つ，評価用データ1つのデータセットを保持するクラス.<br>
@@ -62,6 +63,8 @@ public class TrainTestDatasetManager {
 	 */
 	public TrainTestDatasetManager loadTrainTestFiles(String trainFile, String testFile) {
 		if(Objects.isNull(trainFile) || Objects.isNull(testFile)) { throw new NullPointerException("fileNameString is null");}
+
+		ExperienceParameter.classlabel = ExperienceParameter.ClassLabel.Single;
 
 		DataSet train = Input.inputDataSet(trainFile);
 		addTrains(train);

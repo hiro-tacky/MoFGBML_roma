@@ -6,6 +6,8 @@ import cilabo.fuzzy.rule.consequent.AbstractConsequent;
 import cilabo.fuzzy.rule.consequent.classLabel.ClassLabel;
 import cilabo.fuzzy.rule.consequent.classLabel.impl.ClassLabel_Basic;
 import cilabo.fuzzy.rule.consequent.ruleWeight.impl.RuleWeight_Basic;
+import xml.XML_TagName;
+import xml.XML_manager;
 
 public class Consequent_Basic extends AbstractConsequent <ClassLabel_Basic, Integer, RuleWeight_Basic, Double>{
 
@@ -75,7 +77,17 @@ public class Consequent_Basic extends AbstractConsequent <ClassLabel_Basic, Inte
 
 	@Override
 	public Element toElement() {
-		// TODO 自動生成されたメソッド・スタブ
-		return null;
+		//後件部
+		Element consequent = XML_manager.createElement(XML_TagName.consequent);
+
+		//結論部クラス
+		Element classLabel = this.classLabel.toElement();
+		XML_manager.addElement(consequent, classLabel);
+
+		//ルール重み
+		Element ruleWeight = this.ruleWeight.toElement();
+		XML_manager.addElement(consequent, ruleWeight);
+
+		return consequent;
 	}
 }

@@ -86,10 +86,12 @@ public class Consequent_MultiClass extends AbstractConsequent <ClassLabel_Multi,
 		Element consequent = XML_manager.createElement(XML_TagName.consequent);
 
 		//結論部クラス
-		XML_manager.addElement(consequent, this.classLabel.toElement());
+		Element classLabel = this.classLabel.toElement();
+		XML_manager.addElement(consequent, classLabel);
 
 		//ルール重み
-		XML_manager.addElement(consequent, this.ruleWeight.toElement());
+		Element ruleWeight = this.ruleWeight.toElement();
+		XML_manager.addElement(consequent, ruleWeight);
 
 		return consequent;
 	}

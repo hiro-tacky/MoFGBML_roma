@@ -6,11 +6,14 @@ import java.util.Objects;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.uma.jmetal.solution.integersolution.IntegerSolution;
+import org.w3c.dom.Element;
 
 import cilabo.fuzzy.rule.Rule;
 import cilabo.fuzzy.rule.Rule.RuleBuilder;
 import cilabo.gbml.solution.michiganSolution.AbstractMichiganSolution;
 import cilabo.gbml.solution.util.attribute.NumberOfWinner;
+import xml.XML_TagName;
+import xml.XML_manager;
 
 /**基本的な機能を持つMichigan型識別器
  * @author Takigawa Hiroki
@@ -158,5 +161,26 @@ public final class MichiganSolution_Basic<RuleObject extends Rule> extends Abstr
 		str += ",attributes=," + attributes;
 
 		return str;
+	}
+
+	@Override
+	public Element toElement() {
+		//新規のElementを追加する
+		Element michiganSolution = XML_manager.createElement(XML_TagName.michiganSolution);
+
+		Element rule = this.rule.toElement();
+		XML_manager.addElement(michiganSolution, rule);
+
+		//新規のElementを追加する
+		Element fuzzySets = XML_manager.createElement(XML_TagName.fuzzySets);
+
+		for(int i=0; i<this.getNumberOfVariables(); i++) {
+			XML_manager.addElement(fuzzySets, XML_TagName.fuzzySetID, String.valueOf(this.getVariable(i)),
+					XML_TagName.dimension, String.valueOf(i));
+		}
+
+		XML_manager.addElement(michiganSolution, fuzzySets);
+
+		return michiganSolution;
 	}
 }

@@ -5,6 +5,7 @@ import java.util.Objects;
 import org.w3c.dom.Element;
 
 import jfml.term.FuzzyTermType;
+import xml.XML_TagName;
 import xml.XML_manager;
 
 
@@ -58,11 +59,17 @@ public class Knowledge {
 		return (double)fuzzySets[dimension][H].getMembershipValue((float)x);
 	}
 
+	/** 次元数を返す
+	 * @return 次元数 */
 	public int getDimension() {
 		if(Objects.isNull(fuzzySets)) {System.err.println("Knowledge hasn't been initialised");}
 		return fuzzySets.length;
 	}
 
+	/** 指定した次元のファジィセットの個数を返す
+	 * @param dimension 指定する次元数
+	 * @return ファジィセットの個数
+	 */
 	public int getFuzzySetNum(int dimension) {
 		if(Objects.isNull(fuzzySets)) {System.err.println("Knowledge hasn't been initialised");}
 		return fuzzySets[dimension].length;
@@ -86,25 +93,28 @@ public class Knowledge {
 		return str;
 	}
 
-	public Element knowledgeToElement() {
-		XML_manager xml_manager = XML_manager.getInstance();
-		Element knowledge = XML_manager.createElement(xml_manager.knowledgeName);
+	public Element toElement() {
+		Element knowledge = XML_manager.createElement(XML_TagName.knowledgeBase);
 		for(int dim_i=0; dim_i<this.getDimension(); dim_i++) {
 			FuzzyTermType[] fuzzyTermTypeAtDim = this.fuzzySets[dim_i];
-			Element fuzzySets = XML_manager.addChildNode(knowledge, xml_manager.fuzzySetAtDimName,
-					xml_manager.dimentionIDName, String.valueOf(dim_i));
+			Element fuzzySets = XML_manager.createElement(XML_TagName.fuzzySets,
+					XML_TagName.dimension, String.valueOf(dim_i));
 			for(int j=0; j<fuzzyTermTypeAtDim.length; j++) {
 				FuzzyTermType fuzzyTerm = fuzzyTermTypeAtDim[j];
-				Element fuzzyTermElement = XML_manager.addChildNode(fuzzySets, xml_manager.fuzzyTermName);
-				XML_manager.addChildNode(fuzzyTermElement, xml_manager.fuzzyTermIDName, String.valueOf(j));
-				XML_manager.addChildNode(fuzzyTermElement, xml_manager.fuzzyTermNameTagName, fuzzyTerm.getName());
-				XML_manager.addChildNode(fuzzyTermElement, xml_manager.fuzzyTermShapeTypeIDName, String.valueOf(fuzzyTerm.getType()));
-				XML_manager.addChildNode(fuzzyTermElement, xml_manager.fuzzyTermShapeTypeNameTagName, this.getFuzzyTermShapeTypeNameFromID(fuzzyTerm.getType()));
-				Element parameters = XML_manager.addChildNode(fuzzyTermElement, xml_manager.parametersName);
+				Element fuzzyTermElement = XML_manager.createElement(XML_TagName.fuzzyTermName);
+					XML_manager.addElement(fuzzyTermElement, XML_TagName.fuzzyTermID, String.valueOf(j));
+					XML_manager.addElement(fuzzyTermElement, XML_TagName.fuzzyTermName, fuzzyTerm.getName());
+					XML_manager.addElement(fuzzyTermElement, XML_TagName.ShapeTypeID, String.valueOf(fuzzyTerm.getType()));
+					XML_manager.addElement(fuzzyTermElement, XML_TagName.ShapeTypeName, Knowledge.getFuzzyTermShapeTypeNameFromID(fuzzyTerm.getType()));
+				XML_manager.addElement(fuzzySets, fuzzyTermElement);
+
+				Element parameters = XML_manager.createElement(XML_TagName.parameterSet);
 				float[] parametersList = fuzzyTerm.getParam();
 				for(int k=0; k<parametersList.length; k++) {
-					XML_manager.addChildNode(parameters, xml_manager.parametersAtDimName, String.valueOf(parametersList[k]), xml_manager.dimentionIDName, String.valueOf(k));
+					XML_manager.addElement(parameters, XML_TagName.parameter, String.valueOf(parametersList[k]),
+							XML_TagName.dimension, String.valueOf(k));
 				}
+				XML_manager.addElement(fuzzyTermElement, parameters);
 			}
 		}
 		return knowledge;

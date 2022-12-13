@@ -1,5 +1,7 @@
 package cilabo.fuzzy.rule.impl;
 
+import org.w3c.dom.Element;
+
 import cilabo.data.InputVector;
 import cilabo.fuzzy.rule.AbstractRule;
 import cilabo.fuzzy.rule.antecedent.factory.AntecedentIndexFactory;
@@ -9,6 +11,8 @@ import cilabo.fuzzy.rule.consequent.factory.ConsequentFactory;
 import cilabo.fuzzy.rule.consequent.impl.Consequent_MultiClass;
 import cilabo.fuzzy.rule.consequent.ruleWeight.impl.RuleWeight_Multi;
 import cilabo.main.impl.multiTasking.MultiTasking;
+import xml.XML_TagName;
+import xml.XML_manager;
 
 @MultiTasking
 public final class Rule_MultiClass extends AbstractRule <Antecedent_Basic, Consequent_MultiClass> {
@@ -96,4 +100,20 @@ public final class Rule_MultiClass extends AbstractRule <Antecedent_Basic, Conse
 		return "Rule_MultiClass [antecedent=" + antecedent + ", consequent=" + consequent + "]";
 	}
 
+
+	@Override
+	public Element toElement() {
+		//ルール
+		Element rule = XML_manager.createElement(XML_TagName.rule);
+
+		//前件部
+		Element antecedent = this.antecedent.toElement();
+		XML_manager.addElement(rule, antecedent);
+
+		//後件部
+		Element consequent = this.consequent.toElement();
+		XML_manager.addElement(rule, consequent);
+
+		return rule;
+	}
 }

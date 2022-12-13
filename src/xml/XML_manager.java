@@ -24,7 +24,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
-import cilabo.data.DataSet;
 import cilabo.main.Consts;
 
 public class XML_manager {
@@ -37,43 +36,8 @@ public class XML_manager {
 	private static String xmlFileName;
 
 	//xmlファイル用パラメータ
-		//ruleSet
-		public final String populationName = "population";
-		public final String generationName = "evaluations";
-		public final String individualName = "individual";
-		public final String classifierName = "classifier";
-		public final String ruleName = "singleRule";
-		public final String antecedentName = "antecedent";
-		public final String attributeName = "attribute";
-		public final String dimentionIDName = "dimentionID";
-		public final String consequentName = "consequent";
-		public final String consequentClassVectorName = "consequentClasses";
-		public final String consequentClassName = "consequentClass";
-		public final String consequentClassIndexName = "ClassID";
-		public final String ruleWeightVectorName = "ruleWeights";
-		public final String ruleWeightName = "ruleWeight";
-		public final String ruleWeightIndexName = "ruleWeightID";
-		public final String[] objectivesName = {"accuracyRate_Dtst", "accuracyRate_Dtra", "ruleNum"};
-
-		//knowledge
-		public final String knowledgeName = "knowledge";
-		public final String fuzzySetAtDimName = "fuzzySets";
-		public final String partionNumName = "partionNum";
-		public final String partion_iName = "partion_i";
-		public final String partionTypeName = "partionType";
-		public final String fuzzyTermName = "fuzzyTerm";
-		public final String fuzzyTermIDName = "fuzzyTermID";
-		public final String fuzzyTermNameTagName = "fuzzyTermName";
-		public final String fuzzyTermShapeTypeIDName = "ShapeTypeID";
-		public final String fuzzyTermShapeTypeNameTagName = "ShapeTypeName";
-		public final String parametersName = "parameters";
-		public final String parametersAtDimName = "parameter";
-		public final String constsName = "consts";
-	//xmlファイル用パラメータ
 
 	private static XML_manager instance = new XML_manager();
-	private DataSet Dtst;
-
 
 	public static XML_manager getInstance() {
 		return instance;
@@ -81,15 +45,6 @@ public class XML_manager {
 
 	public static void setInstance(XML_manager instance) {
 		XML_manager.instance = instance;
-	}
-
-	public DataSet getDtst() {
-		return Dtst;
-	}
-
-
-	public void setDtst(DataSet dtst) {
-		Dtst = dtst;
 	}
 
 	/**
@@ -141,19 +96,7 @@ public class XML_manager {
 	 * @param nodeName 生成したい子ノードの名
 	 * @return 生成された子ノード(Element型)
 	 */
-	public static Element addChildNode(Element parent, String nodeName) {
-		Element v = document.createElement(nodeName);
-		parent.appendChild(v);
-		return v;
-	}
-
-	/**
-	 * 親ノードに子ノードを追加する．生成された子ノードを返す
-	 * @param parent 追加先の親ノード
-	 * @param nodeName 生成したい子ノードの名
-	 * @return 生成された子ノード(Element型)
-	 */
-	public static Element addChildNode(Element parent, XML_TagName nodeName) {
+	public static Element addElement(Element parent, XML_TagName nodeName) {
 		Element v = document.createElement(nodeName.toString());
 		parent.appendChild(v);
 		return v;
@@ -166,42 +109,13 @@ public class XML_manager {
 	 * @param nodeValue 要素の持つ値
 	 * @return 生成された子ノード(Element型)
 	 */
-	public static Element addChildNode(Element parent, String nodeName, String nodeValue) {
-		Element v = document.createElement(nodeName);
-		Text textContents = document.createTextNode(nodeValue);
-		v.appendChild(textContents);
-		parent.appendChild(v);
-		return v;
-	}
-
-	/**
-	 * 親ノードに子ノードを追加する．子ノードに値を追加 生成された子ノードを返す
-	 * @param parent 追加先の親ノード
-	 * @param nodeName 生成したい子ノードの名
-	 * @param nodeValue 要素の持つ値
-	 * @return 生成された子ノード(Element型)
-	 */
-	public static Element addChildNode(Element parent, XML_TagName nodeName, String nodeValue) {
+	public static Element addElement(Element parent, XML_TagName nodeName, String nodeValue) {
 		Element v = document.createElement(nodeName.toString());
 		Text textContents = document.createTextNode(nodeValue);
 		v.appendChild(textContents);
 		parent.appendChild(v);
 		return v;
 	}
-	/**
-	 * 親ノードに子ノードを追加する. 属性値を追加 生成された子ノードを返す
-	 * @param parent 追加先の親ノード
-	 * @param nodeName 生成したい子ノードの名
-	 * @param attributeName 属性値名
-	 * @param attributeValue 属性の持つ値
-	 * @return 生成された子ノード(Element型)
-	 */
-	public static Element addChildNode(Element parent, String nodeName, String attributeName, String attributeValue) {
-		Element v = document.createElement(nodeName);
-		v.setAttribute(attributeName, attributeValue);
-		parent.appendChild(v);
-		return v;
-	}
 
 	/**
 	 * 親ノードに子ノードを追加する. 属性値を追加 生成された子ノードを返す
@@ -211,13 +125,12 @@ public class XML_manager {
 	 * @param attributeValue 属性の持つ値
 	 * @return 生成された子ノード(Element型)
 	 */
-	public static Element addChildNode(Element parent, XML_TagName nodeName, XML_TagName attributeName, String attributeValue) {
+	public static Element addElement(Element parent, XML_TagName nodeName, XML_TagName attributeName, String attributeValue) {
 		Element v = document.createElement(nodeName.toString());
 		v.setAttribute(attributeName.toString(), attributeValue);
 		parent.appendChild(v);
 		return v;
 	}
-
 	/**
 	 * 親ノードに子ノードを追加する. 値を追加．属性値を追加  生成された子ノードを返す
 	 * @param parent 追加先の親ノード
@@ -227,24 +140,7 @@ public class XML_manager {
 	 * @param attributeValue 属性の持つ値
 	 * @return 生成された子ノード(Element型)
 	 */
-	public static Element addChildNode(Element parent, String nodeName, String nodeValue, String attributeName, String attributeValue) {
-		Element v = document.createElement(nodeName);
-		Text textContents = document.createTextNode(nodeValue);
-		v.appendChild(textContents);
-		v.setAttribute(attributeName, attributeValue);
-		parent.appendChild(v);
-		return v;
-	}
-	/**
-	 * 親ノードに子ノードを追加する. 値を追加．属性値を追加  生成された子ノードを返す
-	 * @param parent 追加先の親ノード
-	 * @param nodeName 生成したい子ノードの名
-	 * @param nodeValue 要素の持つ値
-	 * @param attributeName 属性値名
-	 * @param attributeValue 属性の持つ値
-	 * @return 生成された子ノード(Element型)
-	 */
-	public static Element addChildNode(Element parent, XML_TagName nodeName, String nodeValue, XML_TagName attributeName, String attributeValue) {
+	public static Element addElement(Element parent, XML_TagName nodeName, String nodeValue, XML_TagName attributeName, String attributeValue) {
 		Element v = document.createElement(nodeName.toString());
 		Text textContents = document.createTextNode(nodeValue);
 		v.appendChild(textContents);
@@ -261,17 +157,30 @@ public class XML_manager {
 	}
 
 	//新規のElementを追加する
-	public static Element createElement(String nodeName) {
-		return document.createElement(nodeName);
-	}
-	//新規のElementを追加する
 	public static Element createElement(XML_TagName nodeName) {
 		return document.createElement(nodeName.toString());
 	}
+
 	//新規のElementを追加する
 	public static Element createElement(XML_TagName nodeName, String nodeValue) {
 		Element v = document.createElement(nodeName.toString());
 		Text textContents = document.createTextNode(nodeValue);
+		v.appendChild(textContents);
+		return v;
+	}
+
+	//Elementを追加する
+	public static Element createElement(XML_TagName nodeName, XML_TagName attributeName, String attributeValue) {
+		Element v = document.createElement(nodeName.toString());
+		v.setAttribute(attributeName.toString(), attributeValue);
+		return v;
+	}
+
+	//Elementを追加する
+	public static Element createElement(XML_TagName nodeName, String nodeValue, XML_TagName attributeName, String attributeValue) {
+		Element v = document.createElement(nodeName.toString());
+		Text textContents = document.createTextNode(nodeValue);
+		v.setAttribute(attributeName.toString(), attributeValue);
 		v.appendChild(textContents);
 		return v;
 	}
@@ -282,10 +191,9 @@ public class XML_manager {
 		return parent;
 	}
 
-
 	//Elementを追加する
-	public static Element addElement(Element parent, Element child, String attributeName, String attributeValue) {
-		child.setAttribute(attributeName, attributeValue);
+	public static Element addElement(Element parent, Element child, XML_TagName attributeName, String attributeValue) {
+		child.setAttribute(attributeName.toString(), attributeValue);
 		parent.appendChild(child);
 		return parent;
 	}
@@ -322,13 +230,13 @@ public class XML_manager {
 	 * @param parent
 	 * @return 子ノード(Element型)
 	 */
-	public static Element getChildElement(Element parent, String nodeName) {
+	public static Element getChildElement(Element parent, XML_TagName nodeName) {
 		NodeList nodelist = parent.getChildNodes();
 		for(int i=0; i<nodelist.getLength(); i++) {
 			Node node = nodelist.item(i);
 			if(node.getNodeType() == Node.ELEMENT_NODE) {
 				Element element = (Element)node;
-				if(element.getNodeName().equals(nodeName)) {
+				if(element.getNodeName().equals(nodeName.toString())) {
 					return element;
 				}
 			}
@@ -341,13 +249,13 @@ public class XML_manager {
 	 * @param parent
 	 * @return 子ノード(Element型)
 	 */
-	public static Element getChildElement(Element parent, String nodeName, String attributeName, String attributeValue) {
+	public static Element getChildElement(Element parent, XML_TagName nodeName, XML_TagName attributeName, String attributeValue) {
 		NodeList nodelist = parent.getChildNodes();
 		for(int i=0; i<nodelist.getLength(); i++) {
 			Node node = nodelist.item(i);
 			if(node.getNodeType() == Node.ELEMENT_NODE) {
 				Element element = (Element)node;
-				if(element.getNodeName().equals(nodeName) && element.getAttribute(attributeName).equals(attributeValue)) {
+				if(element.getNodeName().equals(nodeName.toString()) && element.getAttribute(attributeName.toString()).equals(attributeValue)) {
 					return element;
 				}
 			}

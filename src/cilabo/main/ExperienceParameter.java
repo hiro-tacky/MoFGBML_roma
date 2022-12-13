@@ -1,17 +1,8 @@
 package cilabo.main;
 
-public class ExperienceMethods {
+public class ExperienceParameter {
 
 	public static ClassLabel classlabel = ClassLabel.Single; //クラスラベル
-	public static RuleWeight ruleWeight = RuleWeight.mean; //ルール重み計算方式
-
-	public ExperienceMethods(
-		ClassLabel classlabel,
-		RuleWeight ruleWeight
-	) {
-		ExperienceMethods.classlabel = classlabel;
-		ExperienceMethods.ruleWeight = ruleWeight;
-	}
 
 	/**データセットのクラスラベル方式 */
 	public static enum ClassLabel{
@@ -19,28 +10,26 @@ public class ExperienceMethods {
 		Multi //複数のクラスラベル
 	}
 
-	public static enum RuleWeight{
-		mean, median, top
-	}
-
-	public static enum AttributeIdMichigan{
-		numberOfWinnerRule,
-	}
-
-	public static enum AttributeIdPittsburgh{
-		numberOfWinnerRule,
-	}
-
-	public static enum ObjectivesIndexMichigan{
+	public static enum ObjectivesForMichigan{
 		FitnessValue(0),
 		RuleLength(1);
 
-		private final int objectivesIndexMichigan;
-		private ObjectivesIndexMichigan(int objectivesIndexMichigan) {
-			this.objectivesIndexMichigan = objectivesIndexMichigan;
+		private final int objectivesIndexForMichigan;
+		private ObjectivesForMichigan(int objectivesIndexForMichigan) {
+			this.objectivesIndexForMichigan = objectivesIndexForMichigan;
 		}
-		public int toInt() {return  objectivesIndexMichigan;}
+		public int toInt() {return  objectivesIndexForMichigan;}
 	}
 
+	public static enum ObjectivesForPittsburgh{
+		ErrorRateDtra(0),
+		NumberOfRule(1),
+		ErrorRateDtst(2),;
 
+		private final int objectivesForPittsburgh;
+		private ObjectivesForPittsburgh(int objectivesForPittsburgh) {
+			this.objectivesForPittsburgh = objectivesForPittsburgh;
+		}
+		public int toInt() {return  objectivesForPittsburgh;}
+	}
 }
