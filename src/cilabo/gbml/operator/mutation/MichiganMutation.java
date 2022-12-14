@@ -75,7 +75,7 @@ public class MichiganMutation implements MutationOperator<MichiganSolution> {
 			int newFuzzySet = intRandomGenerator.getRandomValue(0, fuzzySetNum-2);
 
 			if(randomGenerator.getRandomValue() < probability) {
-				if(randPattern.getInputValueAt(i) >= 0) {
+				if(randPattern.getInputValue(i) >= 0) {
 					// Numerical attribute:
 					if(newFuzzySet < (int)solution.getVariable(i)) {
 						solution.setVariable(i, newFuzzySet);
@@ -86,7 +86,7 @@ public class MichiganMutation implements MutationOperator<MichiganSolution> {
 				}
 				else {
 					// Categorical attribute:
-					solution.setVariable(i, (int)randPattern.getInputValueAt(i));
+					solution.setVariable(i, (int)randPattern.getInputValue(i));
 				}
 			}
 		  }

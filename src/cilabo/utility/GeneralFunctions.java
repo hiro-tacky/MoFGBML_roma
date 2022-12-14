@@ -94,11 +94,11 @@ public class GeneralFunctions {
 	}
 
 	/**
-	 * <h1>非復元抽出</h1><br/>
-	 * <h1>Sampling without replacement</h1><br/>
+	 * 非復元抽出<br>
+	 * Sampling without replacement<br>
 	 * @param box : int : 元のデータサイズ
 	 * @param want : int : 抽出したいindexの数
-	 * @param rnd
+	 * @param rnd 乱数生成器
 	 * @return Integer[] : 非復元抽出したwant個のindex
 	 */
 	public static Integer[] samplingWithout(int box, int want, MersenneTwisterFast rnd) {
@@ -120,7 +120,7 @@ public class GeneralFunctions {
 	}
 
 	/**
-	 * <h1>log関数 底の変換公式</h1>
+	 * log関数 底の変換公式
 	 * @param a : double : 引数
 	 * @param b : double : 底
 	 * @return double : log_b (a)
@@ -131,8 +131,8 @@ public class GeneralFunctions {
 
 	/**
 	 * <h1>組合せの総数, nCr</h1>
-	 * @param n
-	 * @param r
+	 * @param n n
+	 * @param r r
 	 * @return int : nCr
 	 */
 	public static int combination(int n, int r) {

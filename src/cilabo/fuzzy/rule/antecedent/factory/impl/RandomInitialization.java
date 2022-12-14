@@ -51,9 +51,9 @@ public class RandomInitialization implements AntecedentIndexFactory{
 			}
 			else {
 				// Judge which dimension n is categorical or numerical.
-				if(randomPattern.getInputValueAt(n) < 0) {
+				if(randomPattern.getInputValue(n) < 0) {
 					// Categorical
-					antecedentIndex[n] = (int)randomPattern.getInputValueAt(n);
+					antecedentIndex[n] = (int)randomPattern.getInputValue(n);
 				}
 				else {
 					// Numerical

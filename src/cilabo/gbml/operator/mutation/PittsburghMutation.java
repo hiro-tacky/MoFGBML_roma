@@ -83,7 +83,7 @@ public class PittsburghMutation implements MutationOperator<PittsburghSolution> 
 				/* To judge which mutatedDimension is categorical or numerical  */
 				double variableOfRandomPattern = train
 												.getPattern(Random.getInstance().getGEN().nextInt(train.getDataSize()))
-					  							.getInputValueAt(mutatedDimension);
+					  							.getInputValue(mutatedDimension);
 				/* Attribute is Numeric */
 				if(variableOfRandomPattern >= 0.0) {
 					int numberOfCandidates = Knowledge.getInstance().getFuzzySetNum(mutatedDimension);

@@ -2,7 +2,7 @@ package cilabo.fuzzy.rule.consequent.classLabel;
 
 import org.w3c.dom.Element;
 
-/** クラスラベルのインターフェイス<br>
+/** 結論部ラベルクラスのインターフェイス．conclusion label class<br>
  * 基本的なsetterやgetterや，クラスラベルインスタンス同士を比較する機能を持つ
  * @author Takigawa Hiroki
  *

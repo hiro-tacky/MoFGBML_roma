@@ -20,7 +20,9 @@ public class TrainTestDatasetManager {
 
 	private TrainTestDatasetManager() {}
 
-	/** 空のインスタンスを生成 <br> Constructs an empty instance of class */
+	/** 空のインスタンスを生成 <br> Constructs an empty instance of class 
+	 @return 空のインスタンス
+	 */
 	public static TrainTestDatasetManager getInstance() {
 		return instance;
 	}

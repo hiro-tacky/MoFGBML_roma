@@ -20,10 +20,9 @@ public class Input {
 
 	/**
 	 * <h1>Input File for Single-Label Classification Dataset</h1>
-	 * @param data : DataSet
 	 * @param fileName : String
+	 * @return 入力済みDataSet
 	 */
-
 	public static DataSet inputDataSet(String fileName) {
 		switch(ExperienceParameter.classlabel) {
 			case Multi:
@@ -34,6 +33,11 @@ public class Input {
 		}
 	}
 
+	/**
+	 * <h1>Input File for Multi-Label Classification Dataset</h1>
+	 * @param fileName : String
+	 * @return 入力済みDataSet
+	 */
 	private static DataSet inputSingleLabelDataSet(String fileName) {
 		List<double[]> lines = inputDataAsList(fileName);
 
@@ -70,8 +74,8 @@ public class Input {
 
 	/**
 	 * <h1>Input File for Multi-Label Classification Dataset</h1>
-	 * @param data : DataSet
 	 * @param fileName : String
+	 * @return 入力済みDataSet
 	 */
 	private static DataSet inputMultiLabelDataSet(String fileName) {
 		List<double[]> lines = inputDataAsList(fileName);

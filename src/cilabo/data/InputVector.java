@@ -3,7 +3,7 @@ package cilabo.data;
 import java.util.Arrays;
 
 
-/** 各パターンの属性値用クラス
+/** 属性値クラス．attribute class
  * @author Takigawa Hiroki
  */
 public class InputVector {

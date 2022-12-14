@@ -14,12 +14,12 @@ import cilabo.main.Consts;
  *
  */
 public class RuleAdditionStyleReplacement
-	implements Replacement<MichiganSolution> {
-	public List<MichiganSolution> replace(List<MichiganSolution> currentList, List<MichiganSolution> offspringList) {
+	implements Replacement<MichiganSolution<?>> {
+	public List<MichiganSolution<?>> replace(List<MichiganSolution<?>> currentList, List<MichiganSolution<?>> offspringList) {
 
 		// 親個体をfitness順にソートする
 		Collections.sort(currentList,
-						 new ObjectiveComparator<MichiganSolution>(0, ObjectiveComparator.Ordering.DESCENDING));
+						 new ObjectiveComparator<MichiganSolution<?>>(0, ObjectiveComparator.Ordering.DESCENDING));
 
 		// 最大ルール数を超えるかどうかを判定
 		int NumberOfReplacement = 0;

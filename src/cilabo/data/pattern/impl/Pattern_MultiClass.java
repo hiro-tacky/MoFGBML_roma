@@ -5,18 +5,16 @@ import cilabo.data.pattern.Pattern;
 import cilabo.fuzzy.rule.consequent.classLabel.impl.ClassLabel_Multi;
 import cilabo.main.impl.multiTasking.MultiTasking;
 
-/** 基本的な機能を持つPatternクラス．
- * 複数の結論部クラスと各属性値を持つ
- * @author Takigawa Hiroki
- */
+/** マルチラベル用のなパターンクラス．pattern class for multi label<br>
+ * 複数の結論部ラベルと各属性値を持つ．this class has multi conclusion labels and own pattern's attributes
+ * @author Takigawa Hiroki */
 @MultiTasking
 public final class Pattern_MultiClass extends Pattern <ClassLabel_Multi>{
 
-	/** コンストラクタ <br> Constructs an instance of class
-	 * @param id パターンに与えられたID
-	 * @param inputVector 属性値クラス
-	 * @param trueClass 結論部クラス
-	 */
+	/** Pattern_MultiClass コンストラクタ
+	 * @param id このインスタンスに与えられたID．ID which is ginve to this instance
+	 * @param inputVector 属性値クラス．attribute class
+	 * @param trueClass 結論部ラベルクラス．conclusion label class */
 	public Pattern_MultiClass(int id, InputVector inputVector, ClassLabel_Multi trueClass) {
 		super(id, inputVector, trueClass);
 	}

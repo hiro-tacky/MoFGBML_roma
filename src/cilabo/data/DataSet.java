@@ -6,10 +6,9 @@ import java.util.stream.Collectors;
 
 import cilabo.data.pattern.Pattern;
 
-/**データセット用のクラス．
- * 各パターンを配列として持つ．
- * @author Takigawa Hiroki
- */
+/**データセット用のクラス．<br>
+ * Pattern実装クラスを配列として持つ．
+ * @author Takigawa Hiroki */
 public class DataSet {
 
 	/** Number of Patterns*/
@@ -19,47 +18,50 @@ public class DataSet {
 	/** Number of Classes*/
 	private int Cnum;
 
-
-	/**	データセットのパターンの可変長配列 */
-	private ArrayList<Pattern> patterns = new ArrayList<>();
+	/**	データセットのPattern実装クラスの可変長配列 */
+	private ArrayList<Pattern<?>> patterns = new ArrayList<>();
 
 	public DataSet(int dataSize, int ndim, int cnum) {
 		DataSize = dataSize;
 		Ndim = ndim;
 		Cnum = cnum;
 	}
-	/** Patternを追加
-	 * @param pattern 追加するパターン
-	 */
-	public void addPattern(Pattern pattern) {
+
+	/** このインスタンスが持つリストの最後に，指定されたパターン実装クラスを追加します。<br>
+	 * Appends pattern class to the end of the list that this instance has
+	 * @param pattern リストに追加されるパターン実装クラス．pattern class to be appended to the list */
+	public void addPattern(Pattern<?> pattern) {
 		this.patterns.add(pattern);
 	}
 
 	/**
-	 * 指定したインデックスのPatternを取得
-	 * @param index Patternのインデックス
-	 * @return 指定されたインデックスにあるPattern
+	 * このインスタンスが持つリスト内の指定された位置にあるパターン実装クラスを返します。<br>
+	 * Returns pattern class at the specified position in the list that this instance has.
+	 * @param index 返されるパターン実装クラスのインデックス．index of pattern class to return
+	 * @return リスト内の指定された位置にあるパターン実装クラス．pattern class at the specified position in the list
 	 */
-	public Pattern getPattern(int index) {
+	public Pattern<?> getPattern(int index) {
 		return this.patterns.get(index);
 	}
 
 	/**
-	 * 指定したインデックスのPatternを取得(並列処理用)
-	 * @param index Patternのインデックス
-	 * @return 指定されたインデックスにあるPattern
+	 * このインスタンスが持つリスト内の指定された位置にあるパターン実装クラスを返します。(並列処理用)<br>
+	 * Returns pattern class at the specified position in the list that this instance has.(method for parallel processing)
+	 * @param index 返されるパターン実装クラスのインデックス．index of pattern class to return
+	 * @return リスト内の指定された位置にあるパターン実装クラス．pattern class at the specified position in the list
 	 */
-	public Pattern getPatternWithID(int id) {
-		List<Pattern> list = this.patterns.stream()
+	public Pattern<?> getPatternWithID(int id) {
+		List<Pattern<?>> list = this.patterns.stream()
 										.filter(p -> p.getID() == id)
 										.collect( Collectors.toList() );
 		return list.get(0);
 	}
 
-	/** Patternの配列を取得
-	 * @return Patternの配列
+	/** このインスタンスが持つパターン実装クラスのリストを返します。<br>
+	 * Returns pattern class list that this instance has.
+	 * @return 返されるパターン実装クラスのリスト．list of pattern class to return
 	 */
-	public ArrayList<Pattern> getPatterns(){
+	public ArrayList<Pattern<?>> getPatterns(){
 		return this.patterns;
 	}
 
@@ -73,7 +75,7 @@ public class DataSet {
 		String str = String.format("%d,%d,%d" + ln, this.DataSize, this.Ndim, this.Cnum);
 		// Patterns
 		for(int n = 0; n < this.patterns.size(); n++) {
-			Pattern pattern = this.patterns.get(n);
+			Pattern<?> pattern = this.patterns.get(n);
 			str += pattern.toString() + ln;
 		}
 		return str;
