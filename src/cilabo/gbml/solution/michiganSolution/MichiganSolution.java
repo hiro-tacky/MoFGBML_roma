@@ -22,6 +22,10 @@ public interface MichiganSolution<RuleObject extends Rule> extends IntegerSoluti
 	 * @param variables 代入するファジィセットのインデックス配列 */
 	public void setVariables(int[] variables);
 
+	/** 指定された次元の前件部のファジィセットのインデックスを返す．
+	 * @param index 取得したい前件部のインデックス */
+	public Integer getVariables(int index);
+
 	/** このインスタンス持つVariablesをintの配列として返す
 	 * @return インスタンス持つVariables */
 	public int[] getVariablesAsIntArray();

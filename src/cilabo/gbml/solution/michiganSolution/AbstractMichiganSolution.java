@@ -78,6 +78,11 @@ public abstract class AbstractMichiganSolution<RuleObject extends Rule> extends 
 	}
 
 	@Override
+	public Integer getVariables(int index) {
+		return this.getVariable(index);
+	}
+
+	@Override
 	public int[] getVariablesAsIntArray() {
 		int[] variablesAsIntArray = new int[this.getNumberOfVariables()];
 		for(int i=0; i<variablesAsIntArray.length; i++) {

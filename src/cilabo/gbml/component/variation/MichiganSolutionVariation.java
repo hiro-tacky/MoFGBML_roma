@@ -10,7 +10,7 @@ import org.uma.jmetal.util.JMetalException;
 
 import cilabo.gbml.solution.michiganSolution.MichiganSolution;
 
-public class MichiganSolutionVariation<S extends MichiganSolution> implements Variation<S> {
+public class MichiganSolutionVariation<S extends MichiganSolution<?>> implements Variation<S> {
 	private CrossoverOperator<S> crossover;
 	private MutationOperator<S> mutation;
 	private int matingPoolSize;

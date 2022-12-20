@@ -14,7 +14,7 @@ import cilabo.gbml.solution.pittsburghSolution.impl.PittsburghSolution_Basic;
 import cilabo.gbml.solution.util.attribute.NumberOfWinner;
 import cilabo.main.ExperienceParameter.ObjectivesForPittsburgh;
 
-public class PittsburghFGBML_Basic <michiganSolution extends MichiganSolution>
+public class PittsburghFGBML_Basic <michiganSolution extends MichiganSolution<?>>
 		extends AbstractPittsburghFGBML<PittsburghSolution_Basic<michiganSolution>, michiganSolution> implements Problem<PittsburghSolution_Basic<michiganSolution>>{
 
 	public PittsburghFGBML_Basic(

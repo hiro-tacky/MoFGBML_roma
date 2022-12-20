@@ -1,5 +1,7 @@
 package cilabo.gbml.solution.pittsburghSolution;
 
+import java.util.List;
+
 import org.uma.jmetal.solution.Solution;
 import org.w3c.dom.Element;
 
@@ -12,7 +14,7 @@ import cilabo.gbml.solution.michiganSolution.MichiganSolution.MichiganSolutionBu
  *
  * @param <michiganSolution>
  */
-public interface PittsburghSolution <michiganSolution extends MichiganSolution>
+public interface PittsburghSolution <michiganSolution extends MichiganSolution<?>>
 	extends Solution<michiganSolution> {
 
 	@Override
@@ -20,6 +22,9 @@ public interface PittsburghSolution <michiganSolution extends MichiganSolution>
 
 	@Override
 	public michiganSolution getVariable(int index);
+
+	@Override
+	public List<michiganSolution> getVariables();
 
 	/** 指定したインデックスのMichiganSolutionを削除する
 	 * @param index 削除したいMichiganSolutionのインデックス

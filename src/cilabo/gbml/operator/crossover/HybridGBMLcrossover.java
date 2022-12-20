@@ -13,20 +13,20 @@ import org.uma.jmetal.util.pseudorandom.RandomGenerator;
 import cilabo.gbml.solution.pittsburghSolution.PittsburghSolution;
 import cilabo.gbml.solution.util.EqualsSolution;
 
-public class HybridGBMLcrossover implements CrossoverOperator<PittsburghSolution> {
+public class HybridGBMLcrossover implements CrossoverOperator<PittsburghSolution<?>> {
 
 	private double crossoverProbability;
 	private RandomGenerator<Double> crossoverRandomGenerator;
 	BoundedRandomGenerator<Integer> selectRandomGenerator;
 
 	private double michiganOperationProbability;
-	CrossoverOperator<PittsburghSolution> michiganX;
-	CrossoverOperator<PittsburghSolution> pittsburghX;
+	CrossoverOperator<PittsburghSolution<?>> michiganX;
+	CrossoverOperator<PittsburghSolution<?>> pittsburghX;
 
 
 	/** Constructor */
 	public HybridGBMLcrossover(double crossoverProbability, double michiganOperationProbability,
-							   CrossoverOperator<PittsburghSolution> michiganX, CrossoverOperator<PittsburghSolution> pittsburghX) {
+							   CrossoverOperator<PittsburghSolution<?>> michiganX, CrossoverOperator<PittsburghSolution<?>> pittsburghX) {
 		this(crossoverProbability,
 			 () -> JMetalRandom.getInstance().nextDouble(),
 			 (a, b) -> JMetalRandom.getInstance().nextInt(a, b));
@@ -78,16 +78,16 @@ public class HybridGBMLcrossover implements CrossoverOperator<PittsburghSolution
 	}
 
 	@Override
-	public List<PittsburghSolution> execute(List<PittsburghSolution> solutions) {
+	public List<PittsburghSolution<?>> execute(List<PittsburghSolution<?>> solutions) {
 		Check.isNotNull(solutions);
 		Check.that(solutions.size() == 2, "There must be two parents instead of " + solutions.size());
 		return doCrossover(crossoverProbability, solutions.get(0), solutions.get(1));
 	}
 
-	public List<PittsburghSolution> doCrossover(
-			double probability, PittsburghSolution parent1, PittsburghSolution parent2)
+	public List<PittsburghSolution<?>> doCrossover(
+			double probability, PittsburghSolution<?> parent1, PittsburghSolution<?> parent2)
 	{
-		List<PittsburghSolution> offspring = new ArrayList<>();
+		List<PittsburghSolution<?>> offspring = new ArrayList<>();
 
 		if(crossoverRandomGenerator.getRandomValue() < probability) {/* Do crossover */
 			/* Judge if two parents are same. */
@@ -97,13 +97,13 @@ public class HybridGBMLcrossover implements CrossoverOperator<PittsburghSolution
 
 			if(crossoverRandomGenerator.getRandomValue() < p) {
 				/* Michigan operation */
-				List<PittsburghSolution> parents = new ArrayList<>();
+				List<PittsburghSolution<?>> parents = new ArrayList<>();
 				parents.add(parent1.copy());
 				offspring = michiganX.execute(parents);
 			}
 			else {
 				/* Pittsburgh operation */
-				List<PittsburghSolution> parents = new ArrayList<>();
+				List<PittsburghSolution<?>> parents = new ArrayList<>();
 				parents.add(parent1.copy());
 				parents.add(parent2.copy());
 				offspring = pittsburghX.execute(parents);

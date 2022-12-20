@@ -188,17 +188,17 @@ public class MoFGBML_Basic_Main {
 		/* Crossover: Hybrid-style GBML specific crossover operator. */
 		double crossoverProbability = 1.0;
 		/* Michigan operation */
-		CrossoverOperator<PittsburghSolution> michiganX
+		CrossoverOperator<PittsburghSolution<?>> michiganX
 				= new MichiganCrossover(Consts.MICHIGAN_CROSS_RT, train);
 		/* Pittsburgh operation */
-		CrossoverOperator<PittsburghSolution> pittsburghX
+		CrossoverOperator<PittsburghSolution<?>> pittsburghX
 				= new PittsburghCrossover(Consts.PITTSBURGH_CROSS_RT);
 		/* Hybrid-style crossover */
-		CrossoverOperator<PittsburghSolution> crossover
+		CrossoverOperator<PittsburghSolution<?>> crossover
 				= new HybridGBMLcrossover(crossoverProbability, Consts.MICHIGAN_OPE_RT,
 																				michiganX, pittsburghX);
 		/* Mutation: Pittsburgh-style GBML specific mutation operator. */
-		MutationOperator<PittsburghSolution> mutation
+		MutationOperator<PittsburghSolution<?>> mutation
 				= new PittsburghMutation(train);
 
 		/* Termination: Number of total evaluations */

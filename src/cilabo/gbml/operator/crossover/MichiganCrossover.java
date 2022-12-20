@@ -28,7 +28,7 @@ import cilabo.main.Consts;
 import cilabo.utility.GeneralFunctions;
 import cilabo.utility.Random;
 
-public class MichiganCrossover implements CrossoverOperator<PittsburghSolution> {
+public class MichiganCrossover implements CrossoverOperator<PittsburghSolution<?>> {
 
 	private double crossoverProbability;
 	private RandomGenerator<Double> crossoverRandomGenerator;
@@ -82,7 +82,7 @@ public class MichiganCrossover implements CrossoverOperator<PittsburghSolution> 
 	}
 
 	@Override
-	public List<PittsburghSolution> execute(List<PittsburghSolution> solutions) {
+	public List<PittsburghSolution<?>> execute(List<PittsburghSolution<?>> solutions) {
 		Check.isNotNull(solutions);
 		Check.that(solutions.size() == 1, "There must be single parent instead of " + solutions.size());
 		return doCrossover(crossoverProbability, solutions.get(0));
@@ -94,10 +94,10 @@ public class MichiganCrossover implements CrossoverOperator<PittsburghSolution> 
 	 * @param _parent
 	 * @return
 	 */
-	public List<PittsburghSolution> doCrossover(double probability, PittsburghSolution parent) {
+	public List<PittsburghSolution<?>> doCrossover(double probability, PittsburghSolution<?> parent) {
 		// Cast IntegerSolution to PittsburghSolution
 
-		List<MichiganSolution> generatedMichiganSolution = new ArrayList<>();
+		List<MichiganSolution<?>> generatedMichiganSolution = new ArrayList<>();
 
 		/* Step 1. Calculate number of all of generating rules. */
 		int numberOfRulesOnParent = parent.getNumberOfVariables();
@@ -142,10 +142,10 @@ public class MichiganCrossover implements CrossoverOperator<PittsburghSolution> 
 		if( 0<NumberOfGA ) {
 
 			/* Crossover: Uniform crossover */
-			CrossoverOperator<MichiganSolution> crossover = new UniformCrossover(Consts.MICHIGAN_CROSS_RT);
+			CrossoverOperator<MichiganSolution<?>> crossover = new UniformCrossover(Consts.MICHIGAN_CROSS_RT);
 			/* Mutation: Michigan-style specific mutation operation */
 			double mutationProbability = 1.0 / (double)train.getNdim();
-			MutationOperator<MichiganSolution> mutation = new MichiganMutation(mutationProbability,	train);
+			MutationOperator<MichiganSolution<?>> mutation = new MichiganMutation(mutationProbability,	train);
 			/* Mating Selection: Binray tournament */
 			int tournamentSize = 2;
 			if(parent.getNumberOfVariables() == 1) {
@@ -155,23 +155,23 @@ public class MichiganCrossover implements CrossoverOperator<PittsburghSolution> 
 			}
 			int matingPoolSize = NumberOfGA *
 					crossover.getNumberOfRequiredParents() / crossover.getNumberOfGeneratedChildren();
-			MatingPoolSelection<MichiganSolution> selection = new NaryTournamentMatingPoolSelection<MichiganSolution>(
+			MatingPoolSelection<MichiganSolution<?>> selection = new NaryTournamentMatingPoolSelection<MichiganSolution<?>>(
 					tournamentSize,
 					matingPoolSize,
 					new ObjectiveComparator<>(0, ObjectiveComparator.Ordering.DESCENDING));
 			/* == GA START == */
 			/* Mating Selection */
-			List<MichiganSolution> matingPopulation = selection.select(parent.getVariables());
+			List<MichiganSolution<?>> matingPopulation = selection.select((List<MichiganSolution<?>>) parent.getVariables());
 			/* Offspring Generation */
-			List<MichiganSolution> generatedSolutionByGA = new ArrayList<>();
+			List<MichiganSolution<?>> generatedSolutionByGA = new ArrayList<>();
 			int numberOfParents = crossover.getNumberOfRequiredParents();
 			for(int i = 0; i < matingPoolSize; i+= numberOfParents) {
-				List<MichiganSolution> parents = new ArrayList<>();
+				List<MichiganSolution<?>> parents = new ArrayList<>();
 				for(int j = 0; j < numberOfParents; j++) {
 					parents.add(matingPopulation.get(i + j));
 				}
 				/* Crossover: Uniform crossover */
-				List<MichiganSolution> offspring = crossover.execute(parents);
+				List<MichiganSolution<?>> offspring = crossover.execute(parents);
 				/* Mutation */
 				for(MichiganSolution s : offspring) {
 					mutation.execute(s);
@@ -188,10 +188,9 @@ public class MichiganCrossover implements CrossoverOperator<PittsburghSolution> 
 		}
 
 		/* Replacement: Single objective maximization repelacement */
-//		Replacement<IntegerSolution> replacement = new RuleAdditionStyleReplacement();
-		Replacement<MichiganSolution> replacement = new RuleReplacementStyleReplacement();
-		List<MichiganSolution> parentMichiganSolution = new ArrayList<>();
-		List<MichiganSolution> childMichiganSolution = new ArrayList<>();
+		Replacement<MichiganSolution<?>> replacement = new RuleReplacementStyleReplacement();
+		List<MichiganSolution<?>> parentMichiganSolution = new ArrayList<>();
+		List<MichiganSolution<?>> childMichiganSolution = new ArrayList<>();
 		//Deep copy
 		for(int i = 0; i < parent.getNumberOfVariables(); i++) {
 			parentMichiganSolution.add(parent.getVariable(i).copy());
@@ -207,7 +206,7 @@ public class MichiganCrossover implements CrossoverOperator<PittsburghSolution> 
 			child.setVariable(i, childMichiganSolution.get(i));
 		}
 
-		List<PittsburghSolution> offspring = new ArrayList<>();
+		List<PittsburghSolution<?>> offspring = new ArrayList<>();
 		offspring.add(child);
 		return offspring;
 	}

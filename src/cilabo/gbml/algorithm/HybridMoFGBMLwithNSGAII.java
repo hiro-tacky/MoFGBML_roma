@@ -30,7 +30,6 @@ import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.SolutionListUtils;
 import org.uma.jmetal.util.comparator.MultiComparator;
-import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.util.observable.Observable;
 import org.uma.jmetal.util.observable.ObservableEntity;
@@ -41,10 +40,11 @@ import cilabo.gbml.component.variation.CrossoverAndMutationAndPittsburghLearning
 import cilabo.gbml.problem.pittsburghFGBML_Problem.impl.PittsburghFGBML_Basic;
 import cilabo.gbml.solution.pittsburghSolution.PittsburghSolution;
 import cilabo.gbml.solution.pittsburghSolution.impl.PittsburghSolution_Basic;
+import cilabo.util.fileoutput.MichiganSolutionListOutput;
 import xml.XML_TagName;
 import xml.XML_manager;
 
-public class HybridMoFGBMLwithNSGAII <S extends PittsburghSolution>extends AbstractEvolutionaryAlgorithm<S, List<S>>
+public class HybridMoFGBMLwithNSGAII <S extends PittsburghSolution<?>>extends AbstractEvolutionaryAlgorithm<S, List<S>>
 										implements ObservableEntity {
 	private int evaluations;
 	private int populationSize;
@@ -78,8 +78,8 @@ public class HybridMoFGBMLwithNSGAII <S extends PittsburghSolution>extends Abstr
 			int offspringPopulationSize,
 			int frequency,
 			String outputRootDir,
-			CrossoverOperator<PittsburghSolution> crossoverOperator,
-			MutationOperator<PittsburghSolution> mutationOperator,
+			CrossoverOperator<PittsburghSolution<?>> crossoverOperator,
+			MutationOperator<PittsburghSolution<?>> mutationOperator,
 			Termination termination) {
 		/* Constructor Body */
 		this.problem = problem;
@@ -103,7 +103,7 @@ public class HybridMoFGBMLwithNSGAII <S extends PittsburghSolution>extends Abstr
 
 		this.variation =
 				new CrossoverAndMutationAndPittsburghLearningVariation<S>(
-						offspringPopulationSize, crossoverOperator, mutationOperator);
+						offspringPopulationSize, (CrossoverOperator<S>)crossoverOperator, (MutationOperator<S>)mutationOperator);
 
 		this.selection =
 				new NaryTournamentMatingPoolSelection<>(
@@ -197,7 +197,7 @@ public class HybridMoFGBMLwithNSGAII <S extends PittsburghSolution>extends Abstr
 	    		}
 	    		System.out.println(); System.out.println();
 
-	    	    new SolutionListOutput((List<? extends Solution<?>>) this.getResult())
+	    	    new MichiganSolutionListOutput((List<? extends Solution<?>>) this.getResult())
 		            .setVarFileOutputContext(new DefaultFileOutputContext(outputRootDir + sep + String.format("VAR-%010d.csv", evaluations), ","))
 		            .setFunFileOutputContext(new DefaultFileOutputContext(outputRootDir + sep + String.format("FUN-%010d.csv", evaluations), ","))
 		            .print();

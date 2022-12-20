@@ -12,7 +12,7 @@ import cilabo.data.pattern.Pattern;
 import cilabo.fuzzy.knowledge.Knowledge;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution;
 
-public class MichiganMutation implements MutationOperator<MichiganSolution> {
+public class MichiganMutation implements MutationOperator<MichiganSolution<?>> {
 	private double mutationProbability;
 	private RandomGenerator<Double> randomGenerator;
 	private BoundedRandomGenerator<Integer> intRandomGenerator;
@@ -52,7 +52,7 @@ public class MichiganMutation implements MutationOperator<MichiganSolution> {
 
 	  /** Execute() method */
 	  @Override
-	  public MichiganSolution execute(MichiganSolution solution) {
+	  public MichiganSolution<?> execute(MichiganSolution<?> solution) {
 		  Check.isNotNull(solution);
 
 		  doMutation(mutationProbability, solution);
@@ -65,7 +65,7 @@ public class MichiganMutation implements MutationOperator<MichiganSolution> {
 	   * @param probability Mutation setProbability
 	   * @param solution The solution to mutate
 	   */
-	  public void doMutation(double probability, MichiganSolution solution) {
+	  public void doMutation(double probability, MichiganSolution<?> solution) {
 		  for(int i = 0; i < solution.getNumberOfVariables(); i++) {
 			// To judge which attribute i is categorical or numerical.
 			Pattern randPattern =data.getPattern(intRandomGenerator.getRandomValue(0, data.getDataSize()-1));

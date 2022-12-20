@@ -15,7 +15,7 @@ import cilabo.main.ExperienceParameter.ObjectivesForPittsburgh;
 import xml.XML_TagName;
 import xml.XML_manager;
 
-public final class PittsburghSolution_Basic <michiganSolution extends MichiganSolution>
+public final class PittsburghSolution_Basic <michiganSolution extends MichiganSolution<?>>
 		extends AbstractPittsburghSolution<michiganSolution>{
 
 	public PittsburghSolution_Basic(int numberOfVariables,

@@ -7,10 +7,10 @@ import java.util.List;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution;
 
 public class SortMichiganPopulation {
-	public static void radixSort(List<MichiganSolution> list) {
-		Collections.sort(list, new Comparator<MichiganSolution>() {
+	public static void radixSort(List<MichiganSolution<?>> list) {
+		Collections.sort(list, new Comparator<MichiganSolution<?>>() {
 			@Override
-			public int compare(MichiganSolution a, MichiganSolution b) {
+			public int compare(MichiganSolution<?> a, MichiganSolution<?> b) {
 				int dimension = a.getNumberOfVariables();
 				for(int i = 0; i < dimension; i++) {
 					int index_a = a.getVariable(i);

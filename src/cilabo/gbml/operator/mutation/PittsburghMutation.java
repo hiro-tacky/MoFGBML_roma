@@ -12,7 +12,7 @@ import cilabo.fuzzy.knowledge.Knowledge;
 import cilabo.gbml.solution.pittsburghSolution.PittsburghSolution;
 import cilabo.utility.Random;
 
-public class PittsburghMutation implements MutationOperator<PittsburghSolution> {
+public class PittsburghMutation implements MutationOperator<PittsburghSolution<?>> {
 	private double mutationProbability;
 	private RandomGenerator<Double> randomGenerator;
 	private BoundedRandomGenerator<Integer> intRandomGenerator;
@@ -58,7 +58,7 @@ public class PittsburghMutation implements MutationOperator<PittsburghSolution> 
 	 * @param solution IntegerSolution : PittsburghSolutionを前提
 	 */
 	@Override
-	public PittsburghSolution execute(PittsburghSolution solution) {
+	public PittsburghSolution<?> execute(PittsburghSolution<?> solution) {
 		Check.isNotNull(solution);
 		Check.that(solution instanceof PittsburghSolution, "The argument must be class: " + PittsburghSolution.class.getCanonicalName());
 
@@ -71,7 +71,7 @@ public class PittsburghMutation implements MutationOperator<PittsburghSolution> 
 	 * @param probability
 	 * @param solution PittsburghSolution
 	 */
-	public void doMutation(double probability, PittsburghSolution solution) {
+	public void doMutation(double probability, PittsburghSolution<?> solution) {
 		int numberOfRules = solution.getNumberOfVariables();
 		int dimension = train.getNdim();
 

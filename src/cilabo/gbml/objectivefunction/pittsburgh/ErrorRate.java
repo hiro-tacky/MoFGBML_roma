@@ -10,7 +10,7 @@ import cilabo.gbml.solution.pittsburghSolution.PittsburghSolution;
 import cilabo.gbml.solution.util.attribute.ErroredPatternsAttribute;
 import cilabo.gbml.solution.util.attribute.NumberOfWinner;
 
-public final class ErrorRate <S extends PittsburghSolution>{
+public final class ErrorRate <S extends PittsburghSolution<?>>{
 
 	public ErrorRate() {}
 

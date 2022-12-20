@@ -10,7 +10,7 @@ import cilabo.gbml.solution.michiganSolution.MichiganSolution.MichiganSolutionBu
 import cilabo.gbml.solution.pittsburghSolution.PittsburghSolution;
 
 public abstract class AbstractPittsburghFGBML <pittsburghSolutionObject extends PittsburghSolution<michiganSolution>,
-		michiganSolution extends MichiganSolution>
+		michiganSolution extends MichiganSolution<?>>
 		extends AbstractGenericProblem <pittsburghSolutionObject> implements Problem<pittsburghSolutionObject>{
 
 	protected DataSet train;

@@ -16,7 +16,7 @@ import cilabo.main.Consts;
 import cilabo.utility.GeneralFunctions;
 import cilabo.utility.Random;
 
-public class PittsburghCrossover implements CrossoverOperator<PittsburghSolution> {
+public class PittsburghCrossover implements CrossoverOperator<PittsburghSolution<?>> {
 	private double crossoverProbability;
 	private RandomGenerator<Double> crossoverRandomGenerator;
 	BoundedRandomGenerator<Integer> selectRandomGenerator;
@@ -73,7 +73,7 @@ public class PittsburghCrossover implements CrossoverOperator<PittsburghSolution
 	}
 
 	@Override
-	public List<PittsburghSolution> execute(List<PittsburghSolution> solutions) {
+	public List<PittsburghSolution<?>> execute(List<PittsburghSolution<?>> solutions) {
 		Check.isNotNull(solutions);
 		Check.that(solutions.size() == 2, "There must be two parents instead of " + solutions.size());
 		return doCrossover(crossoverProbability, solutions.get(0), solutions.get(1));
@@ -86,10 +86,10 @@ public class PittsburghCrossover implements CrossoverOperator<PittsburghSolution
 	 * @param _parent2
 	 * @return
 	 */
-	public List<PittsburghSolution> doCrossover(double probability, PittsburghSolution parent1, PittsburghSolution parent2) {
+	public List<PittsburghSolution<?>> doCrossover(double probability, PittsburghSolution<?> parent1, PittsburghSolution<?> parent2) {
 		// Cast IntegerSolution to PittsburghSolution
 
-		List<PittsburghSolution> offspring = new ArrayList<>();
+		List<PittsburghSolution<?>> offspring = new ArrayList<>();
 
 		/* Do crossover */
 		if(crossoverRandomGenerator.getRandomValue() < probability) {

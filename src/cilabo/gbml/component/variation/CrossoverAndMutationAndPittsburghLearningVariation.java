@@ -10,7 +10,7 @@ import org.uma.jmetal.util.JMetalException;
 
 import cilabo.gbml.solution.pittsburghSolution.PittsburghSolution;
 
-public class CrossoverAndMutationAndPittsburghLearningVariation<S extends PittsburghSolution>
+public class CrossoverAndMutationAndPittsburghLearningVariation<S extends PittsburghSolution<?>>
 			implements Variation<S>
 {
 	private CrossoverOperator<S> crossover;
@@ -20,12 +20,12 @@ public class CrossoverAndMutationAndPittsburghLearningVariation<S extends Pittsb
 
 	public CrossoverAndMutationAndPittsburghLearningVariation(
 			int offspringPopulationSize,
-			CrossoverOperator<PittsburghSolution> crossover,
-			MutationOperator<PittsburghSolution> mutation)
+			CrossoverOperator<S> crossover,
+			MutationOperator<S> mutation)
 	{
 		this.offspringPopulationSize = offspringPopulationSize;
-		this.crossover = (CrossoverOperator<S>) crossover;
-		this.mutation = (MutationOperator<S>) mutation;
+		this.crossover = crossover;
+		this.mutation = mutation;
 
 		this.matingPoolSize = offspringPopulationSize *
 				crossover.getNumberOfRequiredParents() / crossover.getNumberOfGeneratedChildren();

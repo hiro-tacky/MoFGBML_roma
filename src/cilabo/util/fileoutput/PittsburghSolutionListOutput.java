@@ -15,9 +15,9 @@ public class PittsburghSolutionListOutput extends SolutionListOutput {
 
 	private FileOutputContext pittsburghFileContext;
 	private FileOutputContext solutionFileContext;
-	private List<PittsburghSolution<MichiganSolution>> solutionList;
+	private List<PittsburghSolution<MichiganSolution<?>>> solutionList;
 
-	public PittsburghSolutionListOutput(List<PittsburghSolution<MichiganSolution>> solutionList) {
+	public PittsburghSolutionListOutput(List<PittsburghSolution<MichiganSolution<?>>> solutionList) {
 		super(solutionList);
 		this.solutionList = solutionList;
 	}
@@ -38,7 +38,7 @@ public class PittsburghSolutionListOutput extends SolutionListOutput {
 		this.printSolutionsToFile(solutionFileContext, solutionList);
 	}
 
-	public void printSolutionsToFile(FileOutputContext context, List<PittsburghSolution<MichiganSolution>> solutionList) {
+	public void printSolutionsToFile(FileOutputContext context, List<PittsburghSolution<MichiganSolution<?>>> solutionList) {
 		BufferedWriter bufferedWriter = context.getFileWriter();
 		try {
 			if(solutionList.size() > 0) {
@@ -53,7 +53,7 @@ public class PittsburghSolutionListOutput extends SolutionListOutput {
 		}
 	}
 
-	public void printPittsburghSolutionFormatsToFile(FileOutputContext context, List<PittsburghSolution<MichiganSolution>> solutionList) {
+	public void printPittsburghSolutionFormatsToFile(FileOutputContext context, List<PittsburghSolution<MichiganSolution<?>>> solutionList) {
 		BufferedWriter bufferedWriter = context.getFileWriter();
 		try {
 			if(solutionList.size() > 0) {

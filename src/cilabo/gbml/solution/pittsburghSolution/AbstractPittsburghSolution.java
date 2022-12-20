@@ -8,7 +8,7 @@ import cilabo.fuzzy.classifier.Classifier;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution.MichiganSolutionBuilder;
 
-public abstract class AbstractPittsburghSolution <michiganSolution extends MichiganSolution>
+public abstract class AbstractPittsburghSolution <michiganSolution extends MichiganSolution<?>>
 		extends AbstractSolution<michiganSolution>
 		implements PittsburghSolution<michiganSolution>{
 
