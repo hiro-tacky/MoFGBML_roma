@@ -9,7 +9,7 @@ for($i=0; $i -lt 3; $i++){
 	for($j=0; $j -lt 10; $j++){
 		$DtraFileName = "a" + $i + "_" + $j + "_" + $dataName + "-10tra.dat"
 		$DtstFileName = "a" + $i + "_" + $j + "_" + $dataName + "-10tst.dat"
-		Java -jar target/test.jar $dataName $algorithmID $experimentID$i$j $parallelCores dataset\$dataName\$DtraFileName dataset\$dataName\$DtstFileName
+		Java -jar target/MoFGBML-23.0.0-SNAPSHOT.jar $dataName $algorithmID $experimentID$i$j $parallelCores dataset\$dataName\$DtraFileName dataset\$dataName\$DtstFileName
 		Write-Output "Java -jar target/MoFGBML-23.0.0-SNAPSHOT.jar $dataName $algorithmID $experimentID$i$j $parallelCores dataset\$dataName\$DtraFileName dataset\$dataName\$DtstFileName"
 	}
 }
