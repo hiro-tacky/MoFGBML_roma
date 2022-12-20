@@ -65,11 +65,11 @@ public final class PittsburghSolution_Basic <michiganSolution extends MichiganSo
 		String ln = System.getProperty("line.separator");
 		String str = "PittsburghSolution_Basic";
 
-		str += ", {" + String.format("Objectives[%d]=%.4f..", 0, this.getObjective(0));
+		str += String.format(",Objectives[%d]=,%.4f..", 0, this.getObjective(0));
 		for(int i=1; i<this.getNumberOfObjectives(); i++) {
-			str += String.format(", Objectives[%d]=%.4f..", i, this.getObjective(i));
+			str += String.format(",Objectives[%d]=,%.4f..", i, this.getObjective(i));
 		}
-		str += "}" + ln;
+		str += ln;
 
 		for(michiganSolution tmp: this.variables) {
 			str += " ->" + tmp + ln;

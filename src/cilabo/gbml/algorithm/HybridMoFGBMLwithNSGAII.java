@@ -26,7 +26,6 @@ import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.operator.mutation.MutationOperator;
 import org.uma.jmetal.operator.selection.SelectionOperator;
 import org.uma.jmetal.problem.Problem;
-import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.SolutionListUtils;
 import org.uma.jmetal.util.comparator.MultiComparator;
@@ -40,7 +39,7 @@ import cilabo.gbml.component.variation.CrossoverAndMutationAndPittsburghLearning
 import cilabo.gbml.problem.pittsburghFGBML_Problem.impl.PittsburghFGBML_Basic;
 import cilabo.gbml.solution.pittsburghSolution.PittsburghSolution;
 import cilabo.gbml.solution.pittsburghSolution.impl.PittsburghSolution_Basic;
-import cilabo.util.fileoutput.MichiganSolutionListOutput;
+import cilabo.util.fileoutput.PittsburghSolutionListOutput;
 import xml.XML_TagName;
 import xml.XML_manager;
 
@@ -197,7 +196,7 @@ public class HybridMoFGBMLwithNSGAII <S extends PittsburghSolution<?>>extends Ab
 	    		}
 	    		System.out.println(); System.out.println();
 
-	    	    new MichiganSolutionListOutput((List<? extends Solution<?>>) this.getResult())
+	    	    new PittsburghSolutionListOutput((List<PittsburghSolution<?>>) this.getResult())
 		            .setVarFileOutputContext(new DefaultFileOutputContext(outputRootDir + sep + String.format("VAR-%010d.csv", evaluations), ","))
 		            .setFunFileOutputContext(new DefaultFileOutputContext(outputRootDir + sep + String.format("FUN-%010d.csv", evaluations), ","))
 		            .print();
