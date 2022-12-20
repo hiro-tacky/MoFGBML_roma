@@ -1,6 +1,6 @@
 $dataName = "pima"
 $parallelCores = 12
-$algorithmID = "test_junit"
+$algorithmID = "test"
 $experimentID = "trial"
 $logFileName = $algorithmID + "_log.txt"
 
