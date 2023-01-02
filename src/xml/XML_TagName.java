@@ -4,7 +4,7 @@ public enum XML_TagName {
 	id,//汎用
 	dimension,//汎用
 
-	evaluations, evaluation,
+	generations, evaluation,
 		population,
 			pittsburghSolution,
 				michiganSolution,
@@ -20,7 +20,7 @@ public enum XML_TagName {
 							classLabelMulti,
 							ruleWeightMulti,
 
-				objectivesSet,
+				objectives,
 					objective, objectiveName,
 
 	knowledgeBase,

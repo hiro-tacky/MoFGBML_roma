@@ -169,6 +169,14 @@ public class XML_manager {
 		return v;
 	}
 
+	//新規のElementを追加する
+	public static Element createElement(String nodeName, String nodeValue) {
+		Element v = document.createElement(nodeName);
+		Text textContents = document.createTextNode(nodeValue);
+		v.appendChild(textContents);
+		return v;
+	}
+
 	//Elementを追加する
 	public static Element createElement(XML_TagName nodeName, XML_TagName attributeName, String attributeValue) {
 		Element v = document.createElement(nodeName.toString());

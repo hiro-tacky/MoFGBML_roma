@@ -101,7 +101,7 @@ public class Knowledge {
 					XML_TagName.dimension, String.valueOf(dim_i));
 			for(int j=0; j<fuzzyTermTypeAtDim.length; j++) {
 				FuzzyTermType fuzzyTerm = fuzzyTermTypeAtDim[j];
-				Element fuzzyTermElement = XML_manager.createElement(XML_TagName.fuzzyTermName);
+				Element fuzzyTermElement = XML_manager.createElement(XML_TagName.fuzzyTerm);
 					XML_manager.addElement(fuzzyTermElement, XML_TagName.fuzzyTermID, String.valueOf(j));
 					XML_manager.addElement(fuzzyTermElement, XML_TagName.fuzzyTermName, fuzzyTerm.getName());
 					XML_manager.addElement(fuzzyTermElement, XML_TagName.ShapeTypeID, String.valueOf(fuzzyTerm.getType()));
@@ -112,10 +112,13 @@ public class Knowledge {
 				float[] parametersList = fuzzyTerm.getParam();
 				for(int k=0; k<parametersList.length; k++) {
 					XML_manager.addElement(parameters, XML_TagName.parameter, String.valueOf(parametersList[k]),
-							XML_TagName.dimension, String.valueOf(k));
+							XML_TagName.id, String.valueOf(k));
 				}
 				XML_manager.addElement(fuzzyTermElement, parameters);
+
+				XML_manager.addElement(fuzzySets, fuzzyTermElement);
 			}
+			XML_manager.addElement(knowledge, fuzzySets);
 		}
 		return knowledge;
 	}

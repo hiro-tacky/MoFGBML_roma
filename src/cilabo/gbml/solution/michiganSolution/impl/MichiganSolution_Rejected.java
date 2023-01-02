@@ -3,6 +3,10 @@ package cilabo.gbml.solution.michiganSolution.impl;
 import org.w3c.dom.Element;
 
 import cilabo.fuzzy.rule.Rule.RuleBuilder;
+import cilabo.fuzzy.rule.consequent.classLabel.ClassLabel;
+import cilabo.fuzzy.rule.consequent.classLabel.impl.ClassLabel_Basic;
+import cilabo.fuzzy.rule.consequent.ruleWeight.RuleWeight;
+import cilabo.fuzzy.rule.consequent.ruleWeight.impl.RuleWeight_Basic;
 import cilabo.gbml.solution.michiganSolution.AbstractMichiganSolution;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution;
 import xml.XML_TagName;
@@ -12,7 +16,7 @@ public class MichiganSolution_Rejected extends AbstractMichiganSolution implemen
 
 	protected MichiganSolution_Rejected(int numberOfObjectives,
 			int numberOfConstraints,
-			RuleBuilder ruleBuilder) {
+			RuleBuilder<?> ruleBuilder) {
 		super(numberOfObjectives, numberOfConstraints, ruleBuilder);
 	}
 
@@ -33,6 +37,16 @@ public class MichiganSolution_Rejected extends AbstractMichiganSolution implemen
 	@Override
 	public MichiganSolution copy() {
 		return this.getInstance();
+	}
+
+	@Override
+	public ClassLabel<?> getClassLabel() {
+		return new ClassLabel_Basic(-1);
+	}
+
+	@Override
+	public RuleWeight<?> getRuleWeight() {
+		return new RuleWeight_Basic(-1);
 	}
 
 	@Override

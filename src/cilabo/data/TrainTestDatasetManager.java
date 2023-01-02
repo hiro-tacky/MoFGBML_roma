@@ -3,6 +3,7 @@ package cilabo.data;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import cilabo.main.Consts;
 import cilabo.main.ExperienceParameter;
 import cilabo.utility.Input;
 
@@ -20,7 +21,7 @@ public class TrainTestDatasetManager {
 
 	private TrainTestDatasetManager() {}
 
-	/** 空のインスタンスを生成 <br> Constructs an empty instance of class 
+	/** 空のインスタンスを生成 <br> Constructs an empty instance of class
 	 @return 空のインスタンス
 	 */
 	public static TrainTestDatasetManager getInstance() {
@@ -70,6 +71,9 @@ public class TrainTestDatasetManager {
 
 		DataSet train = Input.inputDataSet(trainFile);
 		addTrains(train);
+		Consts.DATA_SIZE = train.getDataSize();
+		Consts.ATTRIBUTE_NUMBER = train.getNdim();
+		Consts.CLASS_LABEL_NUMBER = train.getCnum();
 
 		DataSet test = Input.inputDataSet(testFile);
 		addTests(test);

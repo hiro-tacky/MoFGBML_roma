@@ -200,7 +200,7 @@ public class MultiTasking_Main {
 				= new PittsburghMutation(train);
 
 		/* Termination: Number of total evaluations */
-		Termination termination = new TerminationByEvaluations(Consts.terminateEvaluation);
+		Termination termination = new TerminationByEvaluations(Consts.TERMINATE_EVALUATION);
 
 		//knowlwdge出力用
 		XML_manager.addElement(XML_manager.getRoot(), Knowledge.getInstance(). toElement());
@@ -208,16 +208,16 @@ public class MultiTasking_Main {
 		/* Algorithm: Hybrid-style MoFGBML with NSGA-II */
 		HybridMoFGBMLwithNSGAII<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_MultiClass>>> algorithm
 			= new HybridMoFGBMLwithNSGAII<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_MultiClass>>>(problem,
-											Consts.populationSize,
-											Consts.offspringPopulationSize,
-											Consts.outputFrequency,
+											Consts.POPULATION_SIZE,
+											Consts.OFFSPRING_POPULATION_SIZE,
+											Consts.OUTPUT_FREQUENCY,
 											Consts.EXPERIMENT_ID_DIR,
 											crossover,
 											mutation,
 											termination);
 
 		/* Running observation */
-		EvaluationObserver evaluationObserver = new EvaluationObserver(Consts.outputFrequency);
+		EvaluationObserver evaluationObserver = new EvaluationObserver(Consts.OUTPUT_FREQUENCY);
 		algorithm.getObservable().register(evaluationObserver);
 
 		/* === GA RUN === */

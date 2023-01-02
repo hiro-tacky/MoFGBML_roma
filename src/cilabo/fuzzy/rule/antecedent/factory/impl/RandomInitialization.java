@@ -37,7 +37,7 @@ public class RandomInitialization implements AntecedentIndexFactory{
 		}
 		else {
 			// (dimension - Const) / dimension
-			dcRate = (dimension - Consts.ANTECEDENT_LEN)/(double)dimension;
+			dcRate = (dimension - Consts.ANTECEDENT_NUMBER_DO_NOT_DONT_CARE)/(double)dimension;
 		}
 
 		int[] antecedentIndex = new int[dimension];

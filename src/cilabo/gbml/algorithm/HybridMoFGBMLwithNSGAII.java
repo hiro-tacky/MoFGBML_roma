@@ -208,10 +208,10 @@ public class HybridMoFGBMLwithNSGAII <S extends PittsburghSolution<?>>extends Ab
 	    			XML_manager.addElement(population, pittsburghSolution);
 	    		}
 
-	    		Element evaluationsElement = XML_manager.createElement(XML_TagName.evaluations, XML_TagName.evaluation, String.valueOf(evaluations));
+	    		Element generations = XML_manager.createElement(XML_TagName.generations, XML_TagName.evaluation, String.valueOf(evaluations));
 
-	    		XML_manager.addElement(evaluationsElement, population);
-		    	XML_manager.addElement(XML_manager.getRoot(), evaluationsElement);
+	    		XML_manager.addElement(generations, population);
+		    	XML_manager.addElement(XML_manager.getRoot(), generations);
 	    	}
 	    }
 		else {

@@ -42,7 +42,7 @@ public class HeuristicRuleGeneration implements Operator<List<Pattern>, List<int
 //			/*  (dimension - const) / dimension */
 //			RatioOfDontCare = (double)(((double)dimension - (double)Consts.ANTECEDENT_LEN)/(double)dimension);
 //		}
-		RatioOfDontCare = (double)(((double)dimension - (double)Consts.ANTECEDENT_LEN)/(double)dimension);
+		RatioOfDontCare = (double)(((double)dimension - (double)Consts.ANTECEDENT_NUMBER_DO_NOT_DONT_CARE)/(double)dimension);
 
 		Knowledge knowledge = Knowledge.getInstance();
 

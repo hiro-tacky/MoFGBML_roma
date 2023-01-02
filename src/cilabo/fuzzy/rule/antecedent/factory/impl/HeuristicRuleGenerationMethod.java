@@ -50,7 +50,7 @@ public class HeuristicRuleGenerationMethod implements AntecedentIndexFactory{
 		}
 		else {
 			// (Ndim - const) / Ndim
-			dcRate = Math.max((dimension - Consts.ANTECEDENT_LEN) / (double)dimension, Consts.DONT_CARE_RT);
+			dcRate = Math.max((dimension - Consts.ANTECEDENT_NUMBER_DO_NOT_DONT_CARE) / (double)dimension, Consts.DONT_CARE_RT);
 		}
 
 		int[] antecedentIndex = new int[dimension];

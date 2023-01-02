@@ -78,20 +78,6 @@ public final class PittsburghSolution_Basic <michiganSolution extends MichiganSo
 		return str;
 	}
 
-	@Override
-	public Element toElement() {
-		//新規のElementを追加する
-		Element pittsburghSolution = XML_manager.createElement(XML_TagName.pittsburghSolution);
-
-		for(int i=0; i<this.getNumberOfVariables(); i++) {
-			Element michiganSolution = this.getVariable(i).toElement();
-			XML_manager.addElement(pittsburghSolution, michiganSolution,
-					XML_TagName.id, String.valueOf(i));
-		}
-
-		return pittsburghSolution;
-	}
-
 	/**
 	 * population を構成するElementを返す
 	 *
@@ -99,7 +85,8 @@ public final class PittsburghSolution_Basic <michiganSolution extends MichiganSo
 	 * @param solutionList
 	 * @return population(Element型)
 	 */
-	public Element printSolutionsToElement() {
+	@Override
+	public Element toElement() {
 		Element pittsburghSolution = XML_manager.createElement(XML_TagName.pittsburghSolution);
 		for(int i=0; i<this.getNumberOfVariables(); i++) {
 			Element michiganSolution = this.getVariable(i).toElement();
@@ -108,7 +95,7 @@ public final class PittsburghSolution_Basic <michiganSolution extends MichiganSo
 		}
 
 		//各目的関数の結果
-		Element objectives = XML_manager.addElement(pittsburghSolution, XML_TagName.objectivesSet);
+		Element objectives = XML_manager.createElement(XML_TagName.objectives);
 
 			double f1 = this.getObjective(ObjectivesForPittsburgh.ErrorRateDtra.toInt());
 			Element f1_ = XML_manager.createElement(XML_TagName.objective, String.valueOf(f1));
