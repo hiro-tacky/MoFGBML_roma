@@ -4,7 +4,7 @@ import java.util.Objects;
 
 import org.w3c.dom.Element;
 
-import jfml.term.FuzzyTermType;
+import cilabo.main.ExperienceParameter.DIVISION_TYPE;
 import xml.XML_TagName;
 import xml.XML_manager;
 
@@ -17,7 +17,7 @@ import xml.XML_manager;
  */
 public class Knowledge {
 	private static Knowledge instance = new Knowledge();
-	private FuzzyTermType[][] fuzzySets;
+	private FuzzyTermTypeForMixed[][] fuzzySets;
 
 	private Knowledge() {}
 
@@ -34,7 +34,7 @@ public class Knowledge {
 	 * @param H ファジィセットのid
 	 * @return dim次元H番目のファジィセット
 	 */
-	public FuzzyTermType getFuzzySet(int dimension, int H) {
+	public FuzzyTermTypeForMixed getFuzzySet(int dimension, int H) {
 		if(Objects.isNull(fuzzySets)) {System.err.println("Knowledge hasn't been initialised");}
 		return fuzzySets[dimension][H];
 	}
@@ -43,7 +43,7 @@ public class Knowledge {
 	 * @param dimension 次元
 	 * @return dim次元目のファジィセット配列
 	 */
-	public FuzzyTermType[] getFuzzySet(int dimension) {
+	public FuzzyTermTypeForMixed[] getFuzzySet(int dimension) {
 		if(Objects.isNull(fuzzySets)) {System.err.println("Knowledge hasn't been initialised");}
 		return fuzzySets[dimension];
 	}
@@ -75,7 +75,7 @@ public class Knowledge {
 		return fuzzySets[dimension].length;
 	}
 
-	public void setFuzzySets(FuzzyTermType[][] fuzzySets) {
+	public void setFuzzySets(FuzzyTermTypeForMixed[][] fuzzySets) {
 		this.fuzzySets = fuzzySets;
 	}
 
@@ -96,16 +96,19 @@ public class Knowledge {
 	public Element toElement() {
 		Element knowledge = XML_manager.createElement(XML_TagName.knowledgeBase);
 		for(int dim_i=0; dim_i<this.getDimension(); dim_i++) {
-			FuzzyTermType[] fuzzyTermTypeAtDim = this.fuzzySets[dim_i];
+			FuzzyTermTypeForMixed[] fuzzyTermTypeAtDim = this.fuzzySets[dim_i];
 			Element fuzzySets = XML_manager.createElement(XML_TagName.fuzzySets,
 					XML_TagName.dimension, String.valueOf(dim_i));
 			for(int j=0; j<fuzzyTermTypeAtDim.length; j++) {
-				FuzzyTermType fuzzyTerm = fuzzyTermTypeAtDim[j];
+				FuzzyTermTypeForMixed fuzzyTerm = fuzzyTermTypeAtDim[j];
 				Element fuzzyTermElement = XML_manager.createElement(XML_TagName.fuzzyTerm);
 					XML_manager.addElement(fuzzyTermElement, XML_TagName.fuzzyTermID, String.valueOf(j));
 					XML_manager.addElement(fuzzyTermElement, XML_TagName.fuzzyTermName, fuzzyTerm.getName());
 					XML_manager.addElement(fuzzyTermElement, XML_TagName.ShapeTypeID, String.valueOf(fuzzyTerm.getType()));
-					XML_manager.addElement(fuzzyTermElement, XML_TagName.ShapeTypeName, Knowledge.getFuzzyTermShapeTypeNameFromID(fuzzyTerm.getType()));
+					XML_manager.addElement(fuzzyTermElement, XML_TagName.ShapeTypeName, Knowledge.getShapeTypeNameFromID(fuzzyTerm.getType()));
+					XML_manager.addElement(fuzzyTermElement, XML_TagName.divisionType, fuzzyTerm.getDivisionType().toString());
+					XML_manager.addElement(fuzzyTermElement, XML_TagName.partitionNum, String.valueOf(fuzzyTerm.getPartitionNum()));
+					XML_manager.addElement(fuzzyTermElement, XML_TagName.partition_i, String.valueOf(fuzzyTerm.getPartition_i()));
 				XML_manager.addElement(fuzzySets, fuzzyTermElement);
 
 				Element parameters = XML_manager.createElement(XML_TagName.parameterSet);
@@ -123,7 +126,7 @@ public class Knowledge {
 		return knowledge;
 	}
 
-	public static String getFuzzyTermShapeTypeNameFromID(int id) {
+	public static String getShapeTypeNameFromID(int id) {
 		String ShapeName =null;
 		switch(id) {
 			case 0: ShapeName = "rightLinearShape"; break;
@@ -148,19 +151,19 @@ public class Knowledge {
 		return ShapeName;
 	}
 
-	public static String getFuzzyTermDdivisionTypeNameFromID(int id) {
+	public static String getDdivisionTypeNameFromID(DIVISION_TYPE divisionType) {
 		String TypeName =null;
-		switch(id) {
-			case 0: TypeName = "equalDdivision"; break;
-			case 1: TypeName = "entropyDdivision"; break;
+		switch(divisionType) {
+			case equalDivision: TypeName = "equalDdivision"; break;
+			case entropyDivision: TypeName = "entropyDdivision"; break;
 			default: TypeName = "equalDdivision"; break;
 		}
 		return TypeName;
 	}
 
-	public static String makeFuzzyTermName(int ShapeTypeID, int DdivisionTypeID, int FuzzyTermID) {
+	public static String makeFuzzyTermName(DIVISION_TYPE divisionType, int ShapeTypeID, int FuzzyTermID) {
 		if(ShapeTypeID == 99) {return "DontCare";}
-		return String.format("%s_%s_%02d", Knowledge.getFuzzyTermShapeTypeNameFromID(ShapeTypeID),
-				Knowledge.getFuzzyTermDdivisionTypeNameFromID(DdivisionTypeID), FuzzyTermID);
+		return String.format("%s_%s_%02d", Knowledge.getShapeTypeNameFromID(ShapeTypeID),
+				Knowledge.getDdivisionTypeNameFromID(divisionType), FuzzyTermID);
 	}
 }

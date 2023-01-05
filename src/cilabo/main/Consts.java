@@ -64,6 +64,8 @@ public class Consts {
 	public static double MICHIGAN_CROSS_RT = 0.9;	//元RULE_CROSS_RT
 	/** Pittsburgh交叉確率 */
 	public static double PITTSBURGH_CROSS_RT = 0.9;	//元RULESET_CROSS_RT
+	/** ファジィ度*/
+	public static double FUZZY_GRADE = 1f;
 
 	//Folders' Name ************************************
 	public static String ROOTFOLDER = "results";
@@ -116,6 +118,7 @@ public class Consts {
 		if(bundle.containsKey("RULE_CHANGE_RT")) { RULE_CHANGE_RT = Double.parseDouble(bundle.getString("RULE_CHANGE_RT")); }
 		if(bundle.containsKey("MICHIGAN_CROSS_RT")) { MICHIGAN_CROSS_RT = Double.parseDouble(bundle.getString("MICHIGAN_CROSS_RT")); }
 		if(bundle.containsKey("PITTSBURGH_CROSS_RT")) { PITTSBURGH_CROSS_RT = Double.parseDouble(bundle.getString("PITTSBURGH_CROSS_RT")); }
+		if(bundle.containsKey("FUZZY_GRADE")) { FUZZY_GRADE = Double.parseDouble(bundle.getString("FUZZY_GRADE")); }
 		if(bundle.containsKey("TRAIN")) { TRAIN = Integer.parseInt(bundle.getString("TRAIN")); }
 		if(bundle.containsKey("TEST")) { TEST = Integer.parseInt(bundle.getString("TEST")); }
 		if(bundle.containsKey("ROOTFOLDER")) { ROOTFOLDER = bundle.getString("ROOTFOLDER"); }

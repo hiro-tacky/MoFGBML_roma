@@ -35,6 +35,7 @@ import org.uma.jmetal.util.observable.ObservableEntity;
 import org.uma.jmetal.util.observable.impl.DefaultObservable;
 import org.w3c.dom.Element;
 
+import cilabo.fuzzy.knowledge.Knowledge;
 import cilabo.gbml.component.variation.CrossoverAndMutationAndPittsburghLearningVariation;
 import cilabo.gbml.problem.pittsburghFGBML_Problem.impl.PittsburghFGBML_Basic;
 import cilabo.gbml.solution.pittsburghSolution.PittsburghSolution;
@@ -210,6 +211,8 @@ public class HybridMoFGBMLwithNSGAII <S extends PittsburghSolution<?>>extends Ab
 
 	    		Element generations = XML_manager.createElement(XML_TagName.generations, XML_TagName.evaluation, String.valueOf(evaluations));
 
+	    		//knowlwdge出力用
+	    		XML_manager.addElement(generations, Knowledge.getInstance().toElement());
 	    		XML_manager.addElement(generations, population);
 		    	XML_manager.addElement(XML_manager.getRoot(), generations);
 	    	}

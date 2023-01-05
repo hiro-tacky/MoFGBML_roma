@@ -12,7 +12,7 @@ import cilabo.gbml.solution.michiganSolution.MichiganSolution.MichiganSolutionBu
 import cilabo.gbml.solution.michiganSolution.impl.MichiganSolution_Rejected;
 import cilabo.gbml.solution.pittsburghSolution.impl.PittsburghSolution_Basic;
 import cilabo.gbml.solution.util.attribute.NumberOfWinner;
-import cilabo.main.ExperienceParameter.ObjectivesForPittsburgh;
+import cilabo.main.ExperienceParameter.OBJECTIVES_FOR_PITTSBURGH;
 
 public class PittsburghFGBML_Basic <michiganSolution extends MichiganSolution<?>>
 		extends AbstractPittsburghFGBML<PittsburghSolution_Basic<michiganSolution>, michiganSolution> implements Problem<PittsburghSolution_Basic<michiganSolution>>{
@@ -38,8 +38,8 @@ public class PittsburghFGBML_Basic <michiganSolution extends MichiganSolution<?>
 		NumberOfRules<PittsburghSolution_Basic<michiganSolution>> function2 = new NumberOfRules<PittsburghSolution_Basic<michiganSolution>>();
 		double f2 = function2.function(solution);
 
-		solution.setObjective(ObjectivesForPittsburgh.ErrorRateDtra.toInt(), f1);
-		solution.setObjective(ObjectivesForPittsburgh.NumberOfRule.toInt(), f2);
+		solution.setObjective(OBJECTIVES_FOR_PITTSBURGH.ErrorRateDtra.toInt(), f1);
+		solution.setObjective(OBJECTIVES_FOR_PITTSBURGH.NumberOfRule.toInt(), f2);
 
 	}
 

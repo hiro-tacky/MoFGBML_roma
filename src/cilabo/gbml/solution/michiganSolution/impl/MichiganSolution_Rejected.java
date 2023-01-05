@@ -69,7 +69,7 @@ public class MichiganSolution_Rejected extends AbstractMichiganSolution implemen
 		XML_manager.addElement(michiganSolution, rule);
 
 		//新規のElementを追加する
-		Element fuzzySets = XML_manager.createElement(XML_TagName.fuzzySets);
+		Element fuzzySets = XML_manager.createElement(XML_TagName.fuzzySetList);
 
 		for(int i=0; i<this.getNumberOfVariables(); i++) {
 			XML_manager.addElement(fuzzySets, XML_TagName.fuzzySetID, String.valueOf(this.getVariable(-1)),

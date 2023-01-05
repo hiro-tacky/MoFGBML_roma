@@ -1,4 +1,4 @@
-package cilabo.main.impl.basic;
+package cilabo.main.impl.mixedKnowledge;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -27,7 +27,8 @@ import cilabo.fuzzy.classifier.Classifier;
 import cilabo.fuzzy.classifier.classification.Classification;
 import cilabo.fuzzy.classifier.classification.impl.SingleWinnerRuleSelection;
 import cilabo.fuzzy.classifier.impl.Classifier_basic;
-import cilabo.fuzzy.knowledge.factory.HomoTriangleKnowledgeFactory;
+import cilabo.fuzzy.knowledge.FuzzyTermBluePrintManager;
+import cilabo.fuzzy.knowledge.factory.MixedKnowledgeFactory;
 import cilabo.fuzzy.knowledge.membershipParams.Parameters;
 import cilabo.fuzzy.rule.Rule.RuleBuilder;
 import cilabo.fuzzy.rule.antecedent.factory.impl.HeuristicRuleGenerationMethod;
@@ -46,9 +47,11 @@ import cilabo.gbml.solution.michiganSolution.impl.MichiganSolution_Basic;
 import cilabo.gbml.solution.pittsburghSolution.PittsburghSolution;
 import cilabo.gbml.solution.pittsburghSolution.impl.PittsburghSolution_Basic;
 import cilabo.main.Consts;
+import cilabo.main.ExperienceParameter.DIVISION_TYPE;
 import cilabo.utility.Output;
 import cilabo.utility.Parallel;
 import cilabo.utility.Random;
+import jfml.term.FuzzyTermType;
 import xml.XML_manager;
 
 /**
@@ -56,14 +59,14 @@ import xml.XML_manager;
  *
  * FAN2021時点
  */
-public class MoFGBML_Basic_Main {
+public class MixedKnowledge_Main {
 	public static void main(String[] args) throws JMetalException, FileNotFoundException {
 		String sep = File.separator;
 
 		/* ********************************************************* */
 		System.out.println();
 		System.out.println("==== INFORMATION ====");
-		System.out.println("main: " + MoFGBML_Basic_Main.class.getCanonicalName());
+		System.out.println("main: " + MixedKnowledge_Main.class.getCanonicalName());
 		String version = "1.0";
 		System.out.println("version: " + version);
 		System.out.println();
@@ -77,14 +80,14 @@ public class MoFGBML_Basic_Main {
 		Output.mkdirs(Consts.ROOTFOLDER);
 
 		// set command arguments to static variables
-		MoFGBML_Basic_CommandLineArgs.loadArgs(MoFGBML_Basic_CommandLineArgs.class.getCanonicalName(), args);
+		MixedKnowledge_CommandLineArgs.loadArgs(MixedKnowledge_CommandLineArgs.class.getCanonicalName(), args);
 		// Output constant parameters
 		String fileName = Consts.EXPERIMENT_ID_DIR + sep + "Consts.txt";
 		Output.writeln(fileName, Consts.getString(), true);
-		Output.writeln(fileName, MoFGBML_Basic_CommandLineArgs.getParamsString(), true);
+		Output.writeln(fileName, MixedKnowledge_CommandLineArgs.getParamsString(), true);
 
 		// Initialize ForkJoinPool
-		Parallel.getInstance().initLearningForkJoinPool(MoFGBML_Basic_CommandLineArgs.parallelCores);
+		Parallel.getInstance().initLearningForkJoinPool(MixedKnowledge_CommandLineArgs.parallelCores);
 
 		System.out.println("Processors: " + Runtime.getRuntime().availableProcessors() + " ");
 		System.out.print("args: ");
@@ -107,8 +110,8 @@ public class MoFGBML_Basic_Main {
 		JMetalRandom.getInstance().setSeed(Consts.RAND_SEED);
 
 		/* Load Dataset ======================== */
-		TrainTestDatasetManager.getInstance().loadTrainTestFiles(MoFGBML_Basic_CommandLineArgs.trainFile,
-				MoFGBML_Basic_CommandLineArgs.testFile);
+		TrainTestDatasetManager.getInstance().loadTrainTestFiles(MixedKnowledge_CommandLineArgs.trainFile,
+				MixedKnowledge_CommandLineArgs.testFile);
 
 		/* Run MoFGBML algorithm =============== */
 		DataSet train = TrainTestDatasetManager.getInstance().getTrains().get(0);
@@ -147,8 +150,20 @@ public class MoFGBML_Basic_Main {
 
 		int dimension = train.getNdim();
 		Parameters parameters = new Parameters(train, dimension);
-		HomoTriangleKnowledgeFactory KnowledgeFactory = new HomoTriangleKnowledgeFactory(dimension, parameters);
-		KnowledgeFactory.create();
+		MixedKnowledgeFactory knowledgeFactory = new MixedKnowledgeFactory(dimension, parameters);
+		FuzzyTermBluePrintManager FuzzyTermBMP = new FuzzyTermBluePrintManager(train, dimension);
+		for(int dim_i=0; dim_i<dimension; dim_i++) {
+			int[] K = new int[] {2, 3, 4, 5};
+			FuzzyTermBMP.addFuzyyTermsBluePrint(DIVISION_TYPE.equalDivision, dim_i, K, FuzzyTermType.TYPE_triangularShape);
+			FuzzyTermBMP.addFuzyyTermsBluePrint(DIVISION_TYPE.equalDivision, dim_i, K, FuzzyTermType.TYPE_trapezoidShape);
+			FuzzyTermBMP.addFuzyyTermsBluePrint(DIVISION_TYPE.equalDivision, dim_i, K, FuzzyTermType.TYPE_rectangularShape);
+			FuzzyTermBMP.addFuzyyTermsBluePrint(DIVISION_TYPE.equalDivision, dim_i, K, FuzzyTermType.TYPE_gaussianShape);
+			FuzzyTermBMP.addFuzyyTermsBluePrint(DIVISION_TYPE.entropyDivision, dim_i, K, FuzzyTermType.TYPE_triangularShape);
+			FuzzyTermBMP.addFuzyyTermsBluePrint(DIVISION_TYPE.entropyDivision, dim_i, K, FuzzyTermType.TYPE_trapezoidShape);
+			FuzzyTermBMP.addFuzyyTermsBluePrint(DIVISION_TYPE.entropyDivision, dim_i, K, FuzzyTermType.TYPE_rectangularShape);
+			FuzzyTermBMP.addFuzyyTermsBluePrint(DIVISION_TYPE.entropyDivision, dim_i, K, FuzzyTermType.TYPE_gaussianShape);
+		}
+		knowledgeFactory.create(FuzzyTermBMP);
 
 		List<Pair<Integer, Integer>> bounds_Michigan = AbstractMichiganSolution.makeBounds();
 		int numberOfObjectives_Michigan = 2;

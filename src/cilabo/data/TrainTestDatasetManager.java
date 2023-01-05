@@ -67,7 +67,7 @@ public class TrainTestDatasetManager {
 	public TrainTestDatasetManager loadTrainTestFiles(String trainFile, String testFile) {
 		if(Objects.isNull(trainFile) || Objects.isNull(testFile)) { throw new NullPointerException("fileNameString is null");}
 
-		ExperienceParameter.classlabel = ExperienceParameter.ClassLabel.Single;
+		ExperienceParameter.classlabel = ExperienceParameter.CLASS_LABEL.Single;
 
 		DataSet train = Input.inputDataSet(trainFile);
 		addTrains(train);

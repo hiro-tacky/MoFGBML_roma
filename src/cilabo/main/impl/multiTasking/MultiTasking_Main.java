@@ -28,8 +28,8 @@ import cilabo.fuzzy.classifier.classification.Classification;
 import cilabo.fuzzy.classifier.classification.impl.SingleWinnerRuleSelection;
 import cilabo.fuzzy.classifier.impl.Classifier_basic;
 import cilabo.fuzzy.knowledge.Knowledge;
-import cilabo.fuzzy.knowledge.factory.impl.HomoTriangleKnowledgeFactory;
-import cilabo.fuzzy.knowledge.membershipParams.HomoTriangle_2_3_4_5;
+import cilabo.fuzzy.knowledge.factory.HomoTriangleKnowledgeFactory;
+import cilabo.fuzzy.knowledge.membershipParams.Parameters;
 import cilabo.fuzzy.rule.Rule.RuleBuilder;
 import cilabo.fuzzy.rule.antecedent.factory.impl.HeuristicRuleGenerationMethod;
 import cilabo.fuzzy.rule.consequent.factory.impl.MultiLabel_MoFGBML_Learning;
@@ -75,14 +75,14 @@ public class MultiTasking_Main {
 		Output.mkdirs(Consts.ROOTFOLDER);
 
 		// set command arguments to static variables
-		CommandLineArgs.loadArgs(CommandLineArgs.class.getCanonicalName(), args);
+		MultiTasking_CommandLineArgs.loadArgs(MultiTasking_CommandLineArgs.class.getCanonicalName(), args);
 		// Output constant parameters
 		String fileName = Consts.EXPERIMENT_ID_DIR + sep + "Consts.txt";
 		Output.writeln(fileName, Consts.getString(), true);
-		Output.writeln(fileName, CommandLineArgs.getParamsString(), true);
+		Output.writeln(fileName, MultiTasking_CommandLineArgs.getParamsString(), true);
 
 		// Initialize ForkJoinPool
-		Parallel.getInstance().initLearningForkJoinPool(CommandLineArgs.parallelCores);
+		Parallel.getInstance().initLearningForkJoinPool(MultiTasking_CommandLineArgs.parallelCores);
 
 		System.out.println("Processors: " + Runtime.getRuntime().availableProcessors() + " ");
 		System.out.print("args: ");
@@ -105,7 +105,7 @@ public class MultiTasking_Main {
 		JMetalRandom.getInstance().setSeed(Consts.RAND_SEED);
 
 		/* Load Dataset ======================== */
-		TrainTestDatasetManager.getInstance().loadTrainTestFiles(CommandLineArgs.trainFile, CommandLineArgs.testFile);
+		TrainTestDatasetManager.getInstance().loadTrainTestFiles(MultiTasking_CommandLineArgs.trainFile, MultiTasking_CommandLineArgs.testFile);
 
 		/* Run MoFGBML algorithm =============== */
 		DataSet train = TrainTestDatasetManager.getInstance().getTrains().get(0);
@@ -142,12 +142,9 @@ public class MultiTasking_Main {
 		String sep = File.separator;
 
 		int dimension = train.getNdim();
-		float[][] params = HomoTriangle_2_3_4_5.getParams();
-		HomoTriangleKnowledgeFactory.builder()
-			.dimension(dimension)
-			.params(params)
-			.build()
-			.create();
+		Parameters parameters = new Parameters(train, dimension);
+		HomoTriangleKnowledgeFactory KnowledgeFactory = new HomoTriangleKnowledgeFactory(dimension, parameters);
+		KnowledgeFactory.create();
 
 		List<Pair<Integer, Integer>> bounds_Michigan = AbstractMichiganSolution.makeBounds();
 		int numberOfObjectives_Michigan = 2;

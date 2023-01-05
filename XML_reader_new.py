@@ -58,7 +58,7 @@ class FIGURE_PARAMETER_CLASS:
 
 class RULE_BOOK_CLASS:
     def __init__(self):
-        self.IS_DTRA = False
+        self.IS_DTRA = True
         self.IS_RULENUM_MORE_TAHN_2 = True
         self.COVER_ALL_CLASS = True
         self.TRIAL_NUM_MORE_THAN_HALF = True
@@ -322,7 +322,7 @@ class MichiganSolution():
         
         self.id = michiganSolution.get('id')
         #antecedent
-        self.fuzzyTermIDVector = {int(fuzzySet.get('dimension')) : int(fuzzySet.text) for fuzzySet in michiganSolution.find('fuzzySets').findall('fuzzySetID')}
+        self.fuzzyTermIDVector = {int(fuzzySet.get('dimension')) : int(fuzzySet.text) for fuzzySet in michiganSolution.find('fuzzySetList').findall('fuzzySetID')}
         
         #consequent
         self.consequentClass = int(michiganSolution.find('rule').find('consequent').find('classLabel').text) 
@@ -337,9 +337,10 @@ class MichiganSolution():
 ### PittsburghSolution #######################################################
 class PittsburghSolution():
     """pittsbugh型用個体"""
-    def __init__(self, pittsburghSolution):
+    def __init__(self, pittsburghSolution, consts):
         self.michiganSolutions = {int(michiganSolution.get('id')) : MichiganSolution(michiganSolution) for michiganSolution in pittsburghSolution.findall('michiganSolution')}
         self.objectives = {objective.get('objectiveName') : float(objective.text) for objective in pittsburghSolution.find('objectives').findall('objective')}
+        self.consts = consts
         
     def getMichiganSolution(self, michiganSolutionID):
         return self.michiganSolutions[michiganSolutionID]
@@ -360,12 +361,12 @@ class PittsburghSolution():
             if len(buf) == int(consts.getParameter('CLASS_LABEL_NUMBER')): return True
             else: return False
     
-    def plotRule(self, knowledge, consts, figure_parameter, ruleIDList=None, coloring='class', inputPattern = None):
+    def plotRule(self, knowledge, figure_parameter, ruleIDList=None, coloring='class', inputPattern = None):
         if ruleIDList is not None: ruleIDList = range(len(self.michiganSolutions))
         if type(ruleIDList) is int: ruleIDList = [ruleIDList]
         
         """１つの画像に全てのif-thenルールをプロット"""
-        fig = multiFig_set(y_FigNum = len(self.ruleIDList), x_FigNum=consts.getParameter('ATTRIBUTE_NUMBER'), title='PittsburghSolution')
+        fig = multiFig_set(y_FigNum = len(self.ruleIDList), x_FigNum=self.consts.getParameter('ATTRIBUTE_NUMBER'), title='PittsburghSolution')
         for rule_i in ruleIDList:
             for dim_i, ax in enumerate(fig.axes):
                 
@@ -407,13 +408,14 @@ class PittsburghSolution():
                 buf_fitness = tmp[0]
                 buf_class = tmp[1]
         return buf_class
+    
         
 ### Population ###############################################################
 class Population():
     """個体群"""
-    def __init__(self, generations):
-        self.pittsburghSolutions = {id_: PittsburghSolution(pittsburghSolution) for id_, pittsburghSolution in enumerate(generations.find('population').findall('pittsburghSolution'))}
-        self.evaluationID = int(generations.get('evaluation'))
+    def __init__(self, population, consts):
+        self.consts = consts
+        self.pittsburghSolutions = {id_: PittsburghSolution(pittsburghSolution, consts) for id_, pittsburghSolution in enumerate(population.findall('pittsburghSolution'))}
     
     def getPittsburghSolution(self, pittsburghSolutionID):
         return self.pittsburghSolutions[pittsburghSolutionID]
@@ -421,23 +423,23 @@ class Population():
     def getMichiganSolution(self, pittsburghSolutionID, MichiganSolutionID):
         return self.pittsburghSolutions[pittsburghSolutionID].michiganSolutions[MichiganSolutionID]
     
-    def getPittsburghObjectives_All(self, RULE_BOOK, consts):
+    def getPittsburghObjectives_All(self, RULE_BOOK):
         """全個体をlist型で出力"""
         dataList = []
         for pittsburghSolution_i in self.pittsburghSolutions.values():
             if not RULE_BOOK.IS_RULENUM_MORE_TAHN_2 or pittsburghSolution_i.getObjective('NumberOfRule') > 1:
-                if not RULE_BOOK.COVER_ALL_CLASS or pittsburghSolution_i.isCoverAllClasses(consts):
+                if not RULE_BOOK.COVER_ALL_CLASS or pittsburghSolution_i.isCoverAllClasses(self.consts):
                     if RULE_BOOK.IS_DTRA: dataList.append((pittsburghSolution_i.getObjective('NumberOfRule'), pittsburghSolution_i.getObjective('ErrorRateDtra')))
                     else : dataList.append((pittsburghSolution_i.getObjective('NumberOfRule'), pittsburghSolution_i.getObjective('ErrorRateDtst')))
         return dataList
     
-    def getPittsburghObjectives_Average(self, RULE_BOOK, consts):
+    def getPittsburghObjectives_Average(self, RULE_BOOK):
         """各個体の平均値をlist型で出力"""
         dataBuf = {}
         dataList = []
         for pittsburghSolution_i in self.pittsburghSolutions.values():
             if not RULE_BOOK.IS_RULENUM_MORE_TAHN_2 or pittsburghSolution_i.getObjective('NumberOfRule') > 1:
-                if not RULE_BOOK.COVER_ALL_CLASS or pittsburghSolution_i.isCoverAllClasses(consts):
+                if not RULE_BOOK.COVER_ALL_CLASS or pittsburghSolution_i.isCoverAllClasses(self.consts):
                     if pittsburghSolution_i.getObjective('NumberOfRule') in dataBuf:
                         if RULE_BOOK.IS_DTRA: dataBuf[pittsburghSolution_i.getObjective('NumberOfRule')]['sum'] += pittsburghSolution_i.getObjective('ErrorRateDtra')
                         else : dataBuf[pittsburghSolution_i.getObjective('NumberOfRule')]['sum'] += pittsburghSolution_i.getObjective('ErrorRateDtst')
@@ -447,6 +449,15 @@ class Population():
                         else : dataBuf[pittsburghSolution_i.getObjective('NumberOfRule')] = {'sum':pittsburghSolution_i.getObjective('ErrorRateDtst'), 'num':1}
         dataList = [(key, value['sum']/value['num']) for key, value in dataBuf.items()]
         return dataList
+
+### Generations ##############################################################
+
+class Generations():
+    def __init__(self, generations, consts):
+        self.consts = consts
+        self.evaluationID = int(generations.get('evaluation'))
+        self.Populations = Population(generations.find('population'), consts)
+        self.knowledgeBase = KnowledgeBase(self.generations.find('knowledgeBase'))
     
 ### Trial Manager ############################################################
 
@@ -460,10 +471,10 @@ class TrialManager(XML):
         self.knowledge = KnowledgeBase(self.rootNode.find('knowledgeBase'))
         self.consts = Consts(self.rootNode.find('consts'))
         if ONLY_ALL_GENERATION_FLAG:
-            self.populations = {int(generations.get('evaluation')) : Population(generations) for generations in self.rootNode.findall('generations')\
+            self.populations = {int(generations.get('evaluation')) : Generations(generations, self.consts) for generations in self.rootNode.findall('generations')\
                                 if generations.get('evaluation') == self.consts.getParameter('TERMINATE_EVALUATION')}
         else:
-            self.populations = {int(generations.get('evaluation')) : Population(generations) for generations in self.rootNode.findall('generations')}
+            self.populations = {int(generations.get('evaluation')) : Generations(generations, self.consts) for generations in self.rootNode.findall('generations')}
         
     def getPopulation(self, evaluation = None):
         if evaluation is None : evaluation = int(self.consts.getParameter('TERMINATE_EVALUATION'))
@@ -513,7 +524,7 @@ class ExperimentManager():
         michiganSolutionsBuf = {}
         michiganSolutions = []
         for trial in self.TrialManagers.values():
-            tmp = trial.getPopulation(evaluation).getPittsburghObjectives_Average(RULE_BOOK, trial.consts)
+            tmp = trial.getPopulation(evaluation).getPittsburghObjectives_Average(RULE_BOOK)
             for data in tmp:
                 if data[0] in michiganSolutionsBuf:
                     michiganSolutionsBuf[data[0]]['sum'] += data[1]
@@ -532,7 +543,7 @@ class ExperimentManager():
         """1回試行で得られた個体群の平均値を出力"""
         michiganSolutions = []
         for trial in self.TrialManagers.values():
-            buf = trial.getPopulation(evaluation).getPittsburghObjectives_Average(RULE_BOOK, trial.consts)
+            buf = trial.getPopulation(evaluation).getPittsburghObjectives_Average(RULE_BOOK)
             michiganSolutions.extend(buf)
         return michiganSolutions
 
@@ -541,7 +552,7 @@ class ExperimentManager():
         michiganSolutions = []
         for trial in self.TrialManagers.values():
             population = trial.getPopulation(evaluation)
-            buf = population.getPittsburghObjectives_All(RULE_BOOK, trial.consts)
+            buf = population.getPittsburghObjectives_All(RULE_BOOK)
             michiganSolutions.extend(buf)
         return michiganSolutions        
     
@@ -574,10 +585,12 @@ class Master:
         if evaluation is None : evaluation = int(self.master[dataLabel].TrialManagers['trial{:0>2}'.format(trialID)].consts.getParameter('TERMINATE_EVALUATION'))
         return self.master[dataLabel].TrialManagers["{:s}{:0>2}".format(self.experimentID, trialID)].getPopulation(evaluation).getPittsburghSolution(pittsburghSolutionID)
     
-    def plotResult(self, evaluation, mode, RULE_BOOK, FIGURE_PARAMETER, experimentLabelList, saveFig_c=False):
+    def plotResult(self, evaluation, mode, RULE_BOOK, FIGURE_PARAMETER, experimentLabelList, saveFigFlag=False):
         """学習結果をプロット．
         model: ExperimentManager識別用, evaluation: 世代数, mode: プロットするモード選択, xlim: x軸のレンジ, ylim: y軸のレンジ, 
-        alpha: ドットの透明度, ruleBook: 表示個体の制限, plotData: 評価用データor学習用データ, saveFig_c: 画像を保存するか否か"""
+        alpha: ドットの透明度, ruleBook: 表示個体の制限, plotData: 評価用データor学習用データ, saveFig: 画像を保存するか否か"""
+        
+        if type(experimentLabelList) is not list: experimentLabelList = [experimentLabelList]
 
         if mode=='Allsolutions':
             fig = singleFig_set(FIGURE_PARAMETER, 'Allsolutions' + str(evaluation))
@@ -610,7 +623,7 @@ class Master:
                 
         plotResultSetting(ax, FIGURE_PARAMETER)
         
-        if saveFig:
+        if saveFigFlag:
             dataType = "Dtra" if RULE_BOOK.IS_DTRA else "Dtst"
             fileName = "result_{:s}_{:s}_{:08}".format(self.dataName, dataType, evaluation)
             saveFig(fig, self.currentDir + "/results/graph/" + self.dataName + "/", fileName, FIGURE_PARAMETER)

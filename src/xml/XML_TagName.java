@@ -1,5 +1,6 @@
 package xml;
 
+//必須
 public enum XML_TagName {
 	id,//汎用
 	dimension,//汎用
@@ -8,7 +9,7 @@ public enum XML_TagName {
 		population,
 			pittsburghSolution,
 				michiganSolution,
-					fuzzySets,
+					fuzzySetList,
 						fuzzySetID,
 
 					rule,
@@ -23,14 +24,18 @@ public enum XML_TagName {
 				objectives,
 					objective, objectiveName,
 
-	knowledgeBase,
-		//fuzzySets,
-			fuzzyTerm,
-				fuzzyTermID,
-				fuzzyTermName,
-				ShapeTypeID,
-				ShapeTypeName,
-				parameterSet,
-					parameter,
+		knowledgeBase,
+			fuzzySets,
+				fuzzyTerm,
+					fuzzyTermID,
+					fuzzyTermName,
+					ShapeTypeID,
+					ShapeTypeName,
+					parameterSet,
+						parameter,
+
+					divisionType,
+					partitionNum,
+					partition_i,
 	consts,
 }

@@ -32,6 +32,11 @@ public final class ClassLabel_Multi extends AbstractClassLabel <Integer[]> {
 		return this.classLabel[index];
 	}
 
+	@Override
+	public Integer getClassLabelInteger() {
+		return this.classLabel[0];
+	}
+
 	/** 指定したインデックスのクラスラベルを置き換え
 	 * @param index 置き換えるクラスラベルのインデックス
 	 * @param value 指定されたインデックスに格納されるクラスラベル

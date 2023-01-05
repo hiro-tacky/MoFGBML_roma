@@ -1,4 +1,4 @@
-package cilabo.main.impl.multiTasking;
+package cilabo.main.impl.basic;
 
 import java.io.File;
 
@@ -6,7 +6,7 @@ import cilabo.main.AbstractArgs;
 import cilabo.main.Consts;
 import cilabo.utility.Output;
 
-public class CommandLineArgs extends AbstractArgs {
+public class MoFGBML_Basic_CommandLineArgs extends AbstractArgs {
 	// ************************************************************
 	/** データセット名 */
 	public static String dataName;
@@ -28,7 +28,7 @@ public class CommandLineArgs extends AbstractArgs {
 		if(args.length < n) {
 			System.out.println("Need n=" + String.valueOf(n) + " arguments.");
 			System.out.println("---");
-			System.out.print(CommandLineArgs.getParamsString());
+			System.out.print(MoFGBML_Basic_CommandLineArgs.getParamsString());
 			System.out.println("---");
 			return;
 		}

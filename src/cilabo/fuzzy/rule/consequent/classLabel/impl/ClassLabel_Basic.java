@@ -35,6 +35,10 @@ public final class ClassLabel_Basic extends AbstractClassLabel <Integer>{
 		return true;
 	}
 
+	@Override
+	public Integer getClassLabelInteger() {
+		return this.classLabel;
+	}
 
 	@Override
 	public ClassLabel_Basic copy() {
@@ -60,4 +64,5 @@ public final class ClassLabel_Basic extends AbstractClassLabel <Integer>{
 	public boolean isRejectedClassLabel() {
 		return this.classLabel == AbstractClassLabel.RejectedClassLabel;
 	}
+
 }

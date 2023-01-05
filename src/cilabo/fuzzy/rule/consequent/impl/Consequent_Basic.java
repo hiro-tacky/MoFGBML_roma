@@ -50,6 +50,11 @@ public class Consequent_Basic extends AbstractConsequent <ClassLabel_Basic, Inte
 	}
 
 	@Override
+	public Integer getClassLabelInteger() {
+		return this.classLabel.getClassLabelInteger();
+	}
+
+	@Override
 	public boolean equalsValueOf(Integer classLabelValue) {
 		return this.classLabel.equalsValueOf(classLabelValue);
 	}
@@ -90,4 +95,5 @@ public class Consequent_Basic extends AbstractConsequent <ClassLabel_Basic, Inte
 
 		return consequent;
 	}
+
 }

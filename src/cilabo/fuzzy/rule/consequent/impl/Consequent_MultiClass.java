@@ -55,6 +55,11 @@ public class Consequent_MultiClass extends AbstractConsequent <ClassLabel_Multi,
 	}
 
 	@Override
+	public Integer getClassLabelInteger() {
+		return this.classLabel.getClassLabelInteger();
+	}
+
+	@Override
 	public boolean equalsValueOf(Integer[] classLabelValue) {
 		return this.classLabel.equalsValueOf(classLabelValue);
 	}

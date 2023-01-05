@@ -11,7 +11,7 @@ import cilabo.fuzzy.rule.Rule.RuleBuilder;
 import cilabo.gbml.objectivefunction.michigan.RuleLength;
 import cilabo.gbml.problem.michiganFGBML_Problem.AbstractMichiganFGBML;
 import cilabo.gbml.solution.michiganSolution.impl.MichiganSolution_Basic;
-import cilabo.main.ExperienceParameter.ObjectivesForMichigan;
+import cilabo.main.ExperienceParameter.OBJECTIVES_FOR_MICHIGAN;
 
 public class MichiganFGBML_Basic <RuleObject extends Rule> extends AbstractMichiganFGBML <MichiganSolution_Basic<RuleObject>, RuleObject>{
 
@@ -58,13 +58,13 @@ public class MichiganFGBML_Basic <RuleObject extends Rule> extends AbstractMichi
 		}
 		/* The second objective */
 		RuleLength<MichiganSolution_Basic<RuleObject>> RuleLengthFunc = new RuleLength<MichiganSolution_Basic<RuleObject>>();
-		solution.setObjective(ObjectivesForMichigan.RuleLength.toInt(), RuleLengthFunc.function(solution));
+		solution.setObjective(OBJECTIVES_FOR_MICHIGAN.RuleLength.toInt(), RuleLengthFunc.function(solution));
 	}
 
 	public void calculateNumberOfWinnerRule() {
 		for(int i=0; i<train.getDataSize(); i++) {
-			double buf = winnerSolutionForEachPattern.get(i).getSolution().getObjective(ObjectivesForMichigan.FitnessValue.toInt());
-			winnerSolutionForEachPattern.get(i).getSolution().setObjective(ObjectivesForMichigan.FitnessValue.toInt(), buf+1);
+			double buf = winnerSolutionForEachPattern.get(i).getSolution().getObjective(OBJECTIVES_FOR_MICHIGAN.FitnessValue.toInt());
+			winnerSolutionForEachPattern.get(i).getSolution().setObjective(OBJECTIVES_FOR_MICHIGAN.FitnessValue.toInt(), buf+1);
 		}
 	}
 

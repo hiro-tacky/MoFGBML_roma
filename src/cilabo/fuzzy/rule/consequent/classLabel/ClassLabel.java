@@ -14,6 +14,12 @@ public interface ClassLabel<ClassLabelValue> {
 	 * @return このインスタンスが持つクラスラベルのコピー	 */
 	public ClassLabelValue getClassLabelValue();
 
+	/**
+	 * 単一の結論部クラスを取得
+	 * @return 結論部クラス
+	 */
+	public Integer getClassLabelInteger();
+
 	/** クラスラベルの結論部クラス変数を代入<br>
 	 * @param classLabel 代入されるクラスラベル */
 	public void setClassLabelValue(ClassLabelValue classLabelValue);
