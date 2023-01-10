@@ -27,14 +27,14 @@ import cilabo.fuzzy.classifier.Classifier;
 import cilabo.fuzzy.classifier.classification.Classification;
 import cilabo.fuzzy.classifier.classification.impl.SingleWinnerRuleSelection;
 import cilabo.fuzzy.classifier.impl.Classifier_basic;
-import cilabo.fuzzy.knowledge.FuzzyTermBluePrintManager;
-import cilabo.fuzzy.knowledge.factory.MixedKnowledgeFactory;
-import cilabo.fuzzy.knowledge.membershipParams.Parameters;
+import cilabo.fuzzy.knowledge.FuzzyTermTypeForMixed;
+import cilabo.fuzzy.knowledge.Knowledge;
+import cilabo.fuzzy.knowledge.factory.KnowledgeFactoryFromXML;
 import cilabo.fuzzy.rule.Rule.RuleBuilder;
 import cilabo.fuzzy.rule.antecedent.factory.impl.HeuristicRuleGenerationMethod;
 import cilabo.fuzzy.rule.consequent.factory.impl.MoFGBML_Learning;
 import cilabo.fuzzy.rule.impl.Rule_Basic;
-import cilabo.gbml.algorithm.HybridMoFGBMLwithNSGAII;
+import cilabo.gbml.algorithm.HybridMoFGBMLwithNSGAII2ForMixed;
 import cilabo.gbml.objectivefunction.pittsburgh.ErrorRate;
 import cilabo.gbml.operator.crossover.HybridGBMLcrossover;
 import cilabo.gbml.operator.crossover.MichiganCrossover;
@@ -47,12 +47,12 @@ import cilabo.gbml.solution.michiganSolution.impl.MichiganSolution_Basic;
 import cilabo.gbml.solution.pittsburghSolution.PittsburghSolution;
 import cilabo.gbml.solution.pittsburghSolution.impl.PittsburghSolution_Basic;
 import cilabo.main.Consts;
-import cilabo.main.ExperienceParameter.DIVISION_TYPE;
+import cilabo.utility.FuzzyTermUsedRanking;
 import cilabo.utility.Output;
 import cilabo.utility.Parallel;
 import cilabo.utility.Random;
-import jfml.term.FuzzyTermType;
 import xml.XML_manager;
+import xml.XML_reader;
 
 /**
  * @version 1.0
@@ -149,21 +149,35 @@ public class MixedKnowledge_Main {
 		XML_manager.addElement(XML_manager.getRoot(), Consts.toElement());
 
 		int dimension = train.getNdim();
-		Parameters parameters = new Parameters(train, dimension);
-		MixedKnowledgeFactory knowledgeFactory = new MixedKnowledgeFactory(dimension, parameters);
-		FuzzyTermBluePrintManager FuzzyTermBMP = new FuzzyTermBluePrintManager(train, dimension);
-		for(int dim_i=0; dim_i<dimension; dim_i++) {
-			int[] K = new int[] {2, 3, 4, 5};
-			FuzzyTermBMP.addFuzyyTermsBluePrint(DIVISION_TYPE.equalDivision, dim_i, K, FuzzyTermType.TYPE_triangularShape);
-			FuzzyTermBMP.addFuzyyTermsBluePrint(DIVISION_TYPE.equalDivision, dim_i, K, FuzzyTermType.TYPE_trapezoidShape);
-			FuzzyTermBMP.addFuzyyTermsBluePrint(DIVISION_TYPE.equalDivision, dim_i, K, FuzzyTermType.TYPE_rectangularShape);
-			FuzzyTermBMP.addFuzyyTermsBluePrint(DIVISION_TYPE.equalDivision, dim_i, K, FuzzyTermType.TYPE_gaussianShape);
-			FuzzyTermBMP.addFuzyyTermsBluePrint(DIVISION_TYPE.entropyDivision, dim_i, K, FuzzyTermType.TYPE_triangularShape);
-			FuzzyTermBMP.addFuzyyTermsBluePrint(DIVISION_TYPE.entropyDivision, dim_i, K, FuzzyTermType.TYPE_trapezoidShape);
-			FuzzyTermBMP.addFuzyyTermsBluePrint(DIVISION_TYPE.entropyDivision, dim_i, K, FuzzyTermType.TYPE_rectangularShape);
-			FuzzyTermBMP.addFuzyyTermsBluePrint(DIVISION_TYPE.entropyDivision, dim_i, K, FuzzyTermType.TYPE_gaussianShape);
-		}
-		knowledgeFactory.create(FuzzyTermBMP);
+
+		/////////////////////////////////
+//		Parameters parameters = new Parameters(train, dimension);
+//		MixedKnowledgeFactory knowledgeFactory = new MixedKnowledgeFactory(dimension, parameters);
+//		FuzzyTermBluePrintManager FuzzyTermBMP = new FuzzyTermBluePrintManager(train, dimension);
+//		for(int dim_i=0; dim_i<dimension; dim_i++) {
+//			int[] K = new int[] {2, 3, 4, 5};
+//			FuzzyTermBMP.addFuzyyTermsBluePrint(DIVISION_TYPE.equalDivision, dim_i, K, FuzzyTermType.TYPE_triangularShape);
+//			FuzzyTermBMP.addFuzyyTermsBluePrint(DIVISION_TYPE.equalDivision, dim_i, K, FuzzyTermType.TYPE_trapezoidShape);
+//			FuzzyTermBMP.addFuzyyTermsBluePrint(DIVISION_TYPE.equalDivision, dim_i, K, FuzzyTermType.TYPE_rectangularShape);
+//			FuzzyTermBMP.addFuzyyTermsBluePrint(DIVISION_TYPE.equalDivision, dim_i, K, FuzzyTermType.TYPE_gaussianShape);
+//			FuzzyTermBMP.addFuzyyTermsBluePrint(DIVISION_TYPE.entropyDivision, dim_i, K, FuzzyTermType.TYPE_triangularShape);
+//			FuzzyTermBMP.addFuzyyTermsBluePrint(DIVISION_TYPE.entropyDivision, dim_i, K, FuzzyTermType.TYPE_trapezoidShape);
+//			FuzzyTermBMP.addFuzyyTermsBluePrint(DIVISION_TYPE.entropyDivision, dim_i, K, FuzzyTermType.TYPE_rectangularShape);
+//			FuzzyTermBMP.addFuzyyTermsBluePrint(DIVISION_TYPE.entropyDivision, dim_i, K, FuzzyTermType.TYPE_gaussianShape);
+//		}
+//		knowledgeFactory.create(FuzzyTermBMP);
+
+		/////////////////////////////////
+		XML_reader XML_reader = null;
+		try { XML_reader = new XML_reader(MixedKnowledge_Consts.LEARNING_EXPERIMENT_ID_DIR + File.separator + Consts.XML_FILE_NAME + ".xml");
+		} catch (Exception e) {	e.printStackTrace(); }
+		KnowledgeFactoryFromXML knowledgeFactory = new KnowledgeFactoryFromXML(dimension, XML_reader.getKnowledgeElement(MixedKnowledge_Consts.LEARNING_EVALUATION));
+		knowledgeFactory.create();
+
+		int[] tmp = new int[dimension]; for(int i=0; i<dimension; i++) {tmp[i] = 14;}
+		FuzzyTermTypeForMixed[][] buf = FuzzyTermUsedRanking.getUsedFuzzySetID(XML_reader.getPopulation(MixedKnowledge_Consts.LEARNING_EVALUATION), dimension, tmp);
+		Knowledge.getInstance().setFuzzySets(buf);
+		/////////////////////////////////
 
 		List<Pair<Integer, Integer>> bounds_Michigan = AbstractMichiganSolution.makeBounds();
 		int numberOfObjectives_Michigan = 2;
@@ -220,8 +234,8 @@ public class MixedKnowledge_Main {
 
 
 		/* Algorithm: Hybrid-style MoFGBML with NSGA-II */
-		HybridMoFGBMLwithNSGAII<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>> algorithm
-			= new HybridMoFGBMLwithNSGAII<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>>(problem,
+		HybridMoFGBMLwithNSGAII2ForMixed<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>> algorithm
+			= new HybridMoFGBMLwithNSGAII2ForMixed<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>>(problem,
 											Consts.POPULATION_SIZE,
 											Consts.OFFSPRING_POPULATION_SIZE,
 											Consts.OUTPUT_FREQUENCY,

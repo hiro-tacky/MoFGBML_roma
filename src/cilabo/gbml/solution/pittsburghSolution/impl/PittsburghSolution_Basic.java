@@ -3,6 +3,7 @@ package cilabo.gbml.solution.pittsburghSolution.impl;
 import java.util.HashMap;
 
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import cilabo.data.InputVector;
 import cilabo.data.TrainTestDatasetManager;
@@ -27,6 +28,22 @@ public final class PittsburghSolution_Basic <michiganSolution extends MichiganSo
 				michiganSolutionBuilder, classifier);
 		for(int i=0; i<this.getNumberOfVariables(); i++) {
 			michiganSolution michiganSolution = michiganSolutionBuilder.createMichiganSolution();
+			this.setVariable(i, michiganSolution);
+		}
+	}
+
+	public PittsburghSolution_Basic(int numberOfObjectives,
+			int numberOfConstraints,
+			MichiganSolutionBuilder<michiganSolution> michiganSolutionBuilder,
+			Classifier<michiganSolution> classifier,
+			Element pittsburghSolution) {
+		super(pittsburghSolution.getElementsByTagName(XML_TagName.michiganSolution.toString()).getLength(),
+				numberOfObjectives, numberOfConstraints,
+				michiganSolutionBuilder, classifier);
+
+		NodeList michiganSolutionList = pittsburghSolution.getElementsByTagName(XML_TagName.michiganSolution.toString());
+		for(int i=0; i<michiganSolutionList.getLength(); i++) {
+			michiganSolution michiganSolution = michiganSolutionBuilder.createMichiganSolution((Element)michiganSolutionList.item(i));
 			this.setVariable(i, michiganSolution);
 		}
 	}

@@ -12,11 +12,11 @@ from ipywidgets import interact, IntSlider, Select, FloatSlider
 #数値実験基本設定
 DontCareID = 99
 FuzzyTypeID = {9:"rectangle", 7:"trapezoid", 3:"triangle", 4:"gaussian", DontCareID:"DontCare"}
-myPath = os.getcwd()
+ROOTFOLDER = os.getcwd()
 cmap = plt.get_cmap("tab10")
 #その他の基本設定
 IMAGE_SAVE_DIR_PATH = "results/image/" #画像保存用ディレクトリ
-ONLY_ALL_GENERATION_FLAG = False
+ONLY_FINAL_GENERATION_FLAG = False
 
 class DATASET_INFO_CLASS:
     def __init__(self):
@@ -54,7 +54,15 @@ class FIGURE_PARAMETER_CLASS:
         self.TICK_FONTSIZE = 20 #目盛りのフォントサイズ
         self.LEGEND_FONTSIZE = 20 #汎用のフォントサイズ
         self.MARGIN_SIZE = {'left':0.06, 'right':0.94, 'bottom':0.06, 'top':0.94} #余白サイズ
-        self.IS_TRANSPARENT = False #背景の透過 
+        self.IS_TRANSPARENT = False #背景の透過
+        
+    def simple(self):
+        #figureの基本設定
+        self.PLOT_TITLE_FLAG = False
+        self.PLOT_TICK_FLAG = False
+        self.PLOT_LABEL_FLAG = False
+        self.PLOT_LEGEND_FLAG = True
+        self.PLOT_GRID_FLAG = True
 
 class RULE_BOOK_CLASS:
     def __init__(self):
@@ -207,7 +215,7 @@ def plotResultSetting(ax, figure_parameter):
         ax.grid(True)
 ##############################################################################
 
-### Consts ####################################################################  
+### Consts ###################################################################  
 class Consts:
     """Costs.propertyのためのクラス"""
     def __init__(self, consts):
@@ -218,8 +226,8 @@ class Consts:
             else:
                 self.settingParameters[child.tag] = [int(grandChild.text) for grandChild in child]
                 
-    def getParameter(self, ParameterName):
-        return self.settingParameters[ParameterName]
+    def getParameter(self, parameterName):
+        return self.settingParameters[parameterName]
     
     
 ### Fuzzy Term ###############################################################            
@@ -457,7 +465,7 @@ class Generations():
         self.consts = consts
         self.evaluationID = int(generations.get('evaluation'))
         self.Populations = Population(generations.find('population'), consts)
-        self.knowledgeBase = KnowledgeBase(self.generations.find('knowledgeBase'))
+        self.knowledgeBase = KnowledgeBase(generations.find('knowledgeBase'))
     
 ### Trial Manager ############################################################
 
@@ -468,9 +476,8 @@ class TrialManager(XML):
         """一試行用のクラス
         入力: path=xmlファイルのパス, savePath 保存先指定フォルダ"""
         self.savePath = savePath
-        self.knowledge = KnowledgeBase(self.rootNode.find('knowledgeBase'))
         self.consts = Consts(self.rootNode.find('consts'))
-        if ONLY_ALL_GENERATION_FLAG:
+        if ONLY_FINAL_GENERATION_FLAG:
             self.populations = {int(generations.get('evaluation')) : Generations(generations, self.consts) for generations in self.rootNode.findall('generations')\
                                 if generations.get('evaluation') == self.consts.getParameter('TERMINATE_EVALUATION')}
         else:
@@ -562,14 +569,14 @@ class ExperimentManager():
 ### PLOT XML FILE ############################################################
 
 class Master:
-    def __init__(self, dataName, algorithmIDList, experimentLabel, experimentID, currentDir = myPath):
+    def __init__(self, dataName, algorithmIDList, experimentLabelList, experimentID, ROOTFOLDER = ROOTFOLDER):
         self.dataName = dataName
-        self.currentDir = currentDir
-        self.DATA_LABEL = experimentLabel
+        self.ROOTFOLDER = ROOTFOLDER
+        self.DATA_LABEL = experimentLabelList
         self.experimentID = experimentID
         self.master = {}
-        for index, experimentLabel_i in enumerate(experimentLabel):
-            self.master[experimentLabel_i] = ExperimentManager(self.currentDir, self.currentDir, experimentLabel_i, self.dataName, algorithmIDList[index], experimentID)
+        for index, experimentLabel_i in enumerate(experimentLabelList):
+            self.master[experimentLabel_i] = ExperimentManager(self.ROOTFOLDER, self.ROOTFOLDER, experimentLabel_i, self.dataName, algorithmIDList[index], experimentID)
             
     def getExperimentManager(self, dataLabel):
         return self.master[dataLabel]
@@ -588,7 +595,7 @@ class Master:
     def plotResult(self, evaluation, mode, RULE_BOOK, FIGURE_PARAMETER, experimentLabelList, saveFigFlag=False):
         """学習結果をプロット．
         model: ExperimentManager識別用, evaluation: 世代数, mode: プロットするモード選択, xlim: x軸のレンジ, ylim: y軸のレンジ, 
-        alpha: ドットの透明度, ruleBook: 表示個体の制限, plotData: 評価用データor学習用データ, saveFig: 画像を保存するか否か"""
+        alpha: ドットの透明度, ruleBook: 表示個体の制限, plotData: 評価用データor学習用データ, saveFigFlag: 画像を保存するか否か"""
         
         if type(experimentLabelList) is not list: experimentLabelList = [experimentLabelList]
 
@@ -626,15 +633,8 @@ class Master:
         if saveFigFlag:
             dataType = "Dtra" if RULE_BOOK.IS_DTRA else "Dtst"
             fileName = "result_{:s}_{:s}_{:08}".format(self.dataName, dataType, evaluation)
-            saveFig(fig, self.currentDir + "/results/graph/" + self.dataName + "/", fileName, FIGURE_PARAMETER)
+            saveFig(fig, self.ROOTFOLDER + "/results/graph/" + self.dataName + "/", fileName, FIGURE_PARAMETER)
         plt.show()
-        
-    def plotRule(self, dataLabel, evaluationID, trialID, individualID, coloring='class'):
-        """ルールを表示
-        dataLabel: ExperimentManager識別用, evaluationID: 世代数, trialID: 試行番号, individualID: 個体番号, coloring: カラーリングのルール"""
-        population = self.getPopulation(dataLabel=dataLabel, evaluationID=evaluationID, trialID=trialID)
-        individual = population.getIndividual(individualID)
-        widgets.interact_manual(individual.plotRuleMulti, coloring=ipywidgets.fixed(coloring), inputPattern=ipywidgets.fixed(None))
         
 ###############################################################################
 

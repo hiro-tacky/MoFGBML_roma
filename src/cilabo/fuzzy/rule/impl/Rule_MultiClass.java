@@ -1,6 +1,7 @@
 package cilabo.fuzzy.rule.impl;
 
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import cilabo.data.InputVector;
 import cilabo.fuzzy.rule.AbstractRule;
@@ -67,6 +68,28 @@ public final class Rule_MultiClass extends AbstractRule <Antecedent_Basic, Conse
 				buf[i] = this.createRule(antecedentIndex[i]);
 			}
 			return buf;
+		}
+
+		@Override
+		public Rule_MultiClass createRule(Element michiganSolution) {
+			Antecedent_Basic antecedent = new Antecedent_Basic();
+			Element rule_node = (Element) michiganSolution.getElementsByTagName(XML_TagName.rule.toString()).item(0);
+			Element consequent_node = (Element) rule_node.getElementsByTagName(XML_TagName.consequent.toString()).item(0);
+
+			NodeList classLabelNodes = consequent_node.getElementsByTagName(XML_TagName.classLabelMulti.toString());
+			Integer[] classLabel = new Integer[classLabelNodes.getLength()];
+			for(int i=0; i<classLabelNodes.getLength(); i++) {
+				classLabel[i] = Integer.valueOf(classLabelNodes.item(i).getTextContent());
+			}
+
+			NodeList ruleWeightNodes = consequent_node.getElementsByTagName(XML_TagName.ruleWeightMulti.toString());
+			Double[] ruleWeight = new Double[ruleWeightNodes.getLength()];
+			for(int i=0; i<ruleWeightNodes.getLength(); i++) {
+				ruleWeight[i] = Double.valueOf(ruleWeightNodes.item(i).getTextContent());
+			}
+
+			Consequent_MultiClass consequent = new Consequent_MultiClass(classLabel, ruleWeight);
+			return new Rule_MultiClass(antecedent, consequent);
 		}
 
 		@Override

@@ -68,6 +68,8 @@ public interface MichiganSolution<RuleObject extends Rule> extends IntegerSoluti
 		 * @return 生成されたMichiganSolution */
 		public michiganObject createMichiganSolution();
 
+		public michiganObject createMichiganSolution(Element michiganSolution);
+
 		/** 入力された遺伝子情報を持つMichiganSolutionを生成する．
 		 * @param variables 代入する遺伝子情報
 		 * @return MichiganSolutionを生成する．*/
@@ -85,5 +87,6 @@ public interface MichiganSolution<RuleObject extends Rule> extends IntegerSoluti
 		public michiganObject[] createMichiganSolutions(int numberOfGenerateRule, int[][] variables);
 
 		public MichiganSolutionBuilder<michiganObject> copy();
+
 	}
 }

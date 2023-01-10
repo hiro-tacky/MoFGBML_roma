@@ -19,6 +19,10 @@ public class Consequent_Basic extends AbstractConsequent <ClassLabel_Basic, Inte
 		super(classLabel, ruleWeight);
 	}
 
+	public Consequent_Basic(int classLabel, double ruleWeight) {
+		super(new ClassLabel_Basic(classLabel), new RuleWeight_Basic(ruleWeight));
+	}
+
 	@Override
 	public Consequent_Basic copy() {
 		return new Consequent_Basic(this.classLabel.copy(), this.ruleWeight.copy());

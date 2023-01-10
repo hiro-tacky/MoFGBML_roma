@@ -15,6 +15,7 @@ import cilabo.main.Consts;
  */
 public class RuleAdditionStyleReplacement
 	implements Replacement<MichiganSolution<?>> {
+
 	public List<MichiganSolution<?>> replace(List<MichiganSolution<?>> currentList, List<MichiganSolution<?>> offspringList) {
 
 		// 親個体をfitness順にソートする

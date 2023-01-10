@@ -16,6 +16,7 @@ import xml.XML_manager;
  *
  */
 public class Knowledge {
+	public final static int DnotCare_FuzzyTermID = 99;
 	private static Knowledge instance = new Knowledge();
 	private FuzzyTermTypeForMixed[][] fuzzySets;
 
@@ -162,8 +163,11 @@ public class Knowledge {
 	}
 
 	public static String makeFuzzyTermName(DIVISION_TYPE divisionType, int ShapeTypeID, int FuzzyTermID) {
-		if(ShapeTypeID == 99) {return "DontCare";}
-		return String.format("%s_%s_%02d", Knowledge.getShapeTypeNameFromID(ShapeTypeID),
-				Knowledge.getDdivisionTypeNameFromID(divisionType), FuzzyTermID);
+		if(ShapeTypeID == Knowledge.DnotCare_FuzzyTermID) {
+			return "DontCare";
+		}else {
+			return String.format("%s_%s_%02d", Knowledge.getShapeTypeNameFromID(ShapeTypeID),
+			Knowledge.getDdivisionTypeNameFromID(divisionType), FuzzyTermID);
+		}
 	}
 }

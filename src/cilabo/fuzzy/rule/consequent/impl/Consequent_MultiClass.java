@@ -24,6 +24,10 @@ public class Consequent_MultiClass extends AbstractConsequent <ClassLabel_Multi,
 		super(classLabel, ruleWeight);
 	}
 
+	public Consequent_MultiClass(Integer[] classLabel, Double[] ruleWeight) {
+		super(new ClassLabel_Multi(classLabel), new RuleWeight_Multi(ruleWeight));
+	}
+
 	@Override
 	public Consequent_MultiClass copy() {
 		return new Consequent_MultiClass(this.classLabel.copy(), this.ruleWeight.copy());

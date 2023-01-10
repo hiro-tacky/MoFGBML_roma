@@ -58,6 +58,18 @@ public final class Rule_Basic extends AbstractRule <Antecedent_Basic, Consequent
 		}
 
 		@Override
+		public Rule_Basic createRule(Element michiganSolution) {
+			Antecedent_Basic antecedent = new Antecedent_Basic();
+			Element rule_node = (Element) michiganSolution.getElementsByTagName(XML_TagName.rule.toString()).item(0);
+			Element consequent_node = (Element) rule_node.getElementsByTagName(XML_TagName.consequent.toString()).item(0);
+			int classLabel = Integer.valueOf(consequent_node.getElementsByTagName(XML_TagName.classLabel.toString()).item(0).getTextContent());
+			double ruleWeight = Double.valueOf(consequent_node.getElementsByTagName(XML_TagName.ruleWeight.toString()).item(0).getTextContent());
+
+			Consequent_Basic consequent = new Consequent_Basic(classLabel, ruleWeight);
+			return new Rule_Basic(antecedent, consequent);
+		}
+
+		@Override
 		public RuleBuilder_Basic copy() {
 			return new RuleBuilder_Basic(this.antecedentFactory.copy(), this.consequentFactory.copy());
 		}

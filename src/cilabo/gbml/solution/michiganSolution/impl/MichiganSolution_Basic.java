@@ -7,6 +7,7 @@ import java.util.Objects;
 import org.apache.commons.lang3.tuple.Pair;
 import org.uma.jmetal.solution.integersolution.IntegerSolution;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import cilabo.fuzzy.rule.Rule;
 import cilabo.fuzzy.rule.Rule.RuleBuilder;
@@ -36,6 +37,28 @@ public final class MichiganSolution_Basic<RuleObject extends Rule> extends Abstr
 		int[] variables = ruleBuilder.createAntecedentIndex();
 		this.setVariables(variables);
 		this.learning();
+	}
+
+	/** コンストラクタ
+	 * @param bounds 各遺伝子が取りうる値の上限値と下限値の配列
+	 * @param numberOfObjectives 目的関数の個数
+	 * @param numberOfConstraints 制約の個数
+	 * @param ruleBuilder ルール生成器．
+	 */
+	public MichiganSolution_Basic(List<Pair<Integer, Integer>> bounds,
+			int numberOfObjectives,
+			int numberOfConstraints,
+			RuleBuilder<RuleObject> ruleBuilder,
+			Element michiganSolution) {
+		super(bounds, numberOfObjectives, numberOfConstraints, ruleBuilder);
+		Element fuzzySetList = (Element) michiganSolution.getElementsByTagName(XML_TagName.fuzzySetList.toString()).item(0);
+		NodeList fuzzySetIDList = fuzzySetList.getElementsByTagName(XML_TagName.fuzzySetID.toString());
+		int[] variables = new int[fuzzySetIDList.getLength()];
+		for(int i=0; i<fuzzySetIDList.getLength(); i++) {
+			variables[i] = Integer.valueOf(fuzzySetIDList.item(i).getTextContent());
+		}
+		this.setVariables(variables);
+		this.rule = this.ruleBuilder.createRule(michiganSolution);
 	}
 
 	/** コンストラクタ
@@ -99,6 +122,21 @@ public final class MichiganSolution_Basic<RuleObject extends Rule> extends Abstr
 					this.ruleBuilder);
 			String attributeId = new NumberOfWinner<>().getAttributeId();
 			solution.setAttribute(attributeId, 0);
+			return solution;
+		}
+
+		@Override
+		public MichiganSolution_Basic<RuleObject> createMichiganSolution(Element michiganSolution) {
+			List<Pair<Integer, Integer>> bounds = this.bounds;
+			if(Objects.isNull(bounds)) {
+				bounds = AbstractMichiganSolution.makeBounds();
+			}
+			MichiganSolution_Basic<RuleObject> solution = new MichiganSolution_Basic<RuleObject>(
+					bounds,
+					this.numberOfObjectives,
+					this.numberOfConstraints,
+					this.ruleBuilder,
+					michiganSolution);
 			return solution;
 		}
 

@@ -38,9 +38,9 @@ public class HomoTriangleKnowledgeFactory{
 			fuzzySets[dim_i] = new FuzzyTermTypeForMixed[len + 1];
 
 			//Don't care
-			fuzzySets[dim_i][0] = new FuzzyTermTypeForMixed(Knowledge.makeFuzzyTermName(DIVISION_TYPE.equalDivision, FuzzyTermType.TYPE_rectangularShape, 99),
-												FuzzyTermType.TYPE_rectangularShape, new float[] {0f, 1f},
-												DIVISION_TYPE.equalDivision, 0, 0);
+			fuzzySets[dim_i][0] = new FuzzyTermTypeForMixed(
+					Knowledge.makeFuzzyTermName(DIVISION_TYPE.equalDivision, FuzzyTermType.TYPE_rectangularShape, Knowledge.DnotCare_FuzzyTermID),
+					FuzzyTermType.TYPE_rectangularShape, new float[] {0f, 1f}, DIVISION_TYPE.equalDivision, 0, 0);
 			for(int j=1, cnt=1; j < K[dim_i].length + 1; j++) {
 				float[][] param = parameters.triangle(DIVISION_TYPE.equalDivision, dim_i, K[dim_i][j-1]);
 				for(int k_i=0; k_i<K[dim_i][j-1]; k_i++) {

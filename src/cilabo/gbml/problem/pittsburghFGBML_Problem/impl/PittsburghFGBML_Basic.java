@@ -1,6 +1,7 @@
 package cilabo.gbml.problem.pittsburghFGBML_Problem.impl;
 
 import org.uma.jmetal.problem.Problem;
+import org.w3c.dom.Element;
 
 import cilabo.data.DataSet;
 import cilabo.fuzzy.classifier.Classifier;
@@ -74,6 +75,17 @@ public class PittsburghFGBML_Basic <michiganSolution extends MichiganSolution<?>
 		for(int i=0; i<this.getNumberOfVariables(); i++) {
 			pittsburghSolution.setVariable(i, solutionArray[i]);
 		}
+		return pittsburghSolution;
+	}
+
+	public PittsburghSolution_Basic<michiganSolution> createSolution(Element pittsburghSolutionNode) {
+
+		PittsburghSolution_Basic<michiganSolution> pittsburghSolution = new PittsburghSolution_Basic<michiganSolution>(
+				this.getNumberOfObjectives(),
+				this.getNumberOfConstraints(),
+				this.michiganSolutionBuilder.copy(),
+				this.classifier.copy(),
+				pittsburghSolutionNode);
 		return pittsburghSolution;
 	}
 

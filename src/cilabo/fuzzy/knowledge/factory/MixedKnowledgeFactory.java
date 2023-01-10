@@ -3,8 +3,8 @@ package cilabo.fuzzy.knowledge.factory;
 import java.util.ArrayList;
 
 import cilabo.fuzzy.knowledge.FuzzyTermBluePrintManager;
-import cilabo.fuzzy.knowledge.FuzzyTermTypeForMixed;
 import cilabo.fuzzy.knowledge.FuzzyTermBluePrintManager.FuzzyTermsBluePrint;
+import cilabo.fuzzy.knowledge.FuzzyTermTypeForMixed;
 import cilabo.fuzzy.knowledge.Knowledge;
 import cilabo.fuzzy.knowledge.membershipParams.Parameters;
 import cilabo.main.ExperienceParameter.DIVISION_TYPE;
@@ -35,7 +35,8 @@ public class MixedKnowledgeFactory {
 		for(int dim_i=0; dim_i<this.dimension; dim_i++) {
 			fuzzySets[dim_i] = new FuzzyTermTypeForMixed[FuzzyTermBPM.getfuzyyTermsNum(dim_i)+1];
 			//Don't care
-			fuzzySets[dim_i][0] = new FuzzyTermTypeForMixed(Knowledge.makeFuzzyTermName(DIVISION_TYPE.equalDivision, FuzzyTermType.TYPE_rectangularShape, 99),
+			fuzzySets[dim_i][0] = new FuzzyTermTypeForMixed(
+					Knowledge.makeFuzzyTermName(DIVISION_TYPE.equalDivision, FuzzyTermType.TYPE_rectangularShape, Knowledge.DnotCare_FuzzyTermID),
 					FuzzyTermType.TYPE_rectangularShape, new float[] {0f, 1f}, DIVISION_TYPE.equalDivision, 0, 0);
 
 			ArrayList<FuzzyTermsBluePrint> FuzzyTermBP = FuzzyTermBPM.getFuzzyTermsBluePrint(dim_i);

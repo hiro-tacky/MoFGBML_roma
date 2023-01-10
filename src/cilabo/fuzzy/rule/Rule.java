@@ -72,6 +72,11 @@ public interface Rule<AntecedentObject extends Antecedent, ConsequentObject exte
 		 * @return 生成されたRuleオブジェクトの配列*/
 		public RuleObject[] createRule(int[][] antecedentIndex);
 
+		/** 入力された遺伝子情報を基にRuleオブジェクトを複数生成する
+		 * @param antecedentIndex 生成に用いる遺伝子情報
+		 * @return 生成されたRuleオブジェクトの配列*/
+		public RuleObject createRule(Element michiganSolution);
+
 		public RuleBuilder<RuleObject> copy();
 	}
 }

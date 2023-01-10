@@ -20,7 +20,7 @@ public final class SingleWinnerRuleSelection<michiganSolution extends MichiganSo
 	public MichiganSolution classify(List<michiganSolution> michiganSolutionList, InputVector vector) {
 
 		boolean canClassify = true; //識別可能か
-		double max = Double.MIN_VALUE; //適用度最大値
+		double max = -Double.MAX_VALUE; //適用度最大値
 		int winner = 0;
 		for(int q = 0; q < michiganSolutionList.size(); q++) {
 			michiganSolution michiganSolution = michiganSolutionList.get(q);

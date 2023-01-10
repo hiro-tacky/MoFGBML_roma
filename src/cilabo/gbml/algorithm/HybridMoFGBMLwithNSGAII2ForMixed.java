@@ -43,8 +43,9 @@ import cilabo.gbml.solution.pittsburghSolution.impl.PittsburghSolution_Basic;
 import cilabo.util.fileoutput.PittsburghSolutionListOutput;
 import xml.XML_TagName;
 import xml.XML_manager;
+import xml.XML_reader;
 
-public class HybridMoFGBMLwithNSGAII <S extends PittsburghSolution<?>>extends AbstractEvolutionaryAlgorithm<S, List<S>>
+public class HybridMoFGBMLwithNSGAII2ForMixed <S extends PittsburghSolution<?>>extends AbstractEvolutionaryAlgorithm<S, List<S>>
 										implements ObservableEntity {
 	private int evaluations;
 	private int populationSize;
@@ -69,9 +70,10 @@ public class HybridMoFGBMLwithNSGAII <S extends PittsburghSolution<?>>extends Ab
 	private long totalComputingTime;
 
 	private Observable<Map<String, Object>> observable;
+	private XML_reader XML_reader;
 
 	/** Constructor */
-	public HybridMoFGBMLwithNSGAII(
+	public HybridMoFGBMLwithNSGAII2ForMixed(
 			/* Arguments */
 			Problem<S> problem,
 			int populationSize,
@@ -114,6 +116,10 @@ public class HybridMoFGBMLwithNSGAII <S extends PittsburghSolution<?>>extends Ab
 										ranking.getSolutionComparator(), densityEstimator.getSolutionComparator())));
 
 		this.initialSolutionsCreation = new RandomSolutionsCreation<S>(problem, populationSize);
+//		try { this.XML_reader = new XML_reader(Consts.EXPERIMENT_ID_DIR + File.separator + Consts.XML_FILE_NAME + ".xml");
+//		} catch (Exception e) {	e.printStackTrace(); }
+//		this.initialSolutionsCreation = new InitialSolutionsCreationFromXML<S>(
+//				(PittsburghFGBML_Basic<?>) problem, XML_reader.getPopulation(Consts.TERMINATE_EVALUATION));
 
 		this.evaluation = new SequentialEvaluation<>();
 
