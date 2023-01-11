@@ -214,6 +214,37 @@ def plotResultSetting(ax, figure_parameter):
     if figure_parameter.PLOT_GRID_FLAG:
         ax.grid(True)
 ##############################################################################
+    
+class Pattern:
+    def __init__(self, attributeList, classLabel):
+        self.attributeList = attributeList
+        self.classLabel = classLabel
+
+class Dat:
+    def __init__(self, dataName, i, j, ROOTFOLDER=ROOTFOLDER):
+        train_data = open(ROOTFOLDER + "/dataset/" + dataName + "/a{}_{}_{}-10tra.dat".format(i,j, dataName), 'r')
+        test_data = open(ROOTFOLDER + "/dataset/" + dataName + "/a{}_{}_{}-10tst.dat".format(i,j, dataName), 'r')
+        
+        self.dtra = []
+        for i, rows in enumerate(train_data):
+            row = rows.rstrip('\n').split(',')[:-1]
+            attributeList = row[:-1]
+            classLabel = int(row[-1])
+            self.dtra.append(Pattern(attributeList, classLabel))
+        self.dtst = []
+        for i, rows in enumerate(test_data):
+            row = rows.rstrip('\n').split(',')[:-1]
+            attributeList = row[:-1]
+            classLabel = int(row[-1])
+            self.dtst.append(Pattern(attributeList, classLabel))
+            
+        self.dtra.pop(0)
+        self.dtst.pop(0)
+    
+        # ファイルを閉じる
+        train_data.close()
+        test_data.close()
+        
 
 ### Consts ###################################################################  
 class Consts:
@@ -393,13 +424,13 @@ class PittsburghSolution():
         saveFig(fig, figure_parameter.savePath, 'PittsburghSolution', figure_parameter)
         plt.close()
         
-    def clacFitness(self, data):
+    def clacFitness(self, knowledge, data):
         """誤識別率を出力"""
-        buf = {}
+        buf = [0]*len(self.michiganSolutions)
         for michiganSolutionID, michiganSolution in self.michiganSolutions.items():
             tmp = 1
             for dimID, FuzzyTermID in enumerate(michiganSolution.getFuzzyTermIDList()):
-                tmp2 = self.knowledge.membershipValue(dimID, FuzzyTermID, data[dimID])
+                tmp2 = knowledge.membershipValue(dimID, FuzzyTermID, data[dimID])
                 tmp *= tmp2
                 print( 'x_{} is {:3f}'.format(dimID, tmp2), end=' ')
             tmp *= michiganSolution.ruleWeight
@@ -416,6 +447,21 @@ class PittsburghSolution():
                 buf_fitness = tmp[0]
                 buf_class = tmp[1]
         return buf_class
+    
+    def calcConclusionClassJudge(self, pattern):
+        classBuf = self.clacConclusionClass(pattern.attributeList)
+        return classBuf == pattern.classLabel
+    
+    def calcErrorRate(self, Dat, isDtra):
+        cnt = 0
+        if isDtra:
+            for pattern_i in Dat.dtra:
+                if self.calcConclusionClassJudge(pattern_i): cnt += 1
+            return float(cnt)/len(Dat.dtra)
+        else:
+            for pattern_i in Dat.dtst:
+                if self.calcConclusionClassJudge(pattern_i): cnt += 1
+            return float(cnt)/len(Dat.dtst)
     
         
 ### Population ###############################################################
@@ -464,8 +510,17 @@ class Generations():
     def __init__(self, generations, consts):
         self.consts = consts
         self.evaluationID = int(generations.get('evaluation'))
-        self.Populations = Population(generations.find('population'), consts)
-        self.knowledgeBase = KnowledgeBase(generations.find('knowledgeBase'))
+        self.populations = Population(generations.find('population'), consts)
+        self.knowledge = KnowledgeBase(generations.find('knowledgeBase'))
+    
+    def getKnowledge(self):
+        return self.knowledge
+    
+    def getConsts(self):
+        return self.consts
+    
+    def getPopulation(self):
+        return self.populations
     
 ### Trial Manager ############################################################
 
@@ -478,21 +533,22 @@ class TrialManager(XML):
         self.savePath = savePath
         self.consts = Consts(self.rootNode.find('consts'))
         if ONLY_FINAL_GENERATION_FLAG:
-            self.populations = {int(generations.get('evaluation')) : Generations(generations, self.consts) for generations in self.rootNode.findall('generations')\
+            self.generations = {int(generations.get('evaluation')) : Generations(generations, self.consts) for generations in self.rootNode.findall('generations')\
                                 if generations.get('evaluation') == self.consts.getParameter('TERMINATE_EVALUATION')}
         else:
-            self.populations = {int(generations.get('evaluation')) : Generations(generations, self.consts) for generations in self.rootNode.findall('generations')}
+            self.generations = {int(generations.get('evaluation')) : Generations(generations, self.consts) for generations in self.rootNode.findall('generations')}
+            
+    def getGeneration(self, evaluation=None):
+        if evaluation is None : evaluation = int(self.consts.getParameter('TERMINATE_EVALUATION'))
+        return self.generations[evaluation]
         
     def getPopulation(self, evaluation = None):
         if evaluation is None : evaluation = int(self.consts.getParameter('TERMINATE_EVALUATION'))
-        return self.populations[evaluation]
+        return self.generations[evaluation].getPopulation()
         
     def getPittsburghSolution(self, evaluation, pittsburghSolutionID):
         if evaluation is None : evaluation = int(self.consts.getParameter('TERMINATE_EVALUATION'))
-        return self.populations[evaluation].getPittsburghSolution(pittsburghSolutionID)
-    
-    def getKnowledge(self):
-        return self.knowledge
+        return self.populations[evaluation].getPopulation().getPittsburghSolution(pittsburghSolutionID)
     
     def getConsts(self):
         return self.consts
@@ -518,13 +574,17 @@ class ExperimentManager():
     def getTrialManager(self, trialID):
         return self.TrialManagers["{:s}{:0>2}".format(self.experimentID, trialID)]
     
+    def getGeneration(self, trialID, evaluation):
+        if evaluation is None : evaluation = int(self.TrialManagers['trial{:0>2}'.format(trialID)].consts.getParameter('TERMINATE_EVALUATION'))
+        return self.TrialManagers["{:s}{:0>2}".format(self.experimentID, trialID)].getGeneration(evaluation)
+    
     def getPopulation(self, trialID, evaluation):
         if evaluation is None : evaluation = int(self.TrialManagers['trial{:0>2}'.format(trialID)].consts.getParameter('TERMINATE_EVALUATION'))
-        return self.TrialManagers["{:s}{:0>2}".format(self.experimentID, trialID)].getPopulation(evaluation)
+        return self.TrialManagers["{:s}{:0>2}".format(self.experimentID, trialID)].getGeneration(evaluation).getPopulation()
     
     def getPittsburghSolution(self, trialID, evaluation, pittsburghSolutionID):
         if evaluation is None : evaluation = int(self.TrialManagers['trial{:0>2}'.format(trialID)].consts.getParameter('TERMINATE_EVALUATION'))
-        return self.TrialManagers["{:s}{:0>2}".format(self.experimentID, trialID)].getPopulation(evaluation).getPittsburghSolution(pittsburghSolutionID)
+        return self.TrialManagers["{:s}{:0>2}".format(self.experimentID, trialID)].getGeneration(evaluation).getPopulation().getPittsburghSolution(pittsburghSolutionID)
     
     def getPittsburghObjectives_Average(self, evaluation, RULE_BOOK):
         """全試行で得られた全個体の平均値を出力"""
@@ -584,9 +644,13 @@ class Master:
     def getTrialManager(self, dataLabel, trialID):
         return self.master[dataLabel].TrialManagers["{:s}{:0>2}".format(self.experimentID, trialID)]
     
+    def getGeneration(self, dataLabel, trialID, evaluation):
+        if evaluation is None : evaluation = int(self.master[dataLabel].TrialManagers['trial{:0>2}'.format(trialID)].consts.getParameter('TERMINATE_EVALUATION'))
+        return self.master[dataLabel].TrialManagers["{:s}{:0>2}".format(self.experimentID, trialID)].getGeneration(evaluation)
+    
     def getPopulation(self, dataLabel, trialID, evaluation):
         if evaluation is None : evaluation = int(self.master[dataLabel].TrialManagers['trial{:0>2}'.format(trialID)].consts.getParameter('TERMINATE_EVALUATION'))
-        return self.master[dataLabel].TrialManagers["{:s}{:0>2}".format(self.experimentID, trialID)].getPopulation(evaluation)
+        return self.master[dataLabel].TrialManagers["{:s}{:0>2}".format(self.experimentID, trialID)].getGeneration(evaluation).getPopulation()
     
     def getPittsburghSolution(self, dataLabel, trialID, evaluation, pittsburghSolutionID):
         if evaluation is None : evaluation = int(self.master[dataLabel].TrialManagers['trial{:0>2}'.format(trialID)].consts.getParameter('TERMINATE_EVALUATION'))
