@@ -16,7 +16,7 @@ ROOTFOLDER = os.getcwd()
 cmap = plt.get_cmap("tab10")
 #その他の基本設定
 IMAGE_SAVE_DIR_PATH = "results/image/" #画像保存用ディレクトリ
-ONLY_FINAL_GENERATION_FLAG = False
+ONLY_FINAL_GENERATION_FLAG = True
 
 class DATASET_INFO_CLASS:
     def __init__(self):
@@ -64,12 +64,17 @@ class FIGURE_PARAMETER_CLASS:
         self.PLOT_LEGEND_FLAG = True
         self.PLOT_GRID_FLAG = True
 
+
+FIGURE_PARAMETER = FIGURE_PARAMETER_CLASS()
+
 class RULE_BOOK_CLASS:
     def __init__(self):
         self.IS_DTRA = True
         self.IS_RULENUM_MORE_TAHN_2 = True
         self.COVER_ALL_CLASS = True
         self.TRIAL_NUM_MORE_THAN_HALF = True
+        
+RULE_BOOK = RULE_BOOK_CLASS()
 
 ##############################################################################
 
@@ -147,71 +152,71 @@ class XML:
 
 ### FIGURE OBJECT FUNCTIONS ###################################################       
 # SETTING SINGLE FIGURE OBJECT
-def singleFig_set(figure_parameter, title):
+def singleFig_set(FIGURE_PARAMETER, title):
     """保存する画像(グラフ1つ)の基本設定
     入力:ファイル名
     返り値:figureオブジェクト"""
-    fig = plt.figure(figsize = figure_parameter.FIGURE_SIZE)
+    fig = plt.figure(figsize = FIGURE_PARAMETER.FIGURE_SIZE)
     plt.rcParams["font.family"] = "MS Gothic"
-    fig.subplots_adjust(left=figure_parameter.MARGIN_SIZE['left'], right=figure_parameter.MARGIN_SIZE['right'], \
-                        bottom=figure_parameter.MARGIN_SIZE['bottom'], top=figure_parameter.MARGIN_SIZE['top'])
+    fig.subplots_adjust(left=FIGURE_PARAMETER.MARGIN_SIZE['left'], right=FIGURE_PARAMETER.MARGIN_SIZE['right'], \
+                        bottom=FIGURE_PARAMETER.MARGIN_SIZE['bottom'], top=FIGURE_PARAMETER.MARGIN_SIZE['top'])
     fig.add_subplot(1, 1, 1)
-    if title is not None: fig.suptitle(title, size = figure_parameter.TITLE_FONTSIZE)        
+    if title is not None: fig.suptitle(title, size = FIGURE_PARAMETER.TITLE_FONTSIZE)        
     return fig
 
 # SETTING MULTI FIGURE OBJECT    
-def multiFig_set(x_FigNum, y_FigNum, figure_parameter, title):
+def multiFig_set(x_FigNum, y_FigNum, FIGURE_PARAMETER, title):
     """保存する画像(グラフ複数)の基本設定
     入力:ファイル名 axNum:グラフの数
     返り値:figureオブジェクト"""
-    fig = plt.figure(figsize = (x_FigNum*figure_parameter.FIGURE_SIZE[0], y_FigNum*figure_parameter.FIGURE_SIZE[1]))
+    fig, axes = plt.subplots(nrows=y_FigNum, ncols=x_FigNum, sharex=False, figsize=(x_FigNum*FIGURE_PARAMETER.FIGURE_SIZE[0], y_FigNum*FIGURE_PARAMETER.FIGURE_SIZE[1]))
     plt.rcParams["font.family"] = "MS Gothic"
-    fig.subplots_adjust(left=figure_parameter.MARGIN_SIZE['left'], right=figure_parameter.MARGIN_SIZE['right'], \
-                        bottom=figure_parameter.MARGIN_SIZE['bottom'], top=figure_parameter.MARGIN_SIZE['top'])
-    fig.suptitle(title, size = figure_parameter.TITLE_FONTSIZE*x_FigNum/2)
-    return fig        
+    fig.subplots_adjust(left=FIGURE_PARAMETER.MARGIN_SIZE['left'], right=FIGURE_PARAMETER.MARGIN_SIZE['right'], \
+                        bottom=FIGURE_PARAMETER.MARGIN_SIZE['bottom'], top=FIGURE_PARAMETER.MARGIN_SIZE['top'])
+    fig.suptitle(title, size = FIGURE_PARAMETER.TITLE_FONTSIZE*x_FigNum/2)
+    return fig, axes
     
 # OUTPUT FIGURE OBJECT
-def saveFig(fig, filePath, filename, figure_parameter):
+def saveFig(fig, filePath, filename, FIGURE_PARAMETER):
     """画像を保存する
     入力:figureオブジェクト, ファイル名, データセット名"""
     os.makedirs(filePath, exist_ok=True)
-    fig.savefig(filePath + "/" + filename, transparent=figure_parameter.IS_TRANSPARENT) 
+    fig.savefig(filePath + "/" + filename, transparent=FIGURE_PARAMETER.IS_TRANSPARENT) 
     
-def plotRuleSetting(ax, figure_parameter):
+def plotRuleSetting(ax, FIGURE_PARAMETER):
     ax.set_xlim([-0.05, 1.05])
     ax.set_ylim([-0.05, 1.05])
-    if figure_parameter.PLOT_TICK_FLAG:
-        ax.tick_params(axis="x", labelsize=figure_parameter.TICK_FONTSIZE)
-        ax.tick_params(axis="y", labelsize=figure_parameter.TICK_FONTSIZE)
+    if FIGURE_PARAMETER.PLOT_TICK_FLAG:
+        ax.tick_params(axis="x", labelsize=FIGURE_PARAMETER.TICK_FONTSIZE)
+        ax.tick_params(axis="y", labelsize=FIGURE_PARAMETER.TICK_FONTSIZE)
     else:
         ax.tick_params(labelbottom=False, labelleft=False)
         
-    if figure_parameter.PLOT_LABEL_FLAG:
-        ax.set_xlabel("属性値", fontsize=figure_parameter.LABEL_FONTSIZE,  fontname="MS Gothic")
-        ax.set_ylabel("メンバシップ値", fontsize=figure_parameter.LABEL_FONTSIZE,  fontname="MS Gothic")
+    if FIGURE_PARAMETER.PLOT_LABEL_FLAG:
+        ax.set_xlabel("属性値", fontsize=FIGURE_PARAMETER.LABEL_FONTSIZE,  fontname="MS Gothic")
+        ax.set_ylabel("メンバシップ値", fontsize=FIGURE_PARAMETER.LABEL_FONTSIZE,  fontname="MS Gothic")
         
-    if figure_parameter.PLOT_GRID_FLAG:
+    if FIGURE_PARAMETER.PLOT_GRID_FLAG:
         ax.grid(True)
         
-    if figure_parameter.PLOT_LEGEND_FLAG:
+    if FIGURE_PARAMETER.PLOT_LEGEND_FLAG:
         ax.legend().get_frame().set_alpha(1.0)
         
-def plotResultSetting(ax, figure_parameter):
-    if figure_parameter.PLOT_TICK_FLAG:
-        ax.tick_params(axis="x", labelsize=figure_parameter.TICK_FONTSIZE)
-        ax.tick_params(axis="y", labelsize=figure_parameter.TICK_FONTSIZE)
+def plotResultSetting(ax, FIGURE_PARAMETER):
+    if FIGURE_PARAMETER.PLOT_TICK_FLAG:
+        ax.tick_params(axis="x", labelsize=FIGURE_PARAMETER.TICK_FONTSIZE)
+        ax.tick_params(axis="y", labelsize=FIGURE_PARAMETER.TICK_FONTSIZE)
     else:
         ax.tick_params(labelbottom=False, labelleft=False)
         
-    if figure_parameter.PLOT_LABEL_FLAG:
-        ax.set_xlabel("ルール数", fontsize=figure_parameter.LABEL_FONTSIZE,  fontname="MS Gothic")
-        ax.set_ylabel("誤識別率[%]", fontsize=figure_parameter.LABEL_FONTSIZE,  fontname="MS Gothic")
+    if FIGURE_PARAMETER.PLOT_LABEL_FLAG:
+        ax.set_xlabel("ルール数", fontsize=FIGURE_PARAMETER.LABEL_FONTSIZE,  fontname="MS Gothic")
+        ax.set_ylabel("誤識別率[%]", fontsize=FIGURE_PARAMETER.LABEL_FONTSIZE,  fontname="MS Gothic")
         
-    if figure_parameter.PLOT_LEGEND_FLAG:
+    if FIGURE_PARAMETER.PLOT_LEGEND_FLAG:
         ax.legend().get_frame().set_alpha(1.0)
         
-    if figure_parameter.PLOT_GRID_FLAG:
+    if FIGURE_PARAMETER.PLOT_GRID_FLAG:
         ax.grid(True)
 ##############################################################################
     
@@ -219,6 +224,13 @@ class Pattern:
     def __init__(self, attributeList, classLabel):
         self.attributeList = attributeList
         self.classLabel = classLabel
+    
+    def toStr(self):
+        buf = "Attribute: "
+        for dim_i, attr_i in enumerate(self.attributeList):
+            buf += "dim{}: {:5f}... ".format(dim_i, attr_i)
+        buf += "class:{} ".format(self.classLabel)
+        return buf
 
 class Dat:
     def __init__(self, dataName, i, j, ROOTFOLDER=ROOTFOLDER):
@@ -229,12 +241,14 @@ class Dat:
         for i, rows in enumerate(train_data):
             row = rows.rstrip('\n').split(',')[:-1]
             attributeList = row[:-1]
+            attributeList = [float(i) for i in attributeList]
             classLabel = int(row[-1])
             self.dtra.append(Pattern(attributeList, classLabel))
         self.dtst = []
         for i, rows in enumerate(test_data):
             row = rows.rstrip('\n').split(',')[:-1]
             attributeList = row[:-1]
+            attributeList = [float(i) for i in attributeList]
             classLabel = int(row[-1])
             self.dtst.append(Pattern(attributeList, classLabel))
             
@@ -275,6 +289,7 @@ class FuzzyTerm:
         """Ax にメンバシップ関数をプロットする"""
         color_buf = "C{}".format(color) if type(color) is int else color
         
+        print(ax)
         ax.set_ylim(-0.05, 1.05)
         if not input_x == None:
             y_data = self.membershipValue(input_x)
@@ -354,6 +369,9 @@ class KnowledgeBase:
             
     def getFuzzyTerm(self, dimentionID, FuzzyTermID):
         return self.fuzzySets[dimentionID][FuzzyTermID]
+    
+    def membershipValue(self, dimentionID, FuzzyTermID, input_x):
+        return self.fuzzySets[dimentionID][FuzzyTermID].membershipValue(input_x)
         
 ### MichiganSolution #########################################################
 class MichiganSolution():
@@ -385,7 +403,7 @@ class PittsburghSolution():
         return self.michiganSolutions[michiganSolutionID]
     
     def getFuzzyTermID(self, michiganSolutionID, dimID):
-        return self.michiganSolutions[michiganSolutionID].getFuzzyTermID[dimID]
+        return self.michiganSolutions[michiganSolutionID].getFuzzyTermID(dimID)
     
     def getObjective(self, objectiveName):
         return self.objectives[objectiveName]
@@ -400,16 +418,19 @@ class PittsburghSolution():
             if len(buf) == int(consts.getParameter('CLASS_LABEL_NUMBER')): return True
             else: return False
     
-    def plotRule(self, knowledge, figure_parameter, ruleIDList=None, coloring='class', inputPattern = None):
-        if ruleIDList is not None: ruleIDList = range(len(self.michiganSolutions))
-        if type(ruleIDList) is int: ruleIDList = [ruleIDList]
+    def plotRule(self, knowledge, FIGURE_PARAMETER, michiganSolutionsList=None, coloring='class', data = None):
+        print('d')
+        if michiganSolutionsList is None: michiganSolutionsList = range(len(self.michiganSolutions))
+        if type(michiganSolutionsList) is int: michiganSolutionsList = [michiganSolutionsList]
         
         """１つの画像に全てのif-thenルールをプロット"""
-        fig = multiFig_set(y_FigNum = len(self.ruleIDList), x_FigNum=self.consts.getParameter('ATTRIBUTE_NUMBER'), title='PittsburghSolution')
-        for rule_i in ruleIDList:
+        fig, axes = multiFig_set(y_FigNum=len(self.michiganSolutions), x_FigNum=int(self.consts.getParameter('ATTRIBUTE_NUMBER')), FIGURE_PARAMETER=FIGURE_PARAMETER, title='PittsburghSolution')
+        print('e')
+        for rule_i in michiganSolutionsList:
             for dim_i, ax in enumerate(fig.axes):
+                print(dim_i)
                 
-                plotRuleSetting(ax, figure_parameter)
+                plotRuleSetting(ax, FIGURE_PARAMETER)
                 
                 if coloring == 'each rules': color_between = cmap(rule_i)
                 elif coloring == 'class': color_between = cmap(self.getMichiganSolution(rule_i).consequentClass)
@@ -417,11 +438,11 @@ class PittsburghSolution():
                 
                 FuzzyTermID = self.getFuzzyTermID(rule_i, dim_i)
                 
-                if inputPattern is not None:
-                    knowledge.getFuzzyTerm(dim_i, FuzzyTermID).setAx(ax, color_between=color_between, input_x=inputPattern[dim_i])
+                if data is not None:
+                    knowledge.getFuzzyTerm(dim_i, FuzzyTermID).setAx(ax, color_between=color_between, input_x=data[dim_i])
                 else:
                     knowledge.getFuzzyTerm(dim_i, FuzzyTermID).setAx(ax, color_between=color_between)
-        saveFig(fig, figure_parameter.savePath, 'PittsburghSolution', figure_parameter)
+        saveFig(fig, FIGURE_PARAMETER.savePath, 'PittsburghSolution', FIGURE_PARAMETER)
         plt.close()
         
     def clacFitness(self, knowledge, data):
@@ -432,36 +453,48 @@ class PittsburghSolution():
             for dimID, FuzzyTermID in enumerate(michiganSolution.getFuzzyTermIDList()):
                 tmp2 = knowledge.membershipValue(dimID, FuzzyTermID, data[dimID])
                 tmp *= tmp2
-                print( 'x_{} is {:3f}'.format(dimID, tmp2), end=' ')
+                name = knowledge.getFuzzyTerm(dimID, FuzzyTermID).fuzzyTermName
+                print( 'x_{} is {} = {:3f}'.format(dimID, name, tmp2), end=' ')
             tmp *= michiganSolution.ruleWeight
             buf[michiganSolutionID] = (tmp, michiganSolution.consequentClass)
-            print('then (Class{}, {:5f}) with {:5f}'.format(michiganSolution.consequentClass, tmp, michiganSolution.ruleWeight))
+            print('then (Class{}, ruleWeight:{:5f}, Fitness:{:5f})'.format(michiganSolution.consequentClass, michiganSolution.ruleWeight, tmp))
+        print()
         return buf    
     
-    def clacConclusionClass(self, data):
-        fitness = self.clacFitness(data)
+    def clacConclusionClass(self, knowledge, data):
+        canClassify = False
+        fitness = self.clacFitness(knowledge, data)
         buf_fitness = -1
         buf_class = -1
         for tmp in fitness:
             if buf_fitness < tmp[0]:
                 buf_fitness = tmp[0]
                 buf_class = tmp[1]
-        return buf_class
+                canClassify = True
+            elif buf_fitness == tmp[0]:
+                if buf_class != tmp[1]:
+                    canClassify = False
+        if canClassify and buf_fitness >= 0:
+            return buf_class
+        else :
+            return -1
     
-    def calcConclusionClassJudge(self, pattern):
-        classBuf = self.clacConclusionClass(pattern.attributeList)
+    def calcConclusionClassJudge(self, knowledge, pattern):
+        classBuf = self.clacConclusionClass(knowledge, pattern.attributeList)
         return classBuf == pattern.classLabel
     
-    def calcErrorRate(self, Dat, isDtra):
+    def calcErrorRate(self, knowledge, Dat, isDtra):
         cnt = 0
         if isDtra:
             for pattern_i in Dat.dtra:
-                if self.calcConclusionClassJudge(pattern_i): cnt += 1
-            return float(cnt)/len(Dat.dtra)
+                print(pattern_i.toStr())
+                if self.calcConclusionClassJudge(knowledge, pattern_i): cnt += 1
+            return 1-float(cnt)/len(Dat.dtra)
         else:
             for pattern_i in Dat.dtst:
-                if self.calcConclusionClassJudge(pattern_i): cnt += 1
-            return float(cnt)/len(Dat.dtst)
+                print(pattern_i.toStr())
+                if self.calcConclusionClassJudge(knowledge, pattern_i): cnt += 1
+            return 1-float(cnt)/len(Dat.dtst)
     
         
 ### Population ###############################################################
@@ -521,6 +554,15 @@ class Generations():
     
     def getPopulation(self):
         return self.populations
+    
+    def getPittsburghSolution(self, pittsburghSolutionID):
+        return self.populations.getPittsburghSolution(pittsburghSolutionID)
+    
+    def plotRule(self, FIGURE_PARAMETER, pittsburghSolutionID):
+        self.populations.getPittsburghSolution(pittsburghSolutionID).plotRule(self.knowledge, FIGURE_PARAMETER)
+    
+    def calcErrorRate(self, pittsburghSolutionID, Dat, isDtra):
+        return self.populations.getPittsburghSolution(pittsburghSolutionID).calcErrorRate(self.knowledge, Dat, isDtra)
     
 ### Trial Manager ############################################################
 
@@ -701,6 +743,3 @@ class Master:
         plt.show()
         
 ###############################################################################
-
-FIGURE_PARAMETER = FIGURE_PARAMETER_CLASS()
-RULE_BOOK = RULE_BOOK_CLASS()
