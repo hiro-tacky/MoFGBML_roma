@@ -1,6 +1,6 @@
 $dataName = "pima"
 $parallelCores = 12
-$algorithmID = "default"
+$algorithmID = "ranked"
 $experimentID = "trial"
 $logFileName = $algorithmID + "_log.txt"
 
