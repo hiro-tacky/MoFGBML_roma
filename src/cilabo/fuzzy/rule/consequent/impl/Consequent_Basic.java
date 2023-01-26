@@ -100,4 +100,8 @@ public class Consequent_Basic extends AbstractConsequent <ClassLabel_Basic, Inte
 		return consequent;
 	}
 
+	@Override
+	public Double getRuleWeightDouble() {
+		return this.ruleWeight.getRuleWeightDouble();
+	}
 }

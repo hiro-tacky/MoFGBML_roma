@@ -37,7 +37,7 @@ import org.w3c.dom.Element;
 
 import cilabo.fuzzy.knowledge.Knowledge;
 import cilabo.gbml.component.variation.CrossoverAndMutationAndPittsburghLearningVariation;
-import cilabo.gbml.problem.pittsburghFGBML_Problem.impl.PittsburghFGBML_Basic;
+import cilabo.gbml.problem.pittsburghFGBML_Problem.impl.PittsburghFGBML_ObjectiveFunction2;
 import cilabo.gbml.solution.pittsburghSolution.PittsburghSolution;
 import cilabo.gbml.solution.pittsburghSolution.impl.PittsburghSolution_Basic;
 import cilabo.util.fileoutput.PittsburghSolutionListOutput;
@@ -45,7 +45,7 @@ import xml.XML_TagName;
 import xml.XML_manager;
 import xml.XML_reader;
 
-public class HybridMoFGBMLwithNSGAII2ForMixed <S extends PittsburghSolution<?>>extends AbstractEvolutionaryAlgorithm<S, List<S>>
+public class HybridMoFGBMLwithNSGAII2ForObfunc2 <S extends PittsburghSolution<?>>extends AbstractEvolutionaryAlgorithm<S, List<S>>
 										implements ObservableEntity {
 	private int evaluations;
 	private int populationSize;
@@ -73,7 +73,7 @@ public class HybridMoFGBMLwithNSGAII2ForMixed <S extends PittsburghSolution<?>>e
 	private XML_reader XML_reader;
 
 	/** Constructor */
-	public HybridMoFGBMLwithNSGAII2ForMixed(
+	public HybridMoFGBMLwithNSGAII2ForObfunc2(
 			/* Arguments */
 			Problem<S> problem,
 			int populationSize,
@@ -263,7 +263,7 @@ public class HybridMoFGBMLwithNSGAII2ForMixed <S extends PittsburghSolution<?>>e
 	protected List<S> removeNoWinnerMichiganSolution(List<S> population) {
 		/* 未勝利個体削除*/
 	    IntStream.range(0, population.size())
-	        .forEach(i -> ((PittsburghFGBML_Basic)problem).removeNoWinnerMichiganSolution((PittsburghSolution_Basic) population.get(i)));
+	        .forEach(i -> ((PittsburghFGBML_ObjectiveFunction2)problem).removeNoWinnerMichiganSolution((PittsburghSolution_Basic) population.get(i)));
 		return population;
 	}
 

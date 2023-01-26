@@ -75,4 +75,9 @@ public final class RuleWeight_Multi extends AbstractRuleWeight <Double[]>{
 		return ruleWeight;
 	}
 
+	@Override
+	public Double getRuleWeightDouble() {
+		return this.getRuleWeightAt(0);
+	}
+
 }

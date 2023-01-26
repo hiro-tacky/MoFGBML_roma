@@ -150,8 +150,17 @@ public final class MichiganSolution_Basic<RuleObject extends Rule> extends Abstr
 
 		@Override
 		public MichiganSolution_Basic<RuleObject>[] createMichiganSolutions(int numberOfGenerateRule) {
-			int[][] variables = this.ruleBuilder.createAntecedentIndex(numberOfGenerateRule);
-			return this.createMichiganSolutions(numberOfGenerateRule, variables);
+			MichiganSolution_Basic<RuleObject>[] obj = new MichiganSolution_Basic[numberOfGenerateRule];
+			for(int i=0; i<numberOfGenerateRule; i++) {
+				int[] variables = null;
+				MichiganSolution_Basic<RuleObject> michiganSolution_i = null;
+				do {
+					variables = this.ruleBuilder.createAntecedentIndex();
+					michiganSolution_i = this.createMichiganSolution(variables);
+				}while(michiganSolution_i.getRuleWeight().getRuleWeightDouble()<0);
+				obj[i] = michiganSolution_i;
+			}
+			return obj;
 		}
 
 		@Override

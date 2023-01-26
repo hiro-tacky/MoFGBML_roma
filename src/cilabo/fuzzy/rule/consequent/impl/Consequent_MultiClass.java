@@ -79,6 +79,11 @@ public class Consequent_MultiClass extends AbstractConsequent <ClassLabel_Multi,
 	}
 
 	@Override
+	public Double getRuleWeightDouble() {
+		return this.ruleWeight.getRuleWeightDouble();
+	}
+
+	@Override
 	public String toString() {
 		String str = null;
 

@@ -30,9 +30,15 @@ class FuzzyTermUsedRankingTest {
 
 	@Test
 	void test() {
-		int[][] tmp = FuzzyTermUsedRanking.getUsedFuzzySetNum(XML_reader.getPopulation(Consts.TERMINATE_EVALUATION), Ndim);
-		int[] buf = new int[] {5, 5, 5, 5, 5, 5, 5, 5};
+//		int[][] tmp = FuzzyTermUsedRanking.getUsedFuzzySetNum(XML_reader.getPopulation(Consts.TERMINATE_EVALUATION), Ndim);
+		int[] buf = new int[] {14, 14, 14, 14, 14, 14, 14, 14};
 		FuzzyTermTypeForMixed[][] tmp2 = FuzzyTermUsedRanking.getUsedFuzzySetID(XML_reader.getPopulation(Consts.TERMINATE_EVALUATION), Ndim, buf);
+	}
+
+	@Test
+	void test2() {
+		FuzzyTermTypeForMixed[][] tmp = FuzzyTermUsedRanking.getUsedFuzzyStyle(XML_reader.getPopulation(Consts.TERMINATE_EVALUATION), Ndim);
+		FuzzyTermTypeForMixed[][] tmp2 = FuzzyTermUsedRanking.getUsedFuzzyStyle(XML_reader.getPopulation(Consts.TERMINATE_EVALUATION), Ndim);
 	}
 
 }
