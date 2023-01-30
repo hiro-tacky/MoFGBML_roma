@@ -79,6 +79,8 @@ public interface MichiganSolution<RuleObject extends Rule> extends IntegerSoluti
 		 * @return MichiganSolutionを生成する．*/
 		public michiganObject createMichiganSolution(ArrayList<Pattern> patterns);
 
+		public michiganObject createMichiganSolution(Pattern pattern);
+
 		public michiganObject createMichiganSolution(int[] variables);
 
 		/** 遺伝子情報を含むルールを自動生成し，生成されたルールからMichiganSolutionを指定された個数生成する．
@@ -93,6 +95,7 @@ public interface MichiganSolution<RuleObject extends Rule> extends IntegerSoluti
 		public michiganObject[] createMichiganSolutions(int numberOfGenerateRule, int[][] variables);
 
 		public MichiganSolutionBuilder<michiganObject> copy();
+
 
 
 	}

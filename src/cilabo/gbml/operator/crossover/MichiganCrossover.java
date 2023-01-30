@@ -129,10 +129,7 @@ public class MichiganCrossover implements CrossoverOperator<PittsburghSolution<?
 					Random.getInstance().getGEN());
 			for(Integer pattern_i : erroredPatternsIndex) {
 				Pattern pattern = erroredPatterns.get(pattern_i);
-
-				HeuristicRuleGenerationMethod heuristicRuleGenerationMethod = new HeuristicRuleGenerationMethod(train);
-				int[] generatedAntecedentIndex = heuristicRuleGenerationMethod.calculateAntecedentPart(pattern);
-				MichiganSolution michiganSolution = parent.getMichiganSolutionBuilder().createMichiganSolution(generatedAntecedentIndex);
+				MichiganSolution michiganSolution = parent.getMichiganSolutionBuilder().createMichiganSolution(pattern);
 				generatedMichiganSolution.add(michiganSolution);
 			}
 		}

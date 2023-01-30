@@ -151,10 +151,13 @@ public final class MichiganSolution_Basic<RuleObject extends Rule> extends Abstr
 			return michiganSolution;
 		}
 
+		@Override
 		public MichiganSolution_Basic<RuleObject> createMichiganSolution(Pattern pattern) {
 			MichiganSolution_Basic<RuleObject> michiganSolution = this.createMichiganSolution();
-			michiganSolution.setVariables(this.ruleBuilder.createAntecedentIndex(pattern));
-			michiganSolution.learning();
+			do {
+				michiganSolution.setVariables(this.ruleBuilder.createAntecedentIndex(pattern));
+				michiganSolution.learning();
+			}while(michiganSolution.getRuleWeight().getRuleWeightDouble()<0);
 			return michiganSolution;
 		}
 
