@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>cilabo.MoFGBML</groupId>
   <artifactId>MoFGBML</artifactId>
-  <version>MoFGBML-23.0.0-SNAPSHOT-BASIC_OBFUNC2</version>
+  <version>MoFGBML-23.0.0-SNAPSHOT-RANKED</version>
 
   <build>
     <sourceDirectory>src</sourceDirectory>

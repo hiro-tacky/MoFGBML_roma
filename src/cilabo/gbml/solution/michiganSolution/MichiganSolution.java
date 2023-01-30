@@ -1,12 +1,16 @@
 package cilabo.gbml.solution.michiganSolution;
 
+import java.util.ArrayList;
+
 import org.uma.jmetal.solution.integersolution.IntegerSolution;
 import org.w3c.dom.Element;
 
 import cilabo.data.InputVector;
+import cilabo.data.pattern.Pattern;
 import cilabo.fuzzy.rule.Rule;
 import cilabo.fuzzy.rule.consequent.classLabel.ClassLabel;
 import cilabo.fuzzy.rule.consequent.ruleWeight.RuleWeight;
+import cilabo.gbml.solution.michiganSolution.impl.MichiganSolution_Basic;
 
 /** MichiganSolutionのインターフェイス．
  * @author Takigawa Hiroki
@@ -73,6 +77,8 @@ public interface MichiganSolution<RuleObject extends Rule> extends IntegerSoluti
 		/** 入力された遺伝子情報を持つMichiganSolutionを生成する．
 		 * @param variables 代入する遺伝子情報
 		 * @return MichiganSolutionを生成する．*/
+		public michiganObject createMichiganSolution(ArrayList<Pattern> patterns);
+
 		public michiganObject createMichiganSolution(int[] variables);
 
 		/** 遺伝子情報を含むルールを自動生成し，生成されたルールからMichiganSolutionを指定された個数生成する．
@@ -87,6 +93,7 @@ public interface MichiganSolution<RuleObject extends Rule> extends IntegerSoluti
 		public michiganObject[] createMichiganSolutions(int numberOfGenerateRule, int[][] variables);
 
 		public MichiganSolutionBuilder<michiganObject> copy();
+
 
 	}
 }

@@ -3,6 +3,7 @@ package cilabo.fuzzy.rule;
 import org.w3c.dom.Element;
 
 import cilabo.data.InputVector;
+import cilabo.data.pattern.Pattern;
 import cilabo.fuzzy.rule.antecedent.Antecedent;
 import cilabo.fuzzy.rule.consequent.Consequent;
 import cilabo.fuzzy.rule.consequent.classLabel.ClassLabel;
@@ -56,6 +57,8 @@ public interface Rule<AntecedentObject extends Antecedent, ConsequentObject exte
 		/** 前件部のファジィセットのインデックス配列を返す
 		 * @return 生成された前件部のファジィセットのインデックス配列 */
 		public int[] createAntecedentIndex();
+
+		public int[] createAntecedentIndex(Pattern pattern);
 
 		/** 前件部のファジィセットのインデックス配列を指定された個数返す
 		 * @param numberOfGenerateRule 生成したいインデックス配列の個数

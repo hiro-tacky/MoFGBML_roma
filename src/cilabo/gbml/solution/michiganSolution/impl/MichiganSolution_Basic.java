@@ -1,5 +1,6 @@
 package cilabo.gbml.solution.michiganSolution.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -9,10 +10,12 @@ import org.uma.jmetal.solution.integersolution.IntegerSolution;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import cilabo.data.pattern.Pattern;
 import cilabo.fuzzy.rule.Rule;
 import cilabo.fuzzy.rule.Rule.RuleBuilder;
 import cilabo.gbml.solution.michiganSolution.AbstractMichiganSolution;
 import cilabo.gbml.solution.util.attribute.NumberOfWinner;
+import cilabo.utility.Random;
 import xml.XML_TagName;
 import xml.XML_manager;
 
@@ -145,6 +148,24 @@ public final class MichiganSolution_Basic<RuleObject extends Rule> extends Abstr
 			MichiganSolution_Basic<RuleObject> michiganSolution = this.createMichiganSolution();
 			michiganSolution.setVariables(variables);
 			michiganSolution.learning();
+			return michiganSolution;
+		}
+
+		public MichiganSolution_Basic<RuleObject> createMichiganSolution(Pattern pattern) {
+			MichiganSolution_Basic<RuleObject> michiganSolution = this.createMichiganSolution();
+			michiganSolution.setVariables(this.ruleBuilder.createAntecedentIndex(pattern));
+			michiganSolution.learning();
+			return michiganSolution;
+		}
+
+		@Override
+		public MichiganSolution_Basic<RuleObject> createMichiganSolution(ArrayList<Pattern> patterns) {
+			MichiganSolution_Basic<RuleObject> michiganSolution = this.createMichiganSolution();
+			do {
+				int index = Random.getInstance().getGEN().nextInt(patterns.size());
+				michiganSolution.setVariables(this.ruleBuilder.createAntecedentIndex(patterns.get(index)));
+				michiganSolution.learning();
+			}while(michiganSolution.getRuleWeight().getRuleWeightDouble()<0);
 			return michiganSolution;
 		}
 

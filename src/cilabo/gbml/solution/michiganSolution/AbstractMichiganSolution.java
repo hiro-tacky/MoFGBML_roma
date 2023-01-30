@@ -9,11 +9,13 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.uma.jmetal.solution.AbstractSolution;
 
 import cilabo.data.InputVector;
+import cilabo.data.pattern.Pattern;
 import cilabo.fuzzy.knowledge.Knowledge;
 import cilabo.fuzzy.rule.Rule;
 import cilabo.fuzzy.rule.Rule.RuleBuilder;
 import cilabo.fuzzy.rule.consequent.classLabel.ClassLabel;
 import cilabo.fuzzy.rule.consequent.ruleWeight.RuleWeight;
+import cilabo.gbml.solution.michiganSolution.impl.MichiganSolution_Basic;
 
 public abstract class AbstractMichiganSolution<RuleObject extends Rule> extends AbstractSolution<Integer> implements MichiganSolution<RuleObject>{
 

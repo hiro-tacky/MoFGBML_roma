@@ -4,8 +4,10 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import cilabo.data.InputVector;
+import cilabo.data.pattern.Pattern;
 import cilabo.fuzzy.rule.AbstractRule;
 import cilabo.fuzzy.rule.antecedent.factory.AntecedentIndexFactory;
+import cilabo.fuzzy.rule.antecedent.factory.impl.HeuristicRuleGenerationMethod;
 import cilabo.fuzzy.rule.antecedent.impl.Antecedent_Basic;
 import cilabo.fuzzy.rule.consequent.classLabel.impl.ClassLabel_Multi;
 import cilabo.fuzzy.rule.consequent.factory.ConsequentFactory;
@@ -55,6 +57,17 @@ public final class Rule_MultiClass extends AbstractRule <Antecedent_Basic, Conse
 		}
 
 		@Override
+		public int[] createAntecedentIndex(Pattern pattern) {
+			int[] antecedentIndex = null;
+			if(this.antecedentFactory instanceof HeuristicRuleGenerationMethod) {
+				antecedentIndex = ((HeuristicRuleGenerationMethod)this.antecedentFactory).calculateAntecedentPart(pattern);
+			}else {
+				System.err.println("antecedentFactory is not HeuristicRuleGenerationMethod");
+			}
+			return antecedentIndex;
+		}
+
+		@Override
 		public Rule_MultiClass createRule(int[] antecedentIndex) {
 			Antecedent_Basic antecedent = new Antecedent_Basic();
 			Consequent_MultiClass consequent = this.learning(antecedent, antecedentIndex);
@@ -96,6 +109,7 @@ public final class Rule_MultiClass extends AbstractRule <Antecedent_Basic, Conse
 		public RuleBuilder_MultiClas copy() {
 			return new RuleBuilder_MultiClas(this.antecedentFactory.copy(), this.consequentFactory.copy());
 		}
+
 	}
 
 	@Override

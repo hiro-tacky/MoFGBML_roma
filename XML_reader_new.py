@@ -7,7 +7,6 @@ import glob
 from scipy.stats import gaussian_kde
 from sklearn import preprocessing
 from ipywidgets import interact, IntSlider, Select, FloatSlider
-import math
 
 #######  setting  ############################################################
 #数値実験基本設定
@@ -17,7 +16,7 @@ ROOTFOLDER = os.getcwd()
 cmap = plt.get_cmap("tab10")
 #その他の基本設定
 IMAGE_SAVE_DIR_PATH = "results/image/" #画像保存用ディレクトリ
-ONLY_FINAL_GENERATION_FLAG = False
+ONLY_FINAL_GENERATION_FLAG = True
 
 class DATASET_INFO_CLASS:
     def __init__(self):
@@ -42,8 +41,6 @@ class FIGURE_PARAMETER_CLASS:
         self.ALPHA_BETWEEN = 0.3
         self.LINE_COLOR = 'black'
         self.BETWEEN_COLOR = 'blue'
-        self.X_LIM = None
-        self.Y_LIM = None
         
         #figureの基本設定
         self.PLOT_TITLE_FLAG = True
@@ -56,7 +53,7 @@ class FIGURE_PARAMETER_CLASS:
         self.LABEL_FONTSIZE = 30 #ラベルのフォントサイズ
         self.TICK_FONTSIZE = 20 #目盛りのフォントサイズ
         self.LEGEND_FONTSIZE = 20 #汎用のフォントサイズ
-        self.MARGIN_SIZE = {'left':0.08, 'right':0.93, 'bottom':0.06, 'top':0.92} #余白サイズ
+        self.MARGIN_SIZE = {'left':0.06, 'right':0.94, 'bottom':0.06, 'top':0.94} #余白サイズ
         self.IS_TRANSPARENT = False #背景の透過
         
     def simple(self):
@@ -72,16 +69,9 @@ FIGURE_PARAMETER = FIGURE_PARAMETER_CLASS()
 
 class RULE_BOOK_CLASS:
     def __init__(self):
-        #学習用データセットを表示するか否か True:学習用データ False:評価用データ
         self.IS_DTRA = True
-        
-        #ルール数が2個以上の個体に限定して表示するか否か
         self.IS_RULENUM_MORE_TAHN_2 = True
-        
-        #データセットの全種類のクラスラベルに対して対応するするif-thenルール(結論部クラスラベルが一致する)を持つpittuburghのみを出力するか
         self.COVER_ALL_CLASS = True
-        
-        #全試行のうち過半数の母数を持つ場合のみを表示するか(30試行でルール数が７の個体が出現する試行が15試行以下の場合は出力しない)
         self.TRIAL_NUM_MORE_THAN_HALF = True
         
 RULE_BOOK = RULE_BOOK_CLASS()
@@ -429,13 +419,11 @@ class PittsburghSolution():
             else: return False
     
     def plotRule(self, knowledge, FIGURE_PARAMETER, michiganSolutionsList=None, coloring='class', data = None):
-        print('d')
         if michiganSolutionsList is None: michiganSolutionsList = range(len(self.michiganSolutions))
         if type(michiganSolutionsList) is int: michiganSolutionsList = [michiganSolutionsList]
         
         """１つの画像に全てのif-thenルールをプロット"""
         fig, axes = multiFig_set(y_FigNum=len(self.michiganSolutions), x_FigNum=int(self.consts.getParameter('ATTRIBUTE_NUMBER')), FIGURE_PARAMETER=FIGURE_PARAMETER, title='PittsburghSolution')
-        print('e')
         for rule_i in michiganSolutionsList:
             for dim_i, ax in enumerate(fig.axes):
                 print(dim_i)
@@ -526,8 +514,8 @@ class Population():
         for pittsburghSolution_i in self.pittsburghSolutions.values():
             if not RULE_BOOK.IS_RULENUM_MORE_TAHN_2 or pittsburghSolution_i.getObjective('NumberOfRule') > 1:
                 if not RULE_BOOK.COVER_ALL_CLASS or pittsburghSolution_i.isCoverAllClasses(self.consts):
-                    if RULE_BOOK.IS_DTRA: dataList.append((math.floor(pittsburghSolution_i.getObjective('NumberOfRule')), pittsburghSolution_i.getObjective('ErrorRateDtra')*100))
-                    else : dataList.append((math.floor(pittsburghSolution_i.getObjective('NumberOfRule')), pittsburghSolution_i.getObjective('ErrorRateDtst')*100))
+                    if RULE_BOOK.IS_DTRA: dataList.append((pittsburghSolution_i.getObjective('NumberOfRule'), pittsburghSolution_i.getObjective('ErrorRateDtra')))
+                    else : dataList.append((pittsburghSolution_i.getObjective('NumberOfRule'), pittsburghSolution_i.getObjective('ErrorRateDtst')))
         return dataList
     
     def getPittsburghObjectives_Average(self, RULE_BOOK):
@@ -537,32 +525,14 @@ class Population():
         for pittsburghSolution_i in self.pittsburghSolutions.values():
             if not RULE_BOOK.IS_RULENUM_MORE_TAHN_2 or pittsburghSolution_i.getObjective('NumberOfRule') > 1:
                 if not RULE_BOOK.COVER_ALL_CLASS or pittsburghSolution_i.isCoverAllClasses(self.consts):
-                    if math.floor(pittsburghSolution_i.getObjective('NumberOfRule')) in dataBuf:
-                        if RULE_BOOK.IS_DTRA: dataBuf[math.floor(pittsburghSolution_i.getObjective('NumberOfRule'))]['sum'] += pittsburghSolution_i.getObjective('ErrorRateDtra')*100
-                        else : dataBuf[math.floor(pittsburghSolution_i.getObjective('NumberOfRule'))]['sum'] += pittsburghSolution_i.getObjective('ErrorRateDtst')*100
-                        dataBuf[math.floor(pittsburghSolution_i.getObjective('NumberOfRule'))]['num'] += 1
+                    if pittsburghSolution_i.getObjective('NumberOfRule') in dataBuf:
+                        if RULE_BOOK.IS_DTRA: dataBuf[pittsburghSolution_i.getObjective('NumberOfRule')]['sum'] += pittsburghSolution_i.getObjective('ErrorRateDtra')
+                        else : dataBuf[pittsburghSolution_i.getObjective('NumberOfRule')]['sum'] += pittsburghSolution_i.getObjective('ErrorRateDtst')
+                        dataBuf[pittsburghSolution_i.getObjective('NumberOfRule')]['num'] += 1
                     else:
-                        if RULE_BOOK.IS_DTRA: dataBuf[math.floor(pittsburghSolution_i.getObjective('NumberOfRule'))] = {'sum':pittsburghSolution_i.getObjective('ErrorRateDtra')*100, 'num':1}
-                        else : dataBuf[math.floor(pittsburghSolution_i.getObjective('NumberOfRule'))] = {'sum':pittsburghSolution_i.getObjective('ErrorRateDtst')*100, 'num':1}
+                        if RULE_BOOK.IS_DTRA: dataBuf[pittsburghSolution_i.getObjective('NumberOfRule')] = {'sum':pittsburghSolution_i.getObjective('ErrorRateDtra'), 'num':1}
+                        else : dataBuf[pittsburghSolution_i.getObjective('NumberOfRule')] = {'sum':pittsburghSolution_i.getObjective('ErrorRateDtst'), 'num':1}
         dataList = [(key, value['sum']/value['num']) for key, value in dataBuf.items()]
-        return dataList
-    
-    def getPittsburghObjectives_Best(self, RULE_BOOK):
-        """各個体の平均値をlist型で出力"""
-        dataBuf = {}
-        dataList = []
-        for pittsburghSolution_i in self.pittsburghSolutions.values():
-            if not RULE_BOOK.IS_RULENUM_MORE_TAHN_2 or pittsburghSolution_i.getObjective('NumberOfRule') > 1:
-                if not RULE_BOOK.COVER_ALL_CLASS or pittsburghSolution_i.isCoverAllClasses(self.consts):
-                    if math.floor(pittsburghSolution_i.getObjective('NumberOfRule')) in dataBuf:
-                        if RULE_BOOK.IS_DTRA and dataBuf[math.floor(pittsburghSolution_i.getObjective('NumberOfRule'))] > pittsburghSolution_i.getObjective('ErrorRateDtra')*100:
-                            dataBuf[math.floor(pittsburghSolution_i.getObjective('NumberOfRule'))] = pittsburghSolution_i.getObjective('ErrorRateDtra')*100
-                        elif dataBuf[math.floor(pittsburghSolution_i.getObjective('NumberOfRule'))] > pittsburghSolution_i.getObjective('ErrorRateDtst')*100:
-                            dataBuf[math.floor(pittsburghSolution_i.getObjective('NumberOfRule'))] = pittsburghSolution_i.getObjective('ErrorRateDtst')*100
-                    else:
-                        if RULE_BOOK.IS_DTRA: dataBuf[math.floor(pittsburghSolution_i.getObjective('NumberOfRule'))] = pittsburghSolution_i.getObjective('ErrorRateDtra')*100
-                        else : dataBuf[math.floor(pittsburghSolution_i.getObjective('NumberOfRule'))] = pittsburghSolution_i.getObjective('ErrorRateDtst')*100
-        dataList = [(key, value) for key, value in dataBuf.items()]
         return dataList
 
 ### Generations ##############################################################
@@ -691,34 +661,7 @@ class ExperimentManager():
             population = trial.getPopulation(evaluation)
             buf = population.getPittsburghObjectives_All(RULE_BOOK)
             michiganSolutions.extend(buf)
-        return michiganSolutions    
-    
-    def getPittsburghObjectives_BestAverage(self, evaluation, RULE_BOOK):
-        """全試行で得られた全個体の平均値を出力"""
-        michiganSolutionsBuf = {}
-        michiganSolutions = []
-        for trial in self.TrialManagers.values():
-            tmp = trial.getPopulation(evaluation).getPittsburghObjectives_Best(RULE_BOOK)
-            for data in tmp:
-                if data[0] in michiganSolutionsBuf:
-                    michiganSolutionsBuf[data[0]]['sum'] += data[1]
-                    michiganSolutionsBuf[data[0]]['num'] += 1
-                else:
-                    michiganSolutionsBuf[data[0]] = {'sum':data[1], 'num':1}
-                    
-        if RULE_BOOK.TRIAL_NUM_MORE_THAN_HALF:
-            michiganSolutions = [(key, value['sum']/value['num']) for key, value in michiganSolutionsBuf.items() if value['num'] > len(self.TrialManagers)/2]
-        else:
-            michiganSolutions = [(key, value['sum']/value['num']) for key, value in michiganSolutionsBuf.items()]
-            
-        return michiganSolutions
-    
-    def getPittsburghObjectives_BestTrials(self, evaluation, RULE_BOOK):
-        michiganSolutions = []
-        for trial in self.TrialManagers.values():
-            buf = trial.getPopulation(evaluation).getPittsburghObjectives_Best(RULE_BOOK)
-            michiganSolutions.extend(buf)
-        return michiganSolutions      
+        return michiganSolutions        
     
 ##############################################################################
 
@@ -759,82 +702,42 @@ class Master:
         alpha: ドットの透明度, ruleBook: 表示個体の制限, plotData: 評価用データor学習用データ, saveFigFlag: 画像を保存するか否か"""
         
         if type(experimentLabelList) is not list: experimentLabelList = [experimentLabelList]
-        dataSetType = 'Dtra' if RULE_BOOK.IS_DTRA else 'Dtst' 
 
         if mode=='Allsolutions':
-            title = '{:s}{:d}-{}'.format('Allsolutions', evaluation, dataSetType)
-            fig = singleFig_set(FIGURE_PARAMETER, title)
+            fig = singleFig_set(FIGURE_PARAMETER, 'Allsolutions' + str(evaluation))
             fig.subplots_adjust(bottom=0.12)
             ax = fig.gca()
             for experimentLabel in experimentLabelList:
                 experimentManager = self.master[experimentLabel]
                 data = experimentManager.getPittsburghObjectives_Allsolutions(evaluation=evaluation, RULE_BOOK=RULE_BOOK)
+                print(data)
                 ax.scatter([data_i[0] for data_i in data], [data_i[1] for data_i in data], s=FIGURE_PARAMETER.MARKER_SIZE, alpha=FIGURE_PARAMETER.MARKER_ALPHA, label=experimentLabel)
-                if FIGURE_PARAMETER.Y_LIM is not None and FIGURE_PARAMETER.X_LIM is not None:
-                    ax.set_xlim(FIGURE_PARAMETER.X_LIM[0], FIGURE_PARAMETER.X_LIM[1])
-                    ax.set_ylim(FIGURE_PARAMETER.Y_LIM[0], FIGURE_PARAMETER.Y_LIM[1])
-                
+
         elif mode=='Alltrials':
-            title = '{:s}{:d}-{}'.format('Alltrials', evaluation, dataSetType)
-            fig = singleFig_set(FIGURE_PARAMETER, title)
+            fig = singleFig_set(FIGURE_PARAMETER, 'Alltrials' + str(evaluation))
             fig.subplots_adjust(bottom=0.12)
             ax = fig.gca()        
             for experimentLabel in experimentLabelList:
                 experimentManager = self.master[experimentLabel]
                 data = experimentManager.getPittsburghObjectives_Alltrials(evaluation=evaluation, RULE_BOOK=RULE_BOOK)
                 ax.scatter([data_i[0] for data_i in data], [data_i[1] for data_i in data], s=FIGURE_PARAMETER.MARKER_SIZE, alpha=FIGURE_PARAMETER.MARKER_ALPHA, label=experimentLabel)                
-            if FIGURE_PARAMETER.Y_LIM is not None and FIGURE_PARAMETER.X_LIM is not None:
-                ax.set_xlim(FIGURE_PARAMETER.X_LIM[0], FIGURE_PARAMETER.X_LIM[1])
-                ax.set_ylim(FIGURE_PARAMETER.Y_LIM[0], FIGURE_PARAMETER.Y_LIM[1])
         
         elif mode=='Average':
-            title = '{:s}{:d}-{}'.format('Average', evaluation, dataSetType)
-            fig = singleFig_set(FIGURE_PARAMETER, title)
+            fig = singleFig_set(FIGURE_PARAMETER, 'Average' + str(evaluation))
             fig.subplots_adjust(bottom=0.12)
             ax = fig.gca()        
             for experimentLabel in experimentLabelList:
                 experimentManager = self.master[experimentLabel]
                 data = experimentManager.getPittsburghObjectives_Average(evaluation=evaluation, RULE_BOOK=RULE_BOOK)
+                print(data)
                 ax.scatter([data_i[0] for data_i in data], [data_i[1] for data_i in data], s=FIGURE_PARAMETER.MARKER_SIZE, alpha=FIGURE_PARAMETER.MARKER_ALPHA, label=experimentLabel)
-            if FIGURE_PARAMETER.Y_LIM is not None and FIGURE_PARAMETER.X_LIM is not None:
-                ax.set_xlim(FIGURE_PARAMETER.X_LIM[0], FIGURE_PARAMETER.X_LIM[1])
-                ax.set_ylim(FIGURE_PARAMETER.Y_LIM[0], FIGURE_PARAMETER.Y_LIM[1])
-                
-        elif mode=='BestTrials':
-            title = '{:s}{:d}-{}'.format('Best', evaluation, dataSetType)
-            fig = singleFig_set(FIGURE_PARAMETER, title)
-            fig.subplots_adjust(bottom=0.12)
-            ax = fig.gca()        
-            for experimentLabel in experimentLabelList:
-                experimentManager = self.master[experimentLabel]
-                data = experimentManager.getPittsburghObjectives_BestTrials(evaluation=evaluation, RULE_BOOK=RULE_BOOK)
-                ax.scatter([data_i[0] for data_i in data], [data_i[1] for data_i in data], s=FIGURE_PARAMETER.MARKER_SIZE, alpha=FIGURE_PARAMETER.MARKER_ALPHA, label=experimentLabel)
-            if FIGURE_PARAMETER.Y_LIM is not None and FIGURE_PARAMETER.X_LIM is not None:
-                ax.set_xlim(FIGURE_PARAMETER.X_LIM[0], FIGURE_PARAMETER.X_LIM[1])
-                ax.set_ylim(FIGURE_PARAMETER.Y_LIM[0], FIGURE_PARAMETER.Y_LIM[1])
-                
-        elif mode=='BestAverage':
-            title = '{:s}{:d}-{}'.format('Best', evaluation, dataSetType)
-            fig = singleFig_set(FIGURE_PARAMETER, title)
-            fig.subplots_adjust(bottom=0.12)
-            ax = fig.gca()        
-            for experimentLabel in experimentLabelList:
-                experimentManager = self.master[experimentLabel]
-                data = experimentManager.getPittsburghObjectives_BestAverage(evaluation=evaluation, RULE_BOOK=RULE_BOOK)
-                ax.scatter([data_i[0] for data_i in data], [data_i[1] for data_i in data], s=FIGURE_PARAMETER.MARKER_SIZE, alpha=FIGURE_PARAMETER.MARKER_ALPHA, label=experimentLabel)
-            if FIGURE_PARAMETER.Y_LIM is not None and FIGURE_PARAMETER.X_LIM is not None:
-                ax.set_xlim(FIGURE_PARAMETER.X_LIM[0], FIGURE_PARAMETER.X_LIM[1])
-                ax.set_ylim(FIGURE_PARAMETER.Y_LIM[0], FIGURE_PARAMETER.Y_LIM[1])
                 
         plotResultSetting(ax, FIGURE_PARAMETER)
         
         if saveFigFlag:
-            fileName = "result_{:s}_{:s}_{:s}_{:08}".format(self.dataName, dataSetType, mode, evaluation)
-            saveDir = self.ROOTFOLDER + "/results/graph/" + self.dataName + '/result/' + dataSetType + '/' + mode + '/'
-            for tmp in experimentLabelList:
-                saveDir += tmp + '_'
-            saveDir += '/'
-            saveFig(fig, saveDir, fileName, FIGURE_PARAMETER)
+            dataType = "Dtra" if RULE_BOOK.IS_DTRA else "Dtst"
+            fileName = "result_{:s}_{:s}_{:08}".format(self.dataName, dataType, evaluation)
+            saveFig(fig, self.ROOTFOLDER + "/results/graph/" + self.dataName + "/", fileName, FIGURE_PARAMETER)
         plt.show()
         
 ###############################################################################
