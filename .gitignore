@@ -10,6 +10,6 @@ dataset/
 jMetal.log
 jMetal.log.1
 jMetal.*
-FUN.csv
-VAR.csv
 
+!target/*.jar
+!results/graph

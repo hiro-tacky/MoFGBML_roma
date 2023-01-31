@@ -25,7 +25,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>cilabo.main.impl.ojectiveFunction2.ObjectiveFunction2_Main</mainClass>
+              <mainClass>cilabo.main.impl.ranked.RankedKnowledge_Main</mainClass>
               <classpathPrefix>dependency/</classpathPrefix>>
               <addClasspath>true</addClasspath>
               <addExtensions>true</addExtensions>
