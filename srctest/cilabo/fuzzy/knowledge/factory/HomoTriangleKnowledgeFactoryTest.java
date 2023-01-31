@@ -41,7 +41,7 @@ class HomoTriangleKnowledgeFactoryTest {
 			for(int j=1; j<len+1; j++) {
 				FuzzyTermType ftm = Knowledge.getInstance().getFuzzySet(dim_i, j);
 				String name = Knowledge.makeFuzzyTermName(DIVISION_TYPE.equalDivision,
-						FuzzyTermType.TYPE_triangularShape, j);
+						FuzzyTermType.TYPE_triangularShape, j) + "+";
 				assertEquals(name, ftm.getName());
 				assertArrayEquals(expected[j-1], ftm.getParam(), 1E-4f);
 			}
