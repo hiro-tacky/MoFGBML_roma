@@ -1,10 +1,10 @@
 bin/
-target/
+target/*
 copy/
 python/
-results/
 doc/
 dataset/
+results/
 
 .DS_Store
 jMetal.log
@@ -12,4 +12,3 @@ jMetal.log.1
 jMetal.*
 
 !target/*.jar
-!results/graph
