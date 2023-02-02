@@ -2,9 +2,11 @@ package cilabo.fuzzy.knowledge.factory;
 
 import java.io.File;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import cilabo.data.TrainTestDatasetManager;
 import cilabo.fuzzy.knowledge.Knowledge;
 import cilabo.main.Consts;
 import xml.XML_reader;
@@ -29,5 +31,11 @@ class KnowledgeFactoryFromXMLTest {
 	void test() {
 		KBFactory.create();
 		Knowledge KB = Knowledge.getInstance();
+	}
+
+	@AfterAll
+	static void afterClass() throws Exception {
+		TrainTestDatasetManager.getInstance().clear();
+		Knowledge.getInstance().clear();
 	}
 }

@@ -2,13 +2,13 @@ package cilabo.fuzzy.knowledge.factory;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import cilabo.data.DataSet;
 import cilabo.data.TrainTestDatasetManager;
 import cilabo.fuzzy.knowledge.Knowledge;
-import cilabo.fuzzy.knowledge.factory.HomoTriangleKnowledgeFactory;
 import cilabo.fuzzy.knowledge.membershipParams.HomoTriangle_2_3_4_5;
 import cilabo.fuzzy.knowledge.membershipParams.Parameters;
 import cilabo.main.ExperienceParameter.DIVISION_TYPE;
@@ -46,5 +46,11 @@ class HomoTriangleKnowledgeFactoryTest {
 				assertArrayEquals(expected[j-1], ftm.getParam(), 1E-4f);
 			}
 		}
+	}
+
+	@AfterAll
+	static void afterClass() throws Exception {
+		TrainTestDatasetManager.getInstance().clear();
+		Knowledge.getInstance().clear();
 	}
 }

@@ -80,6 +80,10 @@ public class Knowledge {
 		this.fuzzySets = fuzzySets;
 	}
 
+	public void clear() {
+		this.fuzzySets = null;
+	}
+
 	@Override
 	public String toString() {
 		String ln = System.lineSeparator();

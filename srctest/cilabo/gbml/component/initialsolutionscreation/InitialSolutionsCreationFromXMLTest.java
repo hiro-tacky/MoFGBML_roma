@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.uma.jmetal.component.initialsolutioncreation.InitialSolutionsCreation;
@@ -14,6 +15,7 @@ import cilabo.fuzzy.classifier.Classifier;
 import cilabo.fuzzy.classifier.classification.Classification;
 import cilabo.fuzzy.classifier.classification.impl.SingleWinnerRuleSelection;
 import cilabo.fuzzy.classifier.impl.Classifier_basic;
+import cilabo.fuzzy.knowledge.Knowledge;
 import cilabo.fuzzy.knowledge.factory.HomoTriangleKnowledgeFactory;
 import cilabo.fuzzy.knowledge.membershipParams.Parameters;
 import cilabo.fuzzy.rule.Rule.RuleBuilder;
@@ -70,11 +72,17 @@ class InitialSolutionsCreationFromXMLTest {
 		}
 		initialSolutionsCreation = new InitialSolutionsCreationFromXML<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>>(
 				problem, XML_reader.getPopulation(Consts.TERMINATE_EVALUATION));
-		population = initialSolutionsCreation.create();
 	}
 
 	@Test
 	void test() {
+		population = initialSolutionsCreation.create();
 //		System.out.println(population.toString());
+	}
+
+	@AfterAll
+	static void afterClass() throws Exception {
+		TrainTestDatasetManager.getInstance().clear();
+		Knowledge.getInstance().clear();
 	}
 }

@@ -5,28 +5,27 @@ import java.util.List;
 import cilabo.data.InputVector;
 import cilabo.fuzzy.classifier.classification.Classification;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution;
-import cilabo.gbml.solution.michiganSolution.impl.MichiganSolution_Rejected;
 
-public final class SingleWinnerRuleSelection<michiganSolution extends MichiganSolution> implements Classification <michiganSolution> {
+public final class SingleWinnerRuleSelection <michiganSolution extends MichiganSolution<?>> implements Classification <michiganSolution> {
 
 	/**
 	 * 単一勝利ルールに基づいて勝利ルールを出力する．
 	 * @param classifier 識別器
 	 * @param vector 入力パターン
-	 * @return 勝利ルール
+	 * @return 勝利ルール 識別不能時はMichiganSolution_Rejected
 	 * @see cilabo.fuzzy.classifier.classification.Classification#classify(cilabo.fuzzy.classifier.Classifier, cilabo.data.InputVector)
 	 */
 	@Override
-	public MichiganSolution classify(List<michiganSolution> michiganSolutionList, InputVector vector) {
+	public michiganSolution classify(List<michiganSolution> michiganSolutionList, InputVector vector) {
 
-		boolean canClassify = true; //識別可能か
-		double max = -Double.MAX_VALUE; //適用度最大値
-		int winner = 0;
+		boolean canClassify = true; //識別可能フラグ
+		double max = -Double.MAX_VALUE; //適用度最大値保存バッファ
+		int winner = 0; //勝利ルールインデックス保存バッファ
 		for(int q = 0; q < michiganSolutionList.size(); q++) {
-			michiganSolution michiganSolution = michiganSolutionList.get(q);
-			double value = michiganSolution.getFitnessValue(vector);
+			MichiganSolution<?> michiganSolution = michiganSolutionList.get(q);
+			double value = michiganSolution.getFitnessValue(vector); //適合度計算
 
-			//適用度最大値更新
+			//適用度最大値更新ケース
 			if(value > max) {
 				max = value;
 				winner = q;
@@ -34,19 +33,21 @@ public final class SingleWinnerRuleSelection<michiganSolution extends MichiganSo
 			}
 			//適用度最大値が同値を取る場合
 			else if(value == max) {
-				michiganSolution winnerRule = michiganSolutionList.get(winner);
-				// "membership*CF"が同値 かつ 結論部クラスが異なる
+				MichiganSolution<?> winnerRule = michiganSolutionList.get(winner);
+				// "membership*CF"が同値 かつ 結論部クラスが異なる場合識別不能とする
 				if(!michiganSolution.equalsClassLabel(winnerRule.getClassLabel())) {
 					canClassify = false;
 				}
 			}
 		}
 
+		//識別可能である場合勝利ルールを返す
 		if(canClassify && max > 0) {
 			return michiganSolutionList.get(winner);
 		}
+		//識別不可能である場合はダミーであるMichiganSolution_Rejectedを返す．
 		else {
-			return MichiganSolution_Rejected.getInstance();
+			return null;
 		}
 	}
 

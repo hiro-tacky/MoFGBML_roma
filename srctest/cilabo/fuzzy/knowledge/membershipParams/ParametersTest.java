@@ -2,11 +2,13 @@ package cilabo.fuzzy.knowledge.membershipParams;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import cilabo.data.DataSet;
 import cilabo.data.TrainTestDatasetManager;
+import cilabo.fuzzy.knowledge.Knowledge;
 import cilabo.main.ExperienceParameter.DIVISION_TYPE;
 import jfml.term.FuzzyTermType;
 
@@ -28,11 +30,15 @@ class ParametersTest {
 		for(int i=0; i<K.length; i++) {
 			float[][] actual = parameters.getParameter(DIVISION_TYPE.equalDivision, 0, K[i], FuzzyTermType.TYPE_triangularShape);
 			for(int j=0; j<actual.length; j++) {
-				System.out.print(expected[cnt].toString());
-				System.out.print(actual[j].toString() + "\n");
 				assertArrayEquals(expected[cnt], actual[j], 1E-4f);
 				cnt++;
 			}
 		}
+	}
+
+	@AfterAll
+	static void afterClass() throws Exception {
+		TrainTestDatasetManager.getInstance().clear();
+		Knowledge.getInstance().clear();
 	}
 }

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 import cilabo.main.Consts;
-import cilabo.main.ExperienceParameter;
 import cilabo.utility.Input;
 
 /** 学習用データ1つ，評価用データ1つのデータセットを保持するクラス.<br>
@@ -15,9 +14,9 @@ import cilabo.utility.Input;
 public class TrainTestDatasetManager {
 	private static TrainTestDatasetManager instance = new TrainTestDatasetManager();
 	// ** 学習用データセット <br>training dataset*/
-	final ArrayList<DataSet> trains = new ArrayList<>();
+	private ArrayList<DataSet> trains = new ArrayList<>();
 	// ** 評価用データセット <br>test dataset*/
-	final ArrayList<DataSet> tests = new ArrayList<>();
+	private ArrayList<DataSet> tests = new ArrayList<>();
 
 	private TrainTestDatasetManager() {}
 
@@ -46,7 +45,7 @@ public class TrainTestDatasetManager {
 	 * @return 学習用データセット
 	 */
 	public ArrayList<DataSet> getTrains() {
-		if(Objects.isNull(this.trains)) {System.err.println("TrainTestDatasetManager is null");}
+		if(Objects.isNull(this.trains)) {System.err.println("trains in TrainTestDatasetManager is null");}
 		return this.trains;
 	}
 
@@ -54,8 +53,14 @@ public class TrainTestDatasetManager {
 	 * @return 評価用データセット
 	 */
 	public ArrayList<DataSet> getTests() {
-		if(Objects.isNull(this.tests)) {System.err.println("TrainTestDatasetManager is null");}
+		if(Objects.isNull(this.tests)) {System.err.println("tests in TrainTestDatasetManager is null");}
 		return this.tests;
+	}
+
+	/** 初期化します */
+	public void clear() {
+		this.tests = new ArrayList<>();
+		this.trains = new ArrayList<>();
 	}
 
 	/**
@@ -66,8 +71,6 @@ public class TrainTestDatasetManager {
 	 */
 	public TrainTestDatasetManager loadTrainTestFiles(String trainFile, String testFile) {
 		if(Objects.isNull(trainFile) || Objects.isNull(testFile)) { throw new NullPointerException("fileNameString is null");}
-
-		ExperienceParameter.classlabel = ExperienceParameter.CLASS_LABEL.Single;
 
 		DataSet train = Input.inputDataSet(trainFile);
 		addTrains(train);

@@ -10,7 +10,7 @@ import cilabo.gbml.solution.michiganSolution.MichiganSolution;
 /**ルールベース識別器
  * @author hirot
  */
-public class Classifier_basic<michiganSolution extends MichiganSolution> implements Classifier<michiganSolution> {
+public class Classifier_basic<michiganSolution extends MichiganSolution<?>> implements Classifier<michiganSolution> {
 
 	protected Classification<michiganSolution> classification;
 
@@ -20,7 +20,7 @@ public class Classifier_basic<michiganSolution extends MichiganSolution> impleme
 	}
 
 	@Override
-	public MichiganSolution classify(List<michiganSolution> michiganSolutionList, InputVector vector) {
+	public michiganSolution classify(List<michiganSolution> michiganSolutionList, InputVector vector) {
 		return this.classification.classify(michiganSolutionList, vector);
 	}
 

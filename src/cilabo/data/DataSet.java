@@ -21,7 +21,13 @@ public class DataSet {
 	/**	データセットのPattern実装クラスの可変長配列 */
 	private ArrayList<Pattern<?>> patterns = new ArrayList<>();
 
+	/** コンストラクタ
+	 * @param dataSize データセットのパターン数
+	 * @param ndim 属性数．次元数
+	 * @param cnum 結論部クラスのラベル種類数
+	 */
 	public DataSet(int dataSize, int ndim, int cnum) {
+		if(dataSize <= 0 || ndim <= 0 || cnum <= 0) { System.err.println("incorect input data set information"); }
 		DataSize = dataSize;
 		Ndim = ndim;
 		Cnum = cnum;

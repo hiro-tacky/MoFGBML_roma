@@ -2,10 +2,13 @@ package cilabo.utility;
 
 import java.io.File;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import cilabo.data.TrainTestDatasetManager;
 import cilabo.fuzzy.knowledge.FuzzyTermTypeForMixed;
+import cilabo.fuzzy.knowledge.Knowledge;
 import cilabo.fuzzy.knowledge.factory.KnowledgeFactoryFromXML;
 import cilabo.main.Consts;
 import xml.XML_reader;
@@ -39,6 +42,12 @@ class FuzzyTermUsedRankingTest {
 	void test2() {
 		FuzzyTermTypeForMixed[][] tmp = FuzzyTermUsedRanking.getUsedFuzzyStyle(XML_reader.getPopulation(Consts.TERMINATE_EVALUATION), Ndim);
 		FuzzyTermTypeForMixed[][] tmp2 = FuzzyTermUsedRanking.getUsedFuzzyStyle(XML_reader.getPopulation(Consts.TERMINATE_EVALUATION), Ndim);
+	}
+
+	@AfterAll
+	static void afterClass() throws Exception {
+		TrainTestDatasetManager.getInstance().clear();
+		Knowledge.getInstance().clear();
 	}
 
 }

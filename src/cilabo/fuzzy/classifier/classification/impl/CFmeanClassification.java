@@ -16,7 +16,7 @@ import cilabo.gbml.solution.michiganSolution.MichiganSolution;
 public final class CFmeanClassification<michiganSolution extends MichiganSolution> implements Classification<michiganSolution>{
 
 	@Override
-	public MichiganSolution classify(List<michiganSolution> michiganSolutionList, InputVector vector) {
+	public michiganSolution classify(List<michiganSolution> michiganSolutionList, InputVector vector) {
 		return null;
 	}
 

@@ -2,6 +2,7 @@ package cilabo.fuzzy.knowledge.factory;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -9,7 +10,6 @@ import cilabo.data.DataSet;
 import cilabo.data.TrainTestDatasetManager;
 import cilabo.fuzzy.knowledge.FuzzyTermBluePrintManager;
 import cilabo.fuzzy.knowledge.Knowledge;
-import cilabo.fuzzy.knowledge.factory.MixedKnowledgeFactory;
 import cilabo.fuzzy.knowledge.membershipParams.Parameters;
 import cilabo.main.ExperienceParameter.DIVISION_TYPE;
 import jfml.term.FuzzyTermType;
@@ -55,11 +55,17 @@ class MixedKnowledgeFactoryTest {
 						getExpected_fuzzyTermType(j), j);
 				assertEquals(name, ftm.getName());
 
-				float[][] parameters_expected = this.parameters.getParameter(getExpected_DIVISION_TYPE(j), dim_i,
+				float[][] parameters_expected = MixedKnowledgeFactoryTest.parameters.getParameter(getExpected_DIVISION_TYPE(j), dim_i,
 						getK(j), getExpected_fuzzyTermType(j));
 				assertArrayEquals(parameters_expected[getK_(j)], ftm.getParam(), 1E-5f, ftm.getName());
 			}
 		}
+	}
+
+	@AfterAll
+	static void afterClass() throws Exception {
+		TrainTestDatasetManager.getInstance().clear();
+		Knowledge.getInstance().clear();
 	}
 
 	private int getK(int x) {
@@ -74,7 +80,7 @@ class MixedKnowledgeFactoryTest {
 			return 5;
 		}
 	}
-	
+
 	private int getK_(int x) {
 		x = (x-1)%(2+3+4+5);
 		if(x < 2) {

@@ -13,6 +13,7 @@ public class InputVector {
 	/**  入力された属性値の配列を持つインスタンスを生成する
 	 * @param inputVector 属性値の配列 */
 	public InputVector(double[] inputVector) {
+		if(inputVector == null) {throw new IllegalArgumentException("inputVector is null");}
 		this.inputVector = Arrays.copyOf(inputVector, inputVector.length);
 	}
 

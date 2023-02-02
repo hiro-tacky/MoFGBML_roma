@@ -21,6 +21,9 @@ public abstract class Pattern <ClassLabelObject extends ClassLabel<?>>{
 	 * @param inputVector 属性値クラス．attribute class
 	 * @param trueClass 結論部ラベルクラス．conclusion label class */
 	public Pattern(int id, InputVector inputVector, ClassLabelObject trueClass) {
+		if(id < 0) {throw new IllegalArgumentException("incorrect id value");}
+		else if(inputVector == null) {throw new IllegalArgumentException("inputVector is null");}
+		else if(trueClass == null) {throw new IllegalArgumentException("trueClass is null");}
 		this.id = id;
 		this.inputVector = inputVector;
 		this.trueClass = trueClass;
