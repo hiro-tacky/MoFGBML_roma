@@ -45,6 +45,7 @@ public class PittsburghFGBML_Basic <michiganSolution extends MichiganSolution<?>
 	}
 
 	public void removeNoWinnerMichiganSolution(PittsburghSolution_Basic<michiganSolution> solution) {
+		PittsburghSolution_Basic<michiganSolution> buf = solution;
 		for(int i=0; i<solution.getNumberOfVariables(); i++) {
 			if((int)solution.getVariable(i).getAttribute((new NumberOfWinner()).getAttributeId()) < 1) {
 				solution.removeVariable(i); i--;
@@ -58,7 +59,7 @@ public class PittsburghFGBML_Basic <michiganSolution extends MichiganSolution<?>
 			}
 			solution.setObjective(0, 1);
 			solution.setObjective(1, this.getNumberOfVariables());
-//			throw new ArithmeticException("This PittsburghSolution has no michiganSolution");
+			throw new ArithmeticException("This PittsburghSolution has no michiganSolution");
 		}
 	}
 

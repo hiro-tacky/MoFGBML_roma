@@ -34,6 +34,7 @@ import cilabo.fuzzy.rule.Rule.RuleBuilder;
 import cilabo.fuzzy.rule.antecedent.factory.impl.HeuristicRuleGenerationMethod;
 import cilabo.fuzzy.rule.consequent.factory.impl.MoFGBML_Learning;
 import cilabo.fuzzy.rule.impl.Rule_Basic;
+import cilabo.gbml.algorithm.HybridMoFGBMLwithNSGAII;
 import cilabo.gbml.algorithm.HybridMoFGBMLwithNSGAII2ForObfunc2;
 import cilabo.gbml.objectivefunction.pittsburgh.ErrorRate;
 import cilabo.gbml.operator.crossover.HybridGBMLcrossover;
@@ -234,8 +235,8 @@ public class MixedKnowledge_Main {
 
 
 		/* Algorithm: Hybrid-style MoFGBML with NSGA-II */
-		HybridMoFGBMLwithNSGAII2ForObfunc2<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>> algorithm
-			= new HybridMoFGBMLwithNSGAII2ForObfunc2<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>>(problem,
+		HybridMoFGBMLwithNSGAII<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>> algorithm
+			= new HybridMoFGBMLwithNSGAII<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>>(problem,
 											Consts.POPULATION_SIZE,
 											Consts.OFFSPRING_POPULATION_SIZE,
 											Consts.OUTPUT_FREQUENCY,
