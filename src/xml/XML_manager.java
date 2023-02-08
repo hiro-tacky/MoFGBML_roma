@@ -30,10 +30,10 @@ public class XML_manager {
 	private DocumentBuilderFactory factory;
 	private DocumentBuilder builder;
 	private DOMImplementation domImpl;
-	protected static Document document;
+	protected Document document;
 	private TransformerFactory transFactory;
-	private static Transformer transformer;
-	private static String xmlFileName;
+	private Transformer transformer;
+	private String xmlFileName;
 
 	//xmlファイル用パラメータ
 
@@ -47,10 +47,6 @@ public class XML_manager {
 		XML_manager.instance = instance;
 	}
 
-	/**
-	 * @param rb rulebase
-	 * @throws Exception
-	 */
 	private XML_manager(){
 		xmlFileName = Consts.XML_FILE_NAME;
 		if(!(xmlFileName.endsWith(".xml"))) {
@@ -60,7 +56,6 @@ public class XML_manager {
 		try {
 			builder = factory.newDocumentBuilder();
 		} catch (ParserConfigurationException e) {
-			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
 		}
 		domImpl = builder.getDOMImplementation();
@@ -69,7 +64,6 @@ public class XML_manager {
 		try {
 			transformer = transFactory.newTransformer();
 		} catch (TransformerConfigurationException e) {
-			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
 		}
 	}
@@ -80,7 +74,7 @@ public class XML_manager {
 	 * @throws TransformerException
 	 * @throws IOException
 	 */
-	public static void output(String savePath) throws TransformerException, IOException {
+	public void output(String savePath) throws TransformerException, IOException {
 		DOMSource source = new DOMSource(document);
 		File newXML = new File(savePath + File.separator + xmlFileName);
 		Path path = Paths.get(savePath);
@@ -96,7 +90,7 @@ public class XML_manager {
 	 * @param nodeName 生成したい子ノードの名
 	 * @return 生成された子ノード(Element型)
 	 */
-	public static Element addElement(Element parent, XML_TagName nodeName) {
+	public Element addElement(Element parent, XML_TagName nodeName) {
 		Element v = document.createElement(nodeName.toString());
 		parent.appendChild(v);
 		return v;
@@ -109,7 +103,7 @@ public class XML_manager {
 	 * @param nodeValue 要素の持つ値
 	 * @return 生成された子ノード(Element型)
 	 */
-	public static Element addElement(Element parent, XML_TagName nodeName, String nodeValue) {
+	public Element addElement(Element parent, XML_TagName nodeName, String nodeValue) {
 		Element v = document.createElement(nodeName.toString());
 		Text textContents = document.createTextNode(nodeValue);
 		v.appendChild(textContents);
@@ -125,7 +119,7 @@ public class XML_manager {
 	 * @param attributeValue 属性の持つ値
 	 * @return 生成された子ノード(Element型)
 	 */
-	public static Element addElement(Element parent, XML_TagName nodeName, XML_TagName attributeName, String attributeValue) {
+	public Element addElement(Element parent, XML_TagName nodeName, XML_TagName attributeName, String attributeValue) {
 		Element v = document.createElement(nodeName.toString());
 		v.setAttribute(attributeName.toString(), attributeValue);
 		parent.appendChild(v);
@@ -140,7 +134,7 @@ public class XML_manager {
 	 * @param attributeValue 属性の持つ値
 	 * @return 生成された子ノード(Element型)
 	 */
-	public static Element addElement(Element parent, XML_TagName nodeName, String nodeValue, XML_TagName attributeName, String attributeValue) {
+	public Element addElement(Element parent, XML_TagName nodeName, String nodeValue, XML_TagName attributeName, String attributeValue) {
 		Element v = document.createElement(nodeName.toString());
 		Text textContents = document.createTextNode(nodeValue);
 		v.appendChild(textContents);
@@ -152,17 +146,17 @@ public class XML_manager {
 	/**
 	 *ツリーの根を返す
 	 */
-	public static Element getRoot() {
+	public Element getRoot() {
 		return document.getDocumentElement();
 	}
 
 	//新規のElementを追加する
-	public static Element createElement(XML_TagName nodeName) {
+	public Element createElement(XML_TagName nodeName) {
 		return document.createElement(nodeName.toString());
 	}
 
 	//新規のElementを追加する
-	public static Element createElement(XML_TagName nodeName, String nodeValue) {
+	public Element createElement(XML_TagName nodeName, String nodeValue) {
 		Element v = document.createElement(nodeName.toString());
 		Text textContents = document.createTextNode(nodeValue);
 		v.appendChild(textContents);
@@ -170,7 +164,7 @@ public class XML_manager {
 	}
 
 	//新規のElementを追加する
-	public static Element createElement(String nodeName, String nodeValue) {
+	public Element createElement(String nodeName, String nodeValue) {
 		Element v = document.createElement(nodeName);
 		Text textContents = document.createTextNode(nodeValue);
 		v.appendChild(textContents);
@@ -178,14 +172,14 @@ public class XML_manager {
 	}
 
 	//Elementを追加する
-	public static Element createElement(XML_TagName nodeName, XML_TagName attributeName, String attributeValue) {
+	public Element createElement(XML_TagName nodeName, XML_TagName attributeName, String attributeValue) {
 		Element v = document.createElement(nodeName.toString());
 		v.setAttribute(attributeName.toString(), attributeValue);
 		return v;
 	}
 
 	//Elementを追加する
-	public static Element createElement(XML_TagName nodeName, String nodeValue, XML_TagName attributeName, String attributeValue) {
+	public Element createElement(XML_TagName nodeName, String nodeValue, XML_TagName attributeName, String attributeValue) {
 		Element v = document.createElement(nodeName.toString());
 		Text textContents = document.createTextNode(nodeValue);
 		v.setAttribute(attributeName.toString(), attributeValue);
@@ -194,13 +188,13 @@ public class XML_manager {
 	}
 
 	//Elementを追加する
-	public static Element addElement(Element parent, Element child) {
+	public Element addElement(Element parent, Element child) {
 		parent.appendChild(child);
 		return parent;
 	}
 
 	//Elementを追加する
-	public static Element addElement(Element parent, Element child, XML_TagName attributeName, String attributeValue) {
+	public Element addElement(Element parent, Element child, XML_TagName attributeName, String attributeValue) {
 		child.setAttribute(attributeName.toString(), attributeValue);
 		parent.appendChild(child);
 		return parent;
@@ -211,7 +205,7 @@ public class XML_manager {
 	 * @param parent
 	 * @return 子ノードのリスト(NodeList型)
 	 */
-	public static NodeList getChildNodeList(Element parent) {
+	public NodeList getChildNodeList(Element parent) {
 		return parent.getChildNodes();
 	}
 
@@ -220,7 +214,7 @@ public class XML_manager {
 	 * @param parent
 	 * @return 子ノードのリスト(Element[]型)
 	 */
-	public static Element[] getChildElementList(Element parent) {
+	public Element[] getChildElementList(Element parent) {
 		NodeList nodelist = parent.getChildNodes();
 		int len = nodelist.getLength();
 		Element[] elementList = new Element[len];
@@ -238,7 +232,7 @@ public class XML_manager {
 	 * @param parent
 	 * @return 子ノード(Element型)
 	 */
-	public static Element getChildElement(Element parent, XML_TagName nodeName) {
+	public Element getChildElement(Element parent, XML_TagName nodeName) {
 		NodeList nodelist = parent.getChildNodes();
 		for(int i=0; i<nodelist.getLength(); i++) {
 			Node node = nodelist.item(i);
@@ -257,7 +251,7 @@ public class XML_manager {
 	 * @param parent
 	 * @return 子ノード(Element型)
 	 */
-	public static Element getChildElement(Element parent, XML_TagName nodeName, XML_TagName attributeName, String attributeValue) {
+	public Element getChildElement(Element parent, XML_TagName nodeName, XML_TagName attributeName, String attributeValue) {
 		NodeList nodelist = parent.getChildNodes();
 		for(int i=0; i<nodelist.getLength(); i++) {
 			Node node = nodelist.item(i);

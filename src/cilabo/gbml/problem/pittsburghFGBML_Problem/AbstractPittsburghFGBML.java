@@ -3,7 +3,7 @@ package cilabo.gbml.problem.pittsburghFGBML_Problem;
 import org.uma.jmetal.problem.AbstractGenericProblem;
 import org.uma.jmetal.problem.Problem;
 
-import cilabo.data.DataSet;
+import cilabo.data.dataSet.impl.DataSet_Basic;
 import cilabo.fuzzy.classifier.Classifier;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution.MichiganSolutionBuilder;
@@ -13,7 +13,7 @@ public abstract class AbstractPittsburghFGBML <pittsburghSolutionObject extends 
 		michiganSolution extends MichiganSolution<?>>
 		extends AbstractGenericProblem <pittsburghSolutionObject> implements Problem<pittsburghSolutionObject>{
 
-	protected DataSet train;
+	protected DataSet_Basic train;
 
 	protected MichiganSolutionBuilder<michiganSolution> michiganSolutionBuilder;
 
@@ -27,7 +27,7 @@ public abstract class AbstractPittsburghFGBML <pittsburghSolutionObject extends 
 			int numberOfVariables,
 			int numberOfObjectives,
 			int numberOfConstraints,
-			DataSet train,
+			DataSet_Basic train,
 			MichiganSolutionBuilder<michiganSolution> michiganSolutionBuilder,
 			Classifier<michiganSolution> classifier) {
 		setNumberOfVariables(numberOfVariables);
@@ -38,7 +38,7 @@ public abstract class AbstractPittsburghFGBML <pittsburghSolutionObject extends 
 		this.classifier = classifier;
 	}
 
-	public DataSet getTrain() {
+	public DataSet_Basic getTrain() {
 		return train;
 	}
 }

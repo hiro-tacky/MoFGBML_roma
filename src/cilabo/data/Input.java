@@ -1,4 +1,4 @@
-package cilabo.utility;
+package cilabo.data;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -8,8 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import cilabo.data.DataSet;
-import cilabo.data.InputVector;
+import cilabo.data.dataSet.impl.DataSet_Basic;
 import cilabo.data.pattern.impl.Pattern_Basic;
 import cilabo.data.pattern.impl.Pattern_MultiClass;
 import cilabo.fuzzy.rule.consequent.classLabel.impl.ClassLabel_Basic;
@@ -23,7 +22,7 @@ public class Input {
 	 * @param fileName : String
 	 * @return 入力済みDataSet
 	 */
-	public static DataSet inputDataSet(String fileName) {
+	public static DataSet_Basic<?> inputDataSet(String fileName) {
 		switch(ExperienceParameter.classlabel) {
 			case Multi:
 				return inputMultiLabelDataSet(fileName);
@@ -38,11 +37,11 @@ public class Input {
 	 * @param fileName : String
 	 * @return 入力済みDataSet
 	 */
-	private static DataSet inputSingleLabelDataSet(String fileName) {
+	private static DataSet_Basic<Pattern_Basic> inputSingleLabelDataSet(String fileName) {
 		List<double[]> lines = inputDataAsList(fileName);
 
 		// The first row is parameters of dataset
-		DataSet data = new DataSet(
+		DataSet_Basic<Pattern_Basic> data = new DataSet_Basic<Pattern_Basic>(
 				(int)lines.get(0)[0],
 				(int)lines.get(0)[1],
 				(int)lines.get(0)[2]);
@@ -60,7 +59,7 @@ public class Input {
 			}
 			C = (int)line[data.getNdim()];
 
-			InputVector inputVector = new InputVector(vector);
+			AttributeVector inputVector = new AttributeVector(vector);
 			ClassLabel_Basic classLabel = new ClassLabel_Basic(C);
 
 			Pattern_Basic pattern = new Pattern_Basic(
@@ -77,11 +76,11 @@ public class Input {
 	 * @param fileName : String
 	 * @return 入力済みDataSet
 	 */
-	private static DataSet inputMultiLabelDataSet(String fileName) {
+	private static DataSet_Basic<Pattern_MultiClass> inputMultiLabelDataSet(String fileName) {
 		List<double[]> lines = inputDataAsList(fileName);
 
 		// The first row is parameters of dataset
-		DataSet data = new DataSet(
+		DataSet_Basic<Pattern_MultiClass> data = new DataSet_Basic<Pattern_MultiClass>(
 				(int)lines.get(0)[0],
 				(int)lines.get(0)[1],
 				(int)lines.get(0)[2]);
@@ -101,7 +100,7 @@ public class Input {
 				cVec[i] = (int)line[i + data.getNdim()];
 			}
 
-			InputVector inputVector = new InputVector(vector);
+			AttributeVector inputVector = new AttributeVector(vector);
 			ClassLabel_Multi classLabel = new ClassLabel_Multi(cVec);
 
 			Pattern_MultiClass pattern = new Pattern_MultiClass(

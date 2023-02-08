@@ -88,7 +88,8 @@ public class PittsburghCrossover implements CrossoverOperator<PittsburghSolution
 	 */
 	public List<PittsburghSolution<?>> doCrossover(double probability, PittsburghSolution<?> parent1, PittsburghSolution<?> parent2) {
 		// Cast IntegerSolution to PittsburghSolution
-
+		if(parent1.getNumberOfVariables() < 1) {System.err.println("incorrect input: number Of Rules is less than 1");}
+		if(parent2.getNumberOfVariables() < 1) {System.err.println("incorrect input: number Of Rules is less than 1");}
 		List<PittsburghSolution<?>> offspring = new ArrayList<>();
 
 		/* Do crossover */
@@ -186,6 +187,7 @@ public class PittsburghCrossover implements CrossoverOperator<PittsburghSolution
 			offspring.remove(index);
 		}
 
+		if(offspring.get(0).getNumberOfVariables() < 1) {System.err.println("incorrect input: number Of Rules is less than 1");}
 		return offspring;
 	}
 }

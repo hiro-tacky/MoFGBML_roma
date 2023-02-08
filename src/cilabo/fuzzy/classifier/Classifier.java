@@ -2,25 +2,15 @@ package cilabo.fuzzy.classifier;
 
 import java.util.List;
 
-import cilabo.data.InputVector;
+import cilabo.fuzzy.classifier.classification.Classification;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution;
 
-/** michigan型識別器集合へのメソッド定義クラス
+/** pittsuburgh型識別器のメソッド定義クラス．識別を行う為のClassificationを親として持つ．
  * @author Takigawa Hiroki
  *
- * @param <michiganSolution> 対象となるMichiganSolution実装クラス
+ * @param <michiganSolution> pittsuburgh型識別器が持つMichiganSolutionクラスの型
  */
-public interface Classifier <michiganSolution extends MichiganSolution<?>> {
-
-	/** 未知パターンに対する勝利ルールを返す
-	 * @param michiganSolutionList ルールセット
-	 * @param vector 未知パターンの属性値クラス
-	 * @return 勝利ルール */
-	public michiganSolution classify(List<michiganSolution> michiganSolutionList, InputVector vector);
-
-	/**  このインスタンスのディープコピーを取得する
-	 * @return  このインスタンスのディープコピー */
-	public Classifier<michiganSolution> copy();
+public interface Classifier <michiganSolution extends MichiganSolution<?>> extends Classification<michiganSolution>{
 
 	/**	ルール長を取得する
 	 * @param michiganSolutionList ルールセット
@@ -34,4 +24,7 @@ public interface Classifier <michiganSolution extends MichiganSolution<?>> {
 	 */
 	public int getRuleNum(List<michiganSolution> michiganSolutionList);
 
+	/**  このインスタンスのディープコピーを取得する
+	 * @return  このインスタンスのディープコピー */
+	public Classifier<michiganSolution> copy();
 }

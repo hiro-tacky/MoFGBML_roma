@@ -6,8 +6,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import cilabo.data.DataSet;
-import cilabo.data.TrainTestDatasetManager;
+import cilabo.data.DatasetManager;
+import cilabo.data.dataSet.impl.DataSet_Basic;
 import cilabo.fuzzy.knowledge.FuzzyTermBluePrintManager;
 import cilabo.fuzzy.knowledge.Knowledge;
 import cilabo.fuzzy.knowledge.membershipParams.Parameters;
@@ -15,15 +15,15 @@ import cilabo.main.ExperienceParameter.DIVISION_TYPE;
 import jfml.term.FuzzyTermType;
 
 class MixedKnowledgeFactoryTest {
-	public static DataSet train;
+	public static DataSet_Basic train;
 	public static int dimension;
 	public static Parameters parameters;
 	public static MixedKnowledgeFactory knowledgeFactory;
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
-		TrainTestDatasetManager.getInstance().loadTrainTestFiles("dataset/iris/a0_0_iris-10tra.dat", "dataset/iris/a0_0_iris-10tst.dat");
-		train = TrainTestDatasetManager.getInstance().getTrains().get(0);
+		DatasetManager.getInstance().loadTrainTestFiles("dataset/iris/a0_0_iris-10tra.dat", "dataset/iris/a0_0_iris-10tst.dat");
+		train = DatasetManager.getInstance().getTrains().get(0);
 		dimension = train.getNdim();
 		parameters = new Parameters(train, dimension);
 		knowledgeFactory = new MixedKnowledgeFactory(dimension, parameters);
@@ -64,7 +64,7 @@ class MixedKnowledgeFactoryTest {
 
 	@AfterAll
 	static void afterClass() throws Exception {
-		TrainTestDatasetManager.getInstance().clear();
+		DatasetManager.getInstance().clear();
 		Knowledge.getInstance().clear();
 	}
 

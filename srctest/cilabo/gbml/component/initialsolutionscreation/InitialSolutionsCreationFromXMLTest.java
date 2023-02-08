@@ -9,8 +9,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.uma.jmetal.component.initialsolutioncreation.InitialSolutionsCreation;
 
-import cilabo.data.DataSet;
-import cilabo.data.TrainTestDatasetManager;
+import cilabo.data.DatasetManager;
+import cilabo.data.dataSet.impl.DataSet_Basic;
 import cilabo.fuzzy.classifier.Classifier;
 import cilabo.fuzzy.classifier.classification.Classification;
 import cilabo.fuzzy.classifier.classification.impl.SingleWinnerRuleSelection;
@@ -39,10 +39,10 @@ class InitialSolutionsCreationFromXMLTest {
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
-		TrainTestDatasetManager.getInstance().loadTrainTestFiles("dataset/pima/a0_0_pima-10tra.dat", "dataset/pima/a0_0_pima-10tst.dat");
-		DataSet train = TrainTestDatasetManager.getInstance().getTrains().get(0);
+		DatasetManager.getInstance().loadTrainTestFiles("dataset/pima/a0_0_pima-10tra.dat", "dataset/pima/a0_0_pima-10tst.dat");
+		DataSet_Basic train = DatasetManager.getInstance().getTrains().get(0);
 
-		Parameters parameters = new Parameters(train, train.getNdim());
+		Parameters parameters = new Parameters(train);
 		HomoTriangleKnowledgeFactory KnowledgeFactory = new HomoTriangleKnowledgeFactory(train.getNdim(), parameters);
 		KnowledgeFactory.create();
 
@@ -82,7 +82,7 @@ class InitialSolutionsCreationFromXMLTest {
 
 	@AfterAll
 	static void afterClass() throws Exception {
-		TrainTestDatasetManager.getInstance().clear();
+		DatasetManager.getInstance().clear();
 		Knowledge.getInstance().clear();
 	}
 }

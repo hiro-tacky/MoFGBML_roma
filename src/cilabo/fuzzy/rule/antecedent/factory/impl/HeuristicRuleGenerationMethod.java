@@ -1,6 +1,6 @@
 package cilabo.fuzzy.rule.antecedent.factory.impl;
 
-import cilabo.data.DataSet;
+import cilabo.data.dataSet.impl.DataSet_Basic;
 import cilabo.data.pattern.Pattern;
 import cilabo.fuzzy.knowledge.Knowledge;
 import cilabo.fuzzy.rule.antecedent.factory.AntecedentIndexFactory;
@@ -8,40 +8,42 @@ import cilabo.main.Consts;
 import cilabo.utility.GeneralFunctions;
 import cilabo.utility.Random;
 
-/**ヒューリスティックに基づいた前件部のファジィセットのインデックス配列のFactory
+/**ヒューリスティックに基づいた前件部のFactory
  * @author Takigawa Hiroki
  */
 public class HeuristicRuleGenerationMethod implements AntecedentIndexFactory{
 
 	/**  学習用データ*/
-	DataSet train;
-
+	private DataSet_Basic<?> train;
+	/** 次元数 */
 	private int dimension;
-
+	/** データセットのパターン数 */
 	private int dataSize;
 
 	/**コンストラクタ
-	 * @param train 選択時の学習に用いる学習用データ
-	 * @param samplingIndex 選択時の学習に用いるパターンのidリスト
+	 * @param train 生成時の学習に用いる学習用データ
 	 */
-	public HeuristicRuleGenerationMethod(DataSet train) {
+	public HeuristicRuleGenerationMethod(DataSet_Basic<?> train) {
 		this.train = train;
-		this.dimension = Knowledge.getInstance().getDimension();
+		this.dimension = Knowledge.getInstance().getNumberOfDimension();
 		this.dataSize = train.getDataSize();
 	}
 
 	/** 前件部のファジィ集合のidを決定する
-	 * @param head 生成する前件部の番目
-	 * @return 決定された前件部のFuzzyTermTypeのidリスト
+	 * @param index 前件部の生成時，学習に用いられるパターンのindex
+	 * @return 決定された前件部のファジィセットのインデックス配列
 	 */
 	public int[] selectAntecedentPart(int index) {
-		Pattern pattern = train.getPattern(index);
+		Pattern<?> pattern = train.getPattern(index);
 		return this.calculateAntecedentPart(pattern);
 	}
 
-	public int[] calculateAntecedentPart(Pattern pattern) {
-		int dimension = train.getNdim();
-		double[] vector = pattern.getInputVector().getVector();
+	/** 前件部のファジィ集合のidを決定する
+	 * @param pattern 前件部の生成時，学習に用いられるパターン
+	 * @return 決定された前件部のファジィセットのインデックス配列
+	 */
+	public int[] calculateAntecedentPart(Pattern<?> pattern) {
+		double[] vector = pattern.getAttributeVector().getAttributeValue();
 
 		//Don't careの決定
 		double dcRate;
@@ -68,7 +70,9 @@ public class HeuristicRuleGenerationMethod implements AntecedentIndexFactory{
 			}
 
 			// Numerical
-			int fuzzySetNum = Knowledge.getInstance().getFuzzySetNum(n)-1;
+			int fuzzySetNum = Knowledge.getInstance().getFuzzySetNum(n)-1; //dontCare以外のファジィ集合の総数
+			if(fuzzySetNum < 1) { antecedentIndex[n] = 0; continue; } //Dont care以外のファジィ集合が存在しない場合はDonat careに固定
+
 			double[] membershipValueRoulette = new double[fuzzySetNum];
 			double sumMembershipValue = 0;
 			membershipValueRoulette[0] = 0;
@@ -108,11 +112,14 @@ public class HeuristicRuleGenerationMethod implements AntecedentIndexFactory{
 			antecedentIndexArrayIndex = GeneralFunctions.samplingWithout(this.dataSize, numberOfGenerateRule, Random.getInstance().getGEN());
 		}else {
 			antecedentIndexArrayIndex = new Integer[numberOfGenerateRule];
+
+			//"未定の学習用パターン数 < データセットのパターン数" になるまでデータセットの全パターンで埋める
 			for(int i=0; i<numberOfGenerateRule/this.dataSize; i++) {
 				for(int j=0; j<this.dataSize; j++) {
 					antecedentIndexArrayIndex[i*this.dataSize + j] = j;
 				}
 			}
+			//残りの未定の学習用パターンをランダムに選択する．
 			int restArrayIndex = numberOfGenerateRule % this.dataSize;
 			Integer[] buf = GeneralFunctions.samplingWithout(this.dataSize,
 					restArrayIndex, Random.getInstance().getGEN());
@@ -121,6 +128,7 @@ public class HeuristicRuleGenerationMethod implements AntecedentIndexFactory{
 			}
 		}
 
+		//決定された学習元パターンから前件部を決定する
 		for(int i=0; i<numberOfGenerateRule; i++) {
 			antecedentIndexArray[i] = this.selectAntecedentPart(antecedentIndexArrayIndex[i]);
 		}

@@ -53,6 +53,8 @@ public class CrossoverAndMutationAndPittsburghLearningVariation<S extends Pittsb
 			List<S> offspring = crossover.execute(parents);
 
 			for(S solution : offspring) {
+				if(solution.getNumberOfVariables() < 1) {
+					System.err.println("number Of Rules is less than 1");}
 				/* Mutation */
 				mutation.execute(solution);
 				/* Learning */

@@ -6,7 +6,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import cilabo.data.TrainTestDatasetManager;
+import cilabo.data.DatasetManager;
 import cilabo.fuzzy.knowledge.FuzzyTermTypeForMixed;
 import cilabo.fuzzy.knowledge.Knowledge;
 import cilabo.fuzzy.knowledge.factory.KnowledgeFactoryFromXML;
@@ -46,7 +46,7 @@ class FuzzyTermUsedRankingTest {
 
 	@AfterAll
 	static void afterClass() throws Exception {
-		TrainTestDatasetManager.getInstance().clear();
+		DatasetManager.getInstance().clear();
 		Knowledge.getInstance().clear();
 	}
 

@@ -2,44 +2,39 @@ package cilabo.fuzzy.rule.consequent.classLabel;
 
 import org.w3c.dom.Element;
 
-/** 結論部ラベルクラスのインターフェイス．conclusion label class<br>
- * 基本的なsetterやgetterや，クラスラベルインスタンス同士を比較する機能を持つ
+/** 結論部ラベルクラス．conclusion label class<br>
  * @author Takigawa Hiroki
  *
- * @param <ClassLabelValue> 実装したクラスラベルが結論部クラスとして持つ変数のクラス
+ * @param <ClassLabelValue> 実装したクラスラベルが結論部クラスとして持つ変数の型
  */
 public interface ClassLabel<ClassLabelValue> {
 
-	/** 結論部クラス変数のコピーを取得<br>
-	 * @return このインスタンスが持つクラスラベルのコピー	 */
-	public ClassLabelValue getClassLabelValue();
-
-	/**
-	 * 単一の結論部クラスを取得
-	 * @return 結論部クラス
-	 */
-	public Integer getClassLabelInteger();
-
 	/** クラスラベルの結論部クラス変数を代入<br>
-	 * @param classLabel 代入されるクラスラベル */
+	 * @param classLabelValue 代入されるクラスラベル */
 	public void setClassLabelValue(ClassLabelValue classLabelValue);
+
+	/** クラスラベルの結論部クラス変数を取得<br>
+	 * @return このインスタンスが持つクラスラベル */
+	public ClassLabelValue getClassLabelValue();
 
 	/**
 	 * 入力された ClassLabel インスタンス と このインスタンスを比較する
 	 * @param classLabel 比較したい ClassLabel インスタンス
 	 * @return 同値である場合:true 同値でない場合:false */
-	public boolean equals(ClassLabel<ClassLabelValue> classLabel);
+	public boolean equalsClassLabel(ClassLabel<?> classLabel);
 
 	/**
-	 * 入力された クラスラベルの変数 と このインスタンスの持つ結論部クラス変数を比較する
-	 * @param classLabel 比較したい クラスラベルの値
-	 * @return 同値である場合:true <br>同値でない場合:false
-	 */
-	public boolean equalsValueOf(ClassLabelValue classLabelValue);
+	 * 入力された ClassLabel インスタンス と このインスタンスを比較する
+	 * @param classLabel 比較したい ClassLabel インスタンス
+	 * @return 同値である場合:true 同値でない場合:false */
+	public boolean equalsClassLabel(int classLabel);
 
 	/** このインスタンスが拒否クラスラベルかを判断する
 	 * @return 拒否クラスラベルである場合:true <br>拒否クラスラベルでない場合:false*/
 	public boolean isRejectedClassLabel();
+
+	/** このインスタンスを拒否クラスラベルとして設定する */
+	public void setRejectedClassLabel();
 
 	/**	このインスタンスのディープコピーを返す
 	 * @return ディープコピーされたこのインスタンス */

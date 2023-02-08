@@ -5,19 +5,24 @@ import java.util.Objects;
 import org.w3c.dom.Element;
 
 import cilabo.main.ExperienceParameter.DIVISION_TYPE;
+import jfml.term.FuzzyTermType;
 import xml.XML_TagName;
 import xml.XML_manager;
 
 
 /**
- * singletoneに変更，アプリケーション内で唯一のインスタンスを持ちます．≒グローバル変数<br>
+ * ファジィ集合マネージャークラス
+ * singletoneデザインパターンを採用，アプリケーション内で唯一のインスタンスを持ちます．≒グローバル変数<br>
  * Knowledge.getInstace()でインスタンスを呼出し使用．
- * @author hirot
- *
+ * @author Takigawa Hiroki
  */
 public class Knowledge {
+
+	/** Don't care 用FuzzyTermID*/
 	public final static int DnotCare_FuzzyTermID = 99;
+	/** 自分自身のインスタンス */
 	private static Knowledge instance = new Knowledge();
+	/** ファジィ集合格納オブジェクト */
 	private FuzzyTermTypeForMixed[][] fuzzySets;
 
 	private Knowledge() {}
@@ -30,56 +35,83 @@ public class Knowledge {
 		return instance;
 	}
 
-	/** 指定したファジィセットを取得
-	 * @param dimension 次元
-	 * @param H ファジィセットのid
-	 * @return dim次元H番目のファジィセット
+	/**
+	 * 指定された位置にあるファジィセットを返します。<br>
+	 * Returns Fuzzy Set at the specified position
+	 * @param dimension 返されるファジィセットの次元．dimension of Fuzzy Set to return
+	 * @param fuzzySet_id 返されるファジィセットのID．ID of Fuzzy Set to return
+	 * @return 指定された位置にあるファジィセット．Fuzzy Set at the specified position
 	 */
-	public FuzzyTermTypeForMixed getFuzzySet(int dimension, int H) {
+	public FuzzyTermTypeForMixed getFuzzySet(int dimension, int fuzzySet_id) {
 		if(Objects.isNull(fuzzySets)) {System.err.println("Knowledge hasn't been initialised");}
-		return fuzzySets[dimension][H];
+		return fuzzySets[dimension][fuzzySet_id];
 	}
 
-	/** 指定したファジィセットを取得
-	 * @param dimension 次元
-	 * @return dim次元目のファジィセット配列
+	/**
+	 * 指定された位置にあるファジィセットの配列を返します。<br>
+	 * Returns Array of Fuzzy Set at the specified position
+	 * @param dimension 返されるファジィセットの次元．dimension of Fuzzy Set to return
+	 * @return 指定された位置にあるファジィセット配列．Array of Fuzzy Set at the specified position
 	 */
 	public FuzzyTermTypeForMixed[] getFuzzySet(int dimension) {
 		if(Objects.isNull(fuzzySets)) {System.err.println("Knowledge hasn't been initialised");}
 		return fuzzySets[dimension];
 	}
 
-	/** 指定したファジィセットを取得
-	 * @param x 入力パターンの属性値
-	 * @param dimension 次元
-	 * @param H ファジィセットのid
-	 * @return dim次元H番目のファジィセット
-	 */
-	public double getMembershipValue(double x, int dimension, int H) {
-		if(Objects.isNull(fuzzySets)) {System.err.println("Knowledge hasn't been initialised");}
-		return (double)fuzzySets[dimension][H].getMembershipValue((float)x);
-	}
-
-	/** 次元数を返す
-	 * @return 次元数 */
-	public int getDimension() {
-		if(Objects.isNull(fuzzySets)) {System.err.println("Knowledge hasn't been initialised");}
-		return fuzzySets.length;
-	}
-
-	/** 指定した次元のファジィセットの個数を返す
-	 * @param dimension 指定する次元数
-	 * @return ファジィセットの個数
+	/**
+	 * 指定された次元のファジィセットの個数を返します。<br>
+	 * Returns number of fuzzy Set that this instance has.
+	 * @param dimension ファジィセットの次元
+	 * @return 返されるファジィセットの個数．number of fuzzy Set to return
 	 */
 	public int getFuzzySetNum(int dimension) {
 		if(Objects.isNull(fuzzySets)) {System.err.println("Knowledge hasn't been initialised");}
 		return fuzzySets[dimension].length;
 	}
 
+	/**
+	 * ファジィセットを入力されたファジィセットで置き換えます。<br>
+	 * Replaces Fuzzy Set in this instance.
+	 * @param fuzzySets このインスタンスにに格納されるファジィセット．Fuzzy Set to be stored at this instance
+	 */
 	public void setFuzzySets(FuzzyTermTypeForMixed[][] fuzzySets) {
+		if(!Objects.isNull(fuzzySets)) {System.err.println("fuzzySets was overwrited");}
 		this.fuzzySets = fuzzySets;
 	}
 
+	/**
+	 * 指定されたファジィセットの入力された属性値に対するメンバシップ値を返す．
+	 * @param x 属性値
+	 * @param dimension  ファジィセットの次元．dimension of Fuzzy Set
+	 * @param fuzzySet_id ファジィセットのID．ID of Fuzzy Set
+	 * @return
+	 */
+	public double getMembershipValue(double attributeValue, int dimension, int fuzzySet_id) {
+		if(Objects.isNull(fuzzySets)) {System.err.println("Knowledge hasn't been initialised");}
+		return (double)fuzzySets[dimension][fuzzySet_id].getMembershipValue((float)attributeValue);
+	}
+
+	/**
+	 * don't Careファジィ集合を返す
+	 * @return don't Careファジィ集合
+	 */
+	public FuzzyTermTypeForMixed makeDontCare(){
+		return new FuzzyTermTypeForMixed(
+			Knowledge.makeFuzzyTermName(DIVISION_TYPE.equalDivision, FuzzyTermType.TYPE_rectangularShape, Knowledge.DnotCare_FuzzyTermID),
+			FuzzyTermType.TYPE_rectangularShape, new float[] {0f, 1f}, DIVISION_TYPE.equalDivision, 0, 0);
+	}
+
+	/**
+	 * 次元数を返します。<br>
+	 * Returns number of dimension
+	 * @return 次元数．number of dimension
+	 */
+	public int getNumberOfDimension() {
+		if(Objects.isNull(fuzzySets)) {System.err.println("Knowledge hasn't been initialised");}
+		return fuzzySets.length;
+	}
+
+	/** ファジィセットを初期化します */
 	public void clear() {
 		this.fuzzySets = null;
 	}
@@ -99,34 +131,34 @@ public class Knowledge {
 	}
 
 	public Element toElement() {
-		Element knowledge = XML_manager.createElement(XML_TagName.knowledgeBase);
-		for(int dim_i=0; dim_i<this.getDimension(); dim_i++) {
+		Element knowledge = XML_manager.getInstance().createElement(XML_TagName.knowledgeBase);
+		for(int dim_i=0; dim_i<this.getNumberOfDimension(); dim_i++) {
 			FuzzyTermTypeForMixed[] fuzzyTermTypeAtDim = this.fuzzySets[dim_i];
-			Element fuzzySets = XML_manager.createElement(XML_TagName.fuzzySets,
+			Element fuzzySets = XML_manager.getInstance().createElement(XML_TagName.fuzzySets,
 					XML_TagName.dimension, String.valueOf(dim_i));
 			for(int j=0; j<fuzzyTermTypeAtDim.length; j++) {
 				FuzzyTermTypeForMixed fuzzyTerm = fuzzyTermTypeAtDim[j];
-				Element fuzzyTermElement = XML_manager.createElement(XML_TagName.fuzzyTerm);
-					XML_manager.addElement(fuzzyTermElement, XML_TagName.fuzzyTermID, String.valueOf(j));
-					XML_manager.addElement(fuzzyTermElement, XML_TagName.fuzzyTermName, fuzzyTerm.getName());
-					XML_manager.addElement(fuzzyTermElement, XML_TagName.ShapeTypeID, String.valueOf(fuzzyTerm.getType()));
-					XML_manager.addElement(fuzzyTermElement, XML_TagName.ShapeTypeName, Knowledge.getShapeTypeNameFromID(fuzzyTerm.getType()));
-					XML_manager.addElement(fuzzyTermElement, XML_TagName.divisionType, fuzzyTerm.getDivisionType().toString());
-					XML_manager.addElement(fuzzyTermElement, XML_TagName.partitionNum, String.valueOf(fuzzyTerm.getPartitionNum()));
-					XML_manager.addElement(fuzzyTermElement, XML_TagName.partition_i, String.valueOf(fuzzyTerm.getPartition_i()));
-				XML_manager.addElement(fuzzySets, fuzzyTermElement);
+				Element fuzzyTermElement = XML_manager.getInstance().createElement(XML_TagName.fuzzyTerm);
+					XML_manager.getInstance().addElement(fuzzyTermElement, XML_TagName.fuzzyTermID, String.valueOf(j));
+					XML_manager.getInstance().addElement(fuzzyTermElement, XML_TagName.fuzzyTermName, fuzzyTerm.getName());
+					XML_manager.getInstance().addElement(fuzzyTermElement, XML_TagName.ShapeTypeID, String.valueOf(fuzzyTerm.getType()));
+					XML_manager.getInstance().addElement(fuzzyTermElement, XML_TagName.ShapeTypeName, Knowledge.getShapeTypeNameFromID(fuzzyTerm.getType()));
+					XML_manager.getInstance().addElement(fuzzyTermElement, XML_TagName.divisionType, fuzzyTerm.getDivisionType().toString());
+					XML_manager.getInstance().addElement(fuzzyTermElement, XML_TagName.partitionNum, String.valueOf(fuzzyTerm.getPartitionNum()));
+					XML_manager.getInstance().addElement(fuzzyTermElement, XML_TagName.partition_i, String.valueOf(fuzzyTerm.getPartition_i()));
+				XML_manager.getInstance().addElement(fuzzySets, fuzzyTermElement);
 
-				Element parameters = XML_manager.createElement(XML_TagName.parameterSet);
+				Element parameters = XML_manager.getInstance().createElement(XML_TagName.parameterSet);
 				float[] parametersList = fuzzyTerm.getParam();
 				for(int k=0; k<parametersList.length; k++) {
-					XML_manager.addElement(parameters, XML_TagName.parameter, String.valueOf(parametersList[k]),
+					XML_manager.getInstance().addElement(parameters, XML_TagName.parameter, String.valueOf(parametersList[k]),
 							XML_TagName.id, String.valueOf(k));
 				}
-				XML_manager.addElement(fuzzyTermElement, parameters);
+				XML_manager.getInstance().addElement(fuzzyTermElement, parameters);
 
-				XML_manager.addElement(fuzzySets, fuzzyTermElement);
+				XML_manager.getInstance().addElement(fuzzySets, fuzzyTermElement);
 			}
-			XML_manager.addElement(knowledge, fuzzySets);
+			XML_manager.getInstance().addElement(knowledge, fuzzySets);
 		}
 		return knowledge;
 	}
@@ -156,22 +188,12 @@ public class Knowledge {
 		return ShapeName;
 	}
 
-	public static String getDdivisionTypeNameFromID(DIVISION_TYPE divisionType) {
-		String TypeName =null;
-		switch(divisionType) {
-			case equalDivision: TypeName = "equalDdivision"; break;
-			case entropyDivision: TypeName = "entropyDdivision"; break;
-			default: TypeName = "equalDdivision"; break;
-		}
-		return TypeName;
-	}
-
 	public static String makeFuzzyTermName(DIVISION_TYPE divisionType, int ShapeTypeID, int FuzzyTermID) {
 		if(ShapeTypeID == Knowledge.DnotCare_FuzzyTermID) {
 			return "DontCare";
 		}else {
 			return String.format("%s_%s_%02d", Knowledge.getShapeTypeNameFromID(ShapeTypeID),
-			Knowledge.getDdivisionTypeNameFromID(divisionType), FuzzyTermID);
+					divisionType.toString(), FuzzyTermID);
 		}
 	}
 }

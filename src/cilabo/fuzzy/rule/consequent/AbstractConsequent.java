@@ -19,7 +19,57 @@ public abstract class AbstractConsequent <ClassLabelObject extends ClassLabel<T1
 	public abstract AbstractConsequent<ClassLabelObject, T1, RuleWeightObject, T2> copy();
 
 	@Override
+	public ClassLabelObject getClassLabel() {
+		return this.classLabel;
+	}
+
+	@Override
+	public RuleWeightObject getRuleWeight() {
+		return this.ruleWeight;
+	}
+
+	@Override
+	public T1 getClassLabelValue() {
+		return this.classLabel.getClassLabelValue();
+	}
+
+	@Override
+	public void setClassLabelValue(T1 classLabelValue) {
+		this.classLabel.setClassLabelValue(classLabelValue);
+	}
+
+	@Override
+	public boolean equalsClassLabel(ClassLabel<?> classLabel) {
+		return this.classLabel.equalsClassLabel(classLabel);
+	}
+
+	@Override
+	public boolean equalsClassLabel(int classLabelValue) {
+		return this.classLabel.equalsClassLabel(classLabelValue);
+	}
+
+	@Override
 	public boolean isRejectedClassLabel() {
 		return this.classLabel.isRejectedClassLabel();
+	}
+
+	@Override
+	public void setRejectedClassLabel() {
+		this.classLabel.setRejectedClassLabel();
+	}
+
+	@Override
+	public T2 getRuleWeightValue() {
+		return this.ruleWeight.getRuleWeightValue();
+	}
+
+	@Override
+	public void setRuleWeightValue(T2 ruleWeightValue) {
+		this.ruleWeight.setRuleWeightValue(ruleWeightValue);
+	}
+
+	@Override
+	public Double getRuleWeightDouble() {
+		return this.ruleWeight.getRuleWeightDouble();
 	}
 }

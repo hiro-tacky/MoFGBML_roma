@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
-import cilabo.data.DataSet;
+import cilabo.data.dataSet.impl.DataSet_Basic;
 import cilabo.fuzzy.rule.consequent.classLabel.ClassLabel;
 import cilabo.main.Consts;
 import cilabo.main.ExperienceParameter.DIVISION_TYPE;
@@ -15,60 +16,130 @@ import cilabo.main.ExperienceParameter.SHAPE_TYPE_NAME;
 import cilabo.utility.Parallel;
 import jfml.term.FuzzyTerm;
 
-public class Parameters {
+/** メンバシップ関数のパラメータ生成用クラス
+ * @author Takigawa Hiroki
+ */
+public class Parameters{
+	/** パラメータ保存用バッファ [分割方式][ファジィ集合ID][属性id] */
 	public HashMap<DIVISION_TYPE, ArrayList<HashMap<Integer, Double[]>>> partitions = new HashMap<DIVISION_TYPE, ArrayList<HashMap<Integer, Double[]>>>();//partitions[DIVISION_TYPE][dim][分割数]=[パラメータ配列]
-	public DataSet dataSet;
-	public int Ndim;
+	/** エントロピー計算用データセット */
+	public DataSet_Basic<?> dataSet;
+	/** 次元数 */
+	public int numberOfDimension;
 
-	public Parameters(DataSet dataSet, int Ndim) {
+	/**
+	 * インスタンスを生成
+	 * @param dataSet エントロピー計算用データセット
+	 */
+	public Parameters(DataSet_Basic<?> dataSet) {
+		if(Objects.isNull(dataSet)) {
+			throw new IllegalArgumentException("argument [dataSet] is null @Parameters.Parameters");
+		}
 		this.dataSet = dataSet;
-		this.Ndim = Ndim;
+		this.numberOfDimension = dataSet.getNdim();
 		for(DIVISION_TYPE tmp: DIVISION_TYPE.values()) {
-			partitions.put(tmp, new ArrayList<HashMap<Integer, Double[]>>(Ndim));
-			for(int i=0; i<Ndim; i++) {
+			partitions.put(tmp, new ArrayList<HashMap<Integer, Double[]>>(numberOfDimension));
+			for(int i=0; i<numberOfDimension; i++) {
 				partitions.get(tmp).add(new HashMap<Integer, Double[]>());
 			}
 		}
 	}
 
+	/**
+	 * 指定された分割方式での分割区間リストを返します。<br>
+	 * Returns Partition that this instance has.
+	 * @param divisionType 分割方式
+	 * @return 返される分割区間．list of Partition to return
+	 */
 	public ArrayList<HashMap<Integer, Double[]>> getPartition(DIVISION_TYPE divisionType) {
+		if(!this.partitions.containsKey(divisionType)) {
+			partitions.put(divisionType, new ArrayList<HashMap<Integer, Double[]>>(numberOfDimension));
+		}
 		return this.partitions.get(divisionType);
 	}
 
-	public HashMap<Integer, Double[]> getPartition(DIVISION_TYPE divisionType, int dim) {
-		return this.partitions.get(divisionType).get(dim);
-	}
-
-	public Double[] getPartition(DIVISION_TYPE divisionType, int dim, int K) {
-		if(!this.partitions.get(divisionType).get(dim).containsKey(K)) {
-			this.makePartition(divisionType, dim, K);
-		}
-		return this.partitions.get(divisionType).get(dim).get(K);
-	}
-
-	/** パラメータを生成する
-	 * @param dim 次元
+	/**
+	 * 指定された分割方式・次元での分割区間を返します。<br>
+	 * Returns Partition at the specified divisionType and dimension
 	 * @param divisionType 分割方式
-	 * @param k 分割数
+	 * @param dimension 次元
+	 * @return 指定された分割方式・次元にある分割区間．Partition at divisionType and dimension
 	 */
-	public void makePartition(DIVISION_TYPE divisionType, int dim, int K) {
+	public HashMap<Integer, Double[]> getPartition(DIVISION_TYPE divisionType, int dimension) {
+		if(this.getPartition(divisionType).size() < dimension+1) {
+			throw new IndexOutOfBoundsException("this.partitions has been initialised that the number of dimension is "
+					+ String.valueOf(this.getPartition(divisionType).size()) + "@" + this.getClass().getSimpleName());
+		}
+		return this.partitions.get(divisionType).get(dimension);
+	}
+
+	/**
+	 * 指定された分割方式・次元・分割数での分割区間を返します。<br>
+	 * Returns Partition at the specified divisionType and dimension
+	 * @param divisionType 分割方式
+	 * @param dimension 次元
+	 * @K 分割数
+	 * @return 指定された分割方式・次元にある分割区間．Partition at divisionType, dimension and number of partition
+	 */
+	public Double[] getPartition(DIVISION_TYPE divisionType, int dimension, int K) {
+		if(!this.getPartition(divisionType, dimension).containsKey(K)) {
+			this.makePartition(divisionType, dimension, K);
+		}
+		return this.partitions.get(divisionType).get(dimension).get(K);
+	}
+
+	/**
+	 * 指定された分割方式・次元・分割数での分割区間を生成します。<br>
+	 * Generate Partition at the specified divisionType and dimension , dimension and number of partition
+	 * @param divisionType 分割方式
+	 * @param dimension 次元
+	 * @K 分割数
+	 */
+	public void makePartition(DIVISION_TYPE divisionType, int dimension, int[] K) {
+		for(int K_i: K) {
+			this.makePartition(divisionType, dimension, K_i);
+		}
+	}
+
+	/**
+	 * 指定された分割方式・次元・分割数での分割区間を生成します。<br>
+	 * Generate Partition at the specified divisionType and dimension , dimension and number of partition
+	 * @param divisionType 分割方式
+	 * @param dimension 次元
+	 * @K 分割数
+	 */
+	public void makePartition(DIVISION_TYPE divisionType, int dimension, int K) {
 		switch(divisionType) {
 			case equalDivision:
 			default:
-				this.makeHomePartition(dim, K);
+				this.makeHomePartition(dimension, K);
 				break;
 			case entropyDivision:
-				this.makeEntropyPartition(dim, K);
+				this.makeEntropyPartition(dimension, K);
 				break;
 		}
 	}
 
 	/**
-	 * 等分割の分割区間を生成する
-	 * @param K 分割数のリスト
+	 * 指定された次元・分割数での均等分割区間を生成します。<br>
+	 * Generate equal distribution Partition at the specified divisionType and dimension
+	 * @param dimension 次元
+	 * @K 分割数
 	 */
-	public void makeHomePartition(int dim, int K) {
-		if (this.partitions.get(DIVISION_TYPE.equalDivision).get(dim).containsKey(K)) {
+	public void makeHomePartition(int dimension, int[] K) {
+		for(int K_i: K) {
+			this.makeHomePartition(dimension, K_i);
+		}
+	}
+
+	/**
+	 * 指定された次元・分割数での均等分割区間を生成します。<br>
+	 * Generate equal distribution Partition at the specified divisionType and dimension
+	 * @param dimension 次元
+	 * @K 分割数
+	 */
+	public void makeHomePartition(int dimension, int K) {
+		if (this.getPartition(DIVISION_TYPE.equalDivision, dimension).containsKey(K)) {
 			return;
 		}else {
 			Double[] partition = new Double[K+1];
@@ -77,23 +148,34 @@ public class Parameters {
 				partition[i] = (double)(2*i-1)/((K-1)*2);
 			}
 			partition[K] = 1d;
-			this.partitions.get(DIVISION_TYPE.equalDivision).get(dim).put(K, partition);
+			this.partitions.get(DIVISION_TYPE.equalDivision).get(dimension).put(K, partition);
 		}
 	}
 
 	/**
-	 * エントロピーに基づいた分割区間を生成する
-	 * @param tra データセット
-	 * @param K 分割数のリスト
-	 * @param dim 導出する属性の次元を指定
+	 * 指定された次元・分割数でのエントロピー分割区間を生成します。<br>
+	 * Generate equal distribution Partition at the specified divisionType and dimension
+	 * @param dimension 次元
+	 * @K 分割数
 	 */
-	public void makeEntropyPartition(int dim, int K) {
-		if (this.partitions.get(DIVISION_TYPE.entropyDivision).get(dim).containsKey(K)) {
+	public void makeEntropyPartition(int dimension, int[] K) {
+		for(int K_i: K) {
+			this.makeEntropyPartition(dimension, K_i);
+		}
+	}
+
+	/**
+	 * 指定された次元・分割数でのエントロピー分割区間を生成します。<br>
+	 * Generate equal distribution Partition at the specified divisionType and dimension
+	 * @param dimension 次元
+	 * @K 分割数
+	 */
+	public void makeEntropyPartition(int dimension, int K) {
+		if (this.getPartition(DIVISION_TYPE.entropyDivision, dimension).containsKey(K)) {
 			return;
 		}else {
-
 			//Step 0. Judge Categoric.
-			if(dataSet.getPattern(0).getInputValue(dim) < 0) {
+			if(dataSet.getPattern(0).getAttributeValue(dimension) < 0) {
 				//If it's categoric, do NOT partitinon.
 				return;
 			}
@@ -101,8 +183,8 @@ public class Parameters {
 			//Step 1. Sort patterns by attribute "dim_i"
 			ArrayList<ForSortPattern> patterns = new ArrayList<ForSortPattern>();
 			for(int p = 0; p < dataSet.getDataSize(); p++) {
-				patterns.add( new ForSortPattern(dataSet.getPattern(p).getInputValue(dim),
-						dataSet.getPattern(p).getTrueClass()));
+				patterns.add( new ForSortPattern(dataSet.getPattern(p).getAttributeValue(dimension),
+						dataSet.getPattern(p).getTargetClass()));
 			}
 			Collections.sort(patterns, new Comparator<ForSortPattern>() {
 				@Override
@@ -118,17 +200,24 @@ public class Parameters {
 			// Optimal Splitting.
 			ArrayList<Double> boundaries = optimalSplitting(patterns, K, dataSet.getCnum());
 			Double[]  buf = boundaries.toArray(new Double[boundaries.size()]);
-			this.partitions.get(DIVISION_TYPE.entropyDivision).get(dim).put(K, buf);
+			this.partitions.get(DIVISION_TYPE.entropyDivision).get(dimension).put(K, buf);
 		}
 	}
 
+	public int getNumberOfDimension() {
+		return numberOfDimension;
+	}
+
 	/**
-	 * 三角形型のパラメータを生成する．
-	 *
-	 * @return パラメータ[ファジイセットID][パラメータ]
+	 * 指定された分割方式・次元・分割数での分割区間をから三角型ファジィ集合のパラメータを生成します。<br>
+	 * Return triangle parameter at the specified divisionType and dimension , dimension and number of partition
+	 * @param divisionType 分割方式
+	 * @param dimension 次元
+	 * @K 分割数
+	 * @return 生成されたさ三角型ファジィ集合のパラメータ
 	 */
-	public float[][] triangle(DIVISION_TYPE divisionType, int dim, int K){
-		Double[] buf = this.getPartition(divisionType, dim, K);
+	public float[][] triangle(DIVISION_TYPE divisionType, int dimension, int K){
+		Double[] buf = this.getPartition(divisionType, dimension, K);
 		float[][] params = new float[K][3];
 		for(int i=0; i<K; i++) {
 			if(i == 0) {
@@ -144,12 +233,16 @@ public class Parameters {
 	}
 
 	/**
-	 * 不均一な線形型のパラメータを生成する．
-	 *
-	 * @return パラメータ[ファジイセットID][パラメータ](台形型パラメータ)
+	 * 指定された分割方式・次元・分割数での分割区間をから線形型ファジィ集合のパラメータを生成します。<br>
+	 * Return linerShape parameter at the specified divisionType and dimension , dimension and number of partition
+	 * @param divisionType 分割方式
+	 * @param dimension 次元
+	 * @K 分割数
+	 * @param F ファジィ度
+	 * @return 生成されたさ線形型ファジィ集合のパラメータ
 	 */
-	public float[][] linerShape(DIVISION_TYPE divisionType, int dim, int K, double F){
-		Double[] buf = this.getPartition(divisionType, dim, K);
+	public float[][] linerShape(DIVISION_TYPE divisionType, int dimension, int K, double F){
+		Double[] buf = this.getPartition(divisionType, dimension, K);
 		float[][] params = new float[K][4];
 		ArrayList<Float> newPoints = new ArrayList<>();
 		//領域左端の点を追加
@@ -179,8 +272,16 @@ public class Parameters {
 		return params;
 	}
 
-	public float[][] gaussian(DIVISION_TYPE divisionType, int dim, int K){
-		Double[] buf = this.getPartition(divisionType, dim, K);
+	/**
+	 * 指定された分割方式・次元・分割数での分割区間をからガウシアン型ファジィ集合のパラメータを生成します。<br>
+	 * Return linerShape parameter at the specified divisionType and dimension , dimension and number of partition
+	 * @param divisionType 分割方式
+	 * @param dimension 次元
+	 * @K 分割数
+	 * @return 生成されたさガウシアン型ファジィ集合のパラメータ
+	 */
+	public float[][] gaussian(DIVISION_TYPE divisionType, int dimension, int K){
+		Double[] buf = this.getPartition(divisionType, dimension, K);
 		float[][] params = new float[K][2];
 		for(int i=0; i<K; i++) {
 			//最初と最後だけ頂点が区間端になるようにする．
@@ -195,13 +296,14 @@ public class Parameters {
 		}
 		return params;
 	}
+
 	/**
 	 * 平均 mean の正規分布(係数なし，x=meanのときvalue=1)について，
 	 * 引数に与えられた，(x, value)を通る平均meanの正規分布の標準偏差を計算するメソッド
-	 * @param mean
-	 * @param x
-	 * @param value
-	 * @return
+	 * @param mean 中央値
+	 * @param x 隣接メンバシップ関数との閾値
+	 * @param value 閾値でとるメンバシップ値
+	 * @return [中央値, 分散]
 	 */
 	public static float[] calcGaussParam(float mean, float x, float value) {
 		float[] param;
@@ -223,12 +325,15 @@ public class Parameters {
 	}
 
 	/**
-	 * 区間型のパラメータを生成する．
-	 *
-	 * @return パラメータ[ファジイセットID][パラメータ]
+	 * 指定された分割方式・次元・分割数での分割区間をから区間型条件部集合のパラメータを生成します。<br>
+	 * Return linerShape parameter at the specified divisionType and dimension , dimension and number of partition
+	 * @param divisionType 分割方式
+	 * @param dimension 次元
+	 * @K 分割数
+	 * @return 生成されたさ区間型条件部集合のパラメータ
 	 */
-	public float[][] rectangle(DIVISION_TYPE divisionType, int dim, int K){
-		Double[] buf = this.getPartition(divisionType, dim, K);
+	public float[][] rectangle(DIVISION_TYPE divisionType, int dimension, int K){
+		Double[] buf = this.getPartition(divisionType, dimension, K);
 		float[][] params = new float[K][2];
 		for(int i=0; i<K; i++) {
 			params[i] = new float[] {(float)(double)buf[i], (float)(double)buf[i+1]};
@@ -237,12 +342,15 @@ public class Parameters {
 	}
 
 	/**
-	 * 台形型のパラメータを生成する．
-	 *
-	 * @return パラメータ[ファジイセットID][パラメータ]
+	 * 指定された分割方式・次元・分割数での分割区間をから台形型ファジィ集合のパラメータを生成します。<br>
+	 * Return linerShape parameter at the specified divisionType and dimension , dimension and number of partition
+	 * @param divisionType 分割方式
+	 * @param dimension 次元
+	 * @K 分割数
+	 * @return 生成されたさ台形型ファジィ集合のパラメータ
 	 */
-	public float[][] trapezoid(DIVISION_TYPE divisionType, int dim, int K){
-		Double[] buf = this.getPartition(divisionType, dim, K);
+	public float[][] trapezoid(DIVISION_TYPE divisionType, int dimension, int K){
+		Double[] buf = this.getPartition(divisionType, dimension, K);
 		float[][] params = new float[K][4];
 		for(int i=0; i<K; i++) {
 			if(i == 0) {
@@ -275,7 +383,7 @@ public class Parameters {
 		double point = 0;
 //		candidate.add(point);
 		for(int p = 1; p < patterns.size(); p++) {
-			if(patterns.get(p-1).getConClass() != patterns.get(p).getConClass()) {
+			if( !patterns.get(p-1).getConClass().equalsClassLabel(patterns.get(p).getConClass()) ) {
 				point = 0.5 * (patterns.get(p-1).getX() + patterns.get(p).getX());
 			}
 
@@ -316,7 +424,7 @@ public class Parameters {
 						try {
 							Optional<Double> partSum = Parallel.getInstance().getLearningForkJoinPool().submit( () ->
 							patterns.parallelStream()
-									.filter(p -> p.getConClass().getClassLabelInteger() == CLASSNUM)
+									.filter(p -> p.getConClass().equalsClassLabel(CLASSNUM))
 									.filter(p -> LEFT <= p.getX() && p.getX() <= RIGHT)
 									.map(p -> {
 										if(p.getX() == 0.0 || p.getX() == 1.0) {return 1.0;}
@@ -377,45 +485,63 @@ public class Parameters {
 		return partitions;
 	}
 
-	public float[][] getParameter(DIVISION_TYPE divisionType, int dim, int K, int fuzzyTermShapeID){
+	/**
+	 * 指定された分割方式・次元・分割数・ファジィ集合形状IDのパラメータを返します。<br>
+	 * Returns Partition at the specified divisionType and dimension
+	 * @param divisionType 分割方式
+	 * @param dimension 次元
+	 * @K 分割数
+	 * @param fuzzyTermShapeID ファジィ集合形状ID
+	 * @return 生成されたファジィ集合のパラメータ．
+	 */
+	public float[][] getParameter(DIVISION_TYPE divisionType, int dimension, int K, int fuzzyTermShapeID){
 		switch(fuzzyTermShapeID) {
 		case FuzzyTerm.TYPE_gaussianShape:
-			return this.gaussian(divisionType, dim, K);
+			return this.gaussian(divisionType, dimension, K);
 
 		case FuzzyTerm.TYPE_trapezoidShape:
 			if(divisionType == DIVISION_TYPE.equalDivision) {
-				return this.trapezoid(divisionType, dim, K);
+				return this.trapezoid(divisionType, dimension, K);
 			}else if(divisionType == DIVISION_TYPE.entropyDivision){
-				return this.linerShape(divisionType, dim, K, Consts.FUZZY_GRADE);
+				return this.linerShape(divisionType, dimension, K, Consts.FUZZY_GRADE);
 			}
 
 		case FuzzyTerm.TYPE_rectangularShape:
-			return this.rectangle(divisionType, dim, K);
+			return this.rectangle(divisionType, dimension, K);
 
 		case FuzzyTerm.TYPE_triangularShape:
 		default:
-			return this.triangle(divisionType, dim, K);
+			return this.triangle(divisionType, dimension, K);
 		}
 	}
 
-	public float[][] getParameter(DIVISION_TYPE divisionType, int dim, int K, SHAPE_TYPE_NAME fuzzyTermShapeName){
+	/**
+	 * 指定された分割方式・次元・分割数・ファジィ集合形状のパラメータを返します。<br>
+	 * Returns Partition at the specified divisionType and dimension
+	 * @param divisionType 分割方式
+	 * @param dimension 次元
+	 * @K 分割数
+	 * @param fuzzyTermShapeName ファジィ集合形状名
+	 * @return 生成されたファジィ集合のパラメータ．
+	 */
+	public float[][] getParameter(DIVISION_TYPE divisionType, int dimension, int K, SHAPE_TYPE_NAME fuzzyTermShapeName){
 		switch(fuzzyTermShapeName) {
 			case gaussian:
-				return this.gaussian(divisionType, dim, K);
+				return this.gaussian(divisionType, dimension, K);
 
 			case trapezoid:
 				if(divisionType == DIVISION_TYPE.equalDivision) {
-					return this.trapezoid(divisionType, dim, K);
+					return this.trapezoid(divisionType, dimension, K);
 				}else if(divisionType == DIVISION_TYPE.entropyDivision){
-					return this.linerShape(divisionType, dim, K, Consts.FUZZY_GRADE);
+					return this.linerShape(divisionType, dimension, K, Consts.FUZZY_GRADE);
 				}
 
 			case interval:
-				return this.rectangle(divisionType, dim, K);
+				return this.rectangle(divisionType, dimension, K);
 
 			case triangle:
 			default:
-				return this.triangle(divisionType, dim, K);
+				return this.triangle(divisionType, dimension, K);
 		}
 	}
 

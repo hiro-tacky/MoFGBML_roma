@@ -7,7 +7,7 @@ import org.uma.jmetal.util.pseudorandom.BoundedRandomGenerator;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 import org.uma.jmetal.util.pseudorandom.RandomGenerator;
 
-import cilabo.data.DataSet;
+import cilabo.data.dataSet.impl.DataSet_Basic;
 import cilabo.fuzzy.knowledge.Knowledge;
 import cilabo.gbml.solution.pittsburghSolution.PittsburghSolution;
 import cilabo.utility.Random;
@@ -16,29 +16,29 @@ public class PittsburghMutation implements MutationOperator<PittsburghSolution<?
 	private double mutationProbability;
 	private RandomGenerator<Double> randomGenerator;
 	private BoundedRandomGenerator<Integer> intRandomGenerator;
-	private DataSet train;
+	private DataSet_Basic train;
 
 	/** Constructor */
-	public PittsburghMutation(DataSet train) {
+	public PittsburghMutation(DataSet_Basic train) {
 		this(1.0, train);
 	}
 
 	/** Constructor */
-	public PittsburghMutation(double mutationProbability, DataSet train) {
+	public PittsburghMutation(double mutationProbability, DataSet_Basic train) {
 		this(mutationProbability, train,
 			 () -> JMetalRandom.getInstance().nextDouble(),
 			 (a, b) -> JMetalRandom.getInstance().nextInt(a, b));
 	}
 
 	/** Constructor */
-	public PittsburghMutation(double mutationProbability, DataSet train, RandomGenerator<Double> randomGenerator) {
+	public PittsburghMutation(double mutationProbability, DataSet_Basic train, RandomGenerator<Double> randomGenerator) {
 		this(
 			mutationProbability, train, randomGenerator,
 			BoundedRandomGenerator.fromDoubleToInteger(randomGenerator));
 	}
 
 	/** Constructor */
-	public PittsburghMutation(double mutationProbability, DataSet train, RandomGenerator<Double> randomGenerator, BoundedRandomGenerator<Integer> intRandomGenerator) {
+	public PittsburghMutation(double mutationProbability, DataSet_Basic train, RandomGenerator<Double> randomGenerator, BoundedRandomGenerator<Integer> intRandomGenerator) {
 		if (mutationProbability < 0) {
 			throw new JMetalException("Mutation probability is negative: " + mutationProbability);
 		}
@@ -73,6 +73,7 @@ public class PittsburghMutation implements MutationOperator<PittsburghSolution<?
 	 */
 	public void doMutation(double probability, PittsburghSolution<?> solution) {
 		int numberOfRules = solution.getNumberOfVariables();
+		if(numberOfRules < 1) {System.err.println("incorrect input: number Of Rules is less than 1");}
 		int dimension = train.getNdim();
 
 		for(int rule_i = 0; rule_i < numberOfRules; rule_i++) {
@@ -83,10 +84,11 @@ public class PittsburghMutation implements MutationOperator<PittsburghSolution<?
 				/* To judge which mutatedDimension is categorical or numerical  */
 				double variableOfRandomPattern = train
 												.getPattern(Random.getInstance().getGEN().nextInt(train.getDataSize()))
-					  							.getInputValue(mutatedDimension);
+					  							.getAttributeValue(mutatedDimension);
 				/* Attribute is Numeric */
 				if(variableOfRandomPattern >= 0.0) {
 					int numberOfCandidates = Knowledge.getInstance().getFuzzySetNum(mutatedDimension);
+					if(numberOfCandidates <= 1) {break;}
 					//既に入力済みのファジィセットのインデックス以外の値をランダムに決定し入力する
 					int newFuzzySet = intRandomGenerator.getRandomValue(0, numberOfCandidates-2);
 					if(newFuzzySet < (int)solution.getVariable(rule_i).getVariable(mutatedDimension)) {

@@ -34,7 +34,7 @@ public final class RuleWeight_Basic extends AbstractRuleWeight <Double>{
 
 	@Override
 	public Element toElement() {
-		Element ruleWeight = XML_manager.createElement(XML_TagName.ruleWeight, String.valueOf(this.ruleWeight));
+		Element ruleWeight = XML_manager.getInstance().createElement(XML_TagName.ruleWeight, String.valueOf(this.ruleWeight));
 		return ruleWeight;
 	}
 

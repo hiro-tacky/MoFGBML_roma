@@ -8,25 +8,27 @@ import cilabo.fuzzy.rule.antecedent.AbstractAntecedent;
 import xml.XML_TagName;
 import xml.XML_manager;
 
+/**
+ * Antecedent実装クラス
+ * @author Takigawa Hiroki
+ */
 public final class Antecedent_Basic extends AbstractAntecedent{
 
-	public Antecedent_Basic() {	}
-
 	@Override
-	public double[] getCompatibleGrade(int[] antecedentIndex, double[] x) {
-		if(antecedentIndex.length != x.length) {
+	public double[] getCompatibleGrade(int[] antecedentIndex, double[] attributeVector) {
+		if(antecedentIndex.length != attributeVector.length) {
 			throw new IllegalArgumentException("antecedentIndex and pattern must be same length");
 		}
 
 		double[] grade = new double[antecedentIndex.length];
-		for(int i = 0; i < x.length; i++) {
-			if(antecedentIndex[i] <= 0 && x[i] <= 0) {
+		for(int i = 0; i < attributeVector.length; i++) {
+			if(antecedentIndex[i] <= 0 && attributeVector[i] <= 0) {
 				// categorical
-				if(antecedentIndex[i] == (int)x[i]) grade[i] = 1.0;
+				if(antecedentIndex[i] == (int)attributeVector[i]) grade[i] = 1.0;
 				else grade[i] = 0.0;
-			}else if(antecedentIndex[i] >= 0 && x[i] >= 0){
+			}else if(antecedentIndex[i] >= 0 && attributeVector[i] >= 0){
 				// numerical
-				grade[i] = this.getFuzzySet(i, antecedentIndex[i]).getMembershipValue((float)x[i]);
+				grade[i] = this.getFuzzySet(i, antecedentIndex[i]).getMembershipValue((float)attributeVector[i]);
 			}else if(antecedentIndex[i] == 0) {
 				//don't care
 				grade[i] = 1.0;
@@ -38,12 +40,12 @@ public final class Antecedent_Basic extends AbstractAntecedent{
 	}
 
 	@Override
-	public double getCompatibleGradeValue(int[] antecedentIndex, double[] x) {
-		if(antecedentIndex.length != x.length) {
+	public double getCompatibleGradeValue(int[] antecedentIndex, double[] attributeVector) {
+		if(antecedentIndex.length != attributeVector.length) {
 			throw new IllegalArgumentException("antecedentIndex and pattern must be same length");
 		}
 
-		double[] buf = this.getCompatibleGrade(antecedentIndex, x);
+		double[] buf = this.getCompatibleGrade(antecedentIndex, attributeVector);
 		double grade = Arrays.stream(buf).reduce(1, (multi, i) -> multi*i);
 		return grade;
 	}
@@ -64,7 +66,7 @@ public final class Antecedent_Basic extends AbstractAntecedent{
 
 	@Override
 	public Element toElement() {
-		Element antecedent = XML_manager.createElement(XML_TagName.antecedent);
+		Element antecedent = XML_manager.getInstance().createElement(XML_TagName.antecedent);
 		return antecedent;
 	}
 }

@@ -3,8 +3,8 @@ package cilabo.fuzzy.rule.consequent.factory.impl;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
-import cilabo.data.DataSet;
-import cilabo.data.pattern.impl.Pattern_MultiClass;
+import cilabo.data.dataSet.impl.DataSet_Basic;
+import cilabo.data.pattern.Pattern;
 import cilabo.fuzzy.rule.antecedent.Antecedent;
 import cilabo.fuzzy.rule.consequent.classLabel.AbstractClassLabel;
 import cilabo.fuzzy.rule.consequent.classLabel.impl.ClassLabel_Multi;
@@ -24,7 +24,7 @@ public final class MultiLabel_MoFGBML_Learning  extends ConsequentFactoryCore
 
 	/**コンストラクタ
 	 * @param train 生成時に用いる学習用データ */
-	public MultiLabel_MoFGBML_Learning(DataSet train) {
+	public MultiLabel_MoFGBML_Learning(DataSet_Basic<Pattern<ClassLabel_Multi>> train) {
 		this.train = train;
 	}
 
@@ -59,9 +59,9 @@ public final class MultiLabel_MoFGBML_Learning  extends ConsequentFactoryCore
 					partSum = Parallel.getInstance().getLearningForkJoinPool().submit( () ->
 						train.getPatterns().parallelStream()
 						// 結論部クラスベクトルのCLASS番目の要素がASSOCIATEであるパターンを抽出
-						.filter(pattern -> ((Pattern_MultiClass)pattern).getTrueClass().equalsValueOf(CLASS, ASSOCIATE))
+						.filter(pattern -> pattern.getTargetClass().equalsClassLabel(CLASS, ASSOCIATE) )
 						// 各パターンの入力ベクトルを抽出
-						.map(pattern -> pattern.getInputVector().getVector())
+						.map(pattern -> pattern.getAttributeVector().getAttributeValue())
 						// 各入力ベクトルとantecedentのcompatible gradeを計算
 						.map(x -> antecedent.getCompatibleGradeValue(antecedentIndex, x))
 						// compatible gradeを総和する
@@ -113,7 +113,7 @@ public final class MultiLabel_MoFGBML_Learning  extends ConsequentFactoryCore
 
 		Double[] ruleWeightBuf = new Double[confidence.length];
 		for(int c = 0; c < confidence.length; c++) {
-			if( classLabel.equalsValueOf(c, AbstractClassLabel.RejectedClassLabel) ) {
+			if( classLabel.equalsClassLabel(c, AbstractClassLabel.RejectedClassLabel) ) {
 				ruleWeightBuf[c] = 0.0;
 			}
 			else {

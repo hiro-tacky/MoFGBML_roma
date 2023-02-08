@@ -30,7 +30,7 @@ public class HeuristicRuleGeneration implements Operator<List<Pattern>, List<int
 
 	public int[] heuristicRuleGeneration(Pattern pattern) {
 		/** Number of attribute. */
-		int dimension = pattern.getInputVector().getVector().length;
+		int dimension = pattern.getAttributeVector().getAttributeValue().length;
 		/** Ratio of don't care
 		 *  (dimension - const) / dimension */
 		double RatioOfDontCare;
@@ -54,8 +54,8 @@ public class HeuristicRuleGeneration implements Operator<List<Pattern>, List<int
 			}
 			else {
 				//Categorical Dimension
-				if(pattern.getInputValue(n) < 0) {
-					antecedentIndex[n] = (int)pattern.getInputValue(n);
+				if(pattern.getAttributeValue(n) < 0) {
+					antecedentIndex[n] = (int)pattern.getAttributeValue(n);
 				}
 				//Numerical Dimension
 				else {
@@ -65,7 +65,7 @@ public class HeuristicRuleGeneration implements Operator<List<Pattern>, List<int
 					// Make roulette
 					membershipValueRoulette[0] = 0.0;
 					for(int f = 1; f < knowledge.getFuzzySetNum(n); f++) {
-						sumMembershipValue += knowledge.getMembershipValue(pattern.getInputValue(n), n, f);
+						sumMembershipValue += knowledge.getMembershipValue(pattern.getAttributeValue(n), n, f);
 						membershipValueRoulette[f] = sumMembershipValue;
 					}
 

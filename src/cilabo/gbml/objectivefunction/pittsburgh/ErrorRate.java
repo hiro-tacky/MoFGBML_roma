@@ -2,10 +2,9 @@ package cilabo.gbml.objectivefunction.pittsburgh;
 
 import java.util.ArrayList;
 
-import cilabo.data.DataSet;
+import cilabo.data.dataSet.impl.DataSet_Basic;
 import cilabo.data.pattern.Pattern;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution;
-import cilabo.gbml.solution.michiganSolution.impl.MichiganSolution_Rejected;
 import cilabo.gbml.solution.pittsburghSolution.PittsburghSolution;
 import cilabo.gbml.solution.util.attribute.ErroredPatternsAttribute;
 import cilabo.gbml.solution.util.attribute.NumberOfWinner;
@@ -14,7 +13,7 @@ public final class ErrorRate <S extends PittsburghSolution<?>>{
 
 	public ErrorRate() {}
 
-	public double function(S solution, DataSet train) {
+	public double function(S solution, DataSet_Basic train) {
 		// Classification
 		int numberOfErrorPatterns = 0;
 
@@ -23,10 +22,10 @@ public final class ErrorRate <S extends PittsburghSolution<?>>{
 		ArrayList<Pattern> erroredPatterns = new ArrayList<Pattern>();
 		for(int i = 0; i < train.getDataSize(); i++) {
 			Pattern pattern = train.getPattern(i);
-			MichiganSolution winnerSolution = solution.classify(pattern.getInputVector());
+			MichiganSolution winnerSolution = solution.classify(pattern.getAttributeVector());
 
 			// If output is rejected then continue next pattern.
-			if(winnerSolution instanceof MichiganSolution_Rejected) {
+			if(winnerSolution == null) {
 				/* Add errored pattern Attribute */
 				numberOfErrorPatterns++;
 				continue;
@@ -34,7 +33,7 @@ public final class ErrorRate <S extends PittsburghSolution<?>>{
 
 			/* If a winner rule correctly classify a pattern,
 			 * then the winner rule's fitness will be incremented. */
-			else if(!pattern.getTrueClass().equals(
+			else if(!pattern.getTargetClass().equalsClassLabel(
 					winnerSolution.getClassLabel()) ){
 				numberOfErrorPatterns++;
 				erroredPatterns.add(pattern);

@@ -2,11 +2,12 @@ package cilabo.fuzzy.rule;
 
 import org.w3c.dom.Element;
 
-import cilabo.data.InputVector;
+import cilabo.data.AttributeVector;
 import cilabo.data.pattern.Pattern;
 import cilabo.fuzzy.rule.antecedent.Antecedent;
 import cilabo.fuzzy.rule.consequent.Consequent;
 import cilabo.fuzzy.rule.consequent.classLabel.ClassLabel;
+import cilabo.fuzzy.rule.consequent.ruleWeight.RuleWeight;
 
 /** ルールのインターフェイス．但し，このクラスは遺伝子情報は持たない．
  * @author Takigawa Hiroki
@@ -15,14 +16,15 @@ import cilabo.fuzzy.rule.consequent.classLabel.ClassLabel;
  * @param <ConsequentObject> ルールオブジェクトが持つ後件部のクラス
  * @see cilabo.gbml.solution.michiganSolution.MichiganSolution
  */
-public interface Rule<AntecedentObject extends Antecedent, ConsequentObject extends Consequent>
-	extends Antecedent, Consequent{
+public interface Rule<AntecedentObject extends Antecedent, ConsequentObject extends Consequent<classLabel, ruleWeight>,
+	classLabel extends ClassLabel<?>, ruleWeight extends RuleWeight<?>>
+	extends Antecedent, Consequent<classLabel, ruleWeight>{
 
 	/** 前件部のファジィセットのインデックス配列と属性値クラスを受け取り，入力パターンの属性値に対するルールの適合度を返す
 	 * @param antecedentIndex 識別に用いる遺伝子情報．前件部のファジィセットのインデックス配列
 	 * @param inputVector 識別対象となるパターンの属性値クラス
 	 * @return ルールの適合度 */
-	public double getFitnessValue(int[] antecedentIndex, InputVector inputVector);
+	public double getFitnessValue(int[] antecedentIndex, AttributeVector inputVector);
 
 	/** 遺伝子情報を受け取り，ルール長を返す
 	 * @param 前件部のファジィセットのインデックス配列
@@ -32,7 +34,11 @@ public interface Rule<AntecedentObject extends Antecedent, ConsequentObject exte
 	/** 入力された後件部クラスラベルとこのインスタンスが持つ後件部のクラスラベルを比較する
 	 * @param classLabel 比較対象となる結論部クラスラベル
 	 * @return true:同値であった．false: 異なる結論部クラスラベルであった．*/
-	boolean equalsClassLabel(ClassLabel classLabel);
+	boolean equalsClassLabel(ClassLabel<?> classLabel);
+
+	/** このインスタンスが拒否クラスラベルかを判断する
+	 * @return 拒否クラスラベルである場合:true <br>拒否クラスラベルでない場合:false*/
+	public boolean isRejectedClassLabel();
 
 	/** Antecedentオブジェクトを取得
 	 * @return Antecedentオブジェクト */
@@ -46,24 +52,32 @@ public interface Rule<AntecedentObject extends Antecedent, ConsequentObject exte
 	public Element toElement();
 
 	@Override
-	public Rule<AntecedentObject, ConsequentObject> copy();
+	public Rule<AntecedentObject, ConsequentObject, classLabel, ruleWeight> copy();
 
 	/** Ruleオブジェクトを生成するfactoryのインターフェイス．
 	 * @author Takigawa Hiroki
 	 * @param <RuleObject> 生成するRuleオブジェクトのクラス
 	 */
-	public interface RuleBuilder<RuleObject extends Rule>{
-
+	public interface RuleBuilder<RuleObject extends Rule<?, ?, ?, ?>>{
 		/** 前件部のファジィセットのインデックス配列を返す
-		 * @return 生成された前件部のファジィセットのインデックス配列 */
+		 * @return 生成されたRuleオブジェクトの配列*/
 		public int[] createAntecedentIndex();
 
-		public int[] createAntecedentIndex(Pattern pattern);
-
-		/** 前件部のファジィセットのインデックス配列を指定された個数返す
-		 * @param numberOfGenerateRule 生成したいインデックス配列の個数
-		 * @return 生成された前件部のファジィセットのインデックス配列 */
+		/** 前件部のファジィセットのインデックス配列を複数返す
+		 * @param numberOfGenerateRule 生成する前件部の数
+		 * @return 生成されたRuleオブジェクトの配列*/
 		public int[][] createAntecedentIndex(int numberOfGenerateRule);
+
+		/** 前件部のファジィセットのインデックス配列を返す
+		 * @param pattern 前件部生成の学習に使用するPatternクラス
+		 * @return 生成された前件部のファジィセットのインデックス配列
+		 */
+		public int[] createAntecedentIndex(Pattern<?> pattern);
+
+		/** 入力されたElementを基に前件部のファジィセットのインデックス配列を返す
+		 * @param antecedentIndex 生成に用いる遺伝子情報
+		 * @return 生成されたRuleオブジェクトの配列*/
+		public int[] createAntecedentIndex(Element michiganSolution);
 
 		/** 入力された遺伝子情報を基にRuleオブジェクトを生成する
 		 * @param antecedentIndex 生成に用いる遺伝子情報
@@ -75,10 +89,11 @@ public interface Rule<AntecedentObject extends Antecedent, ConsequentObject exte
 		 * @return 生成されたRuleオブジェクトの配列*/
 		public RuleObject[] createRule(int[][] antecedentIndex);
 
-		/** 入力された遺伝子情報を基にRuleオブジェクトを複数生成する
-		 * @param antecedentIndex 生成に用いる遺伝子情報
+		/** 入力されたElementを基にRuleオブジェクトを複数生成する
+		 * @param michiganSolution 生成に用いるElement
 		 * @return 生成されたRuleオブジェクトの配列*/
 		public RuleObject createRule(Element michiganSolution);
+
 
 		public RuleBuilder<RuleObject> copy();
 	}

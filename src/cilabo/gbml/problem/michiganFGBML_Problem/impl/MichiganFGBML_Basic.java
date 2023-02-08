@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import cilabo.data.DataSet;
+import cilabo.data.dataSet.impl.DataSet_Basic;
 import cilabo.fuzzy.rule.Rule;
 import cilabo.fuzzy.rule.Rule.RuleBuilder;
 import cilabo.gbml.objectivefunction.michigan.RuleLength;
@@ -21,7 +21,7 @@ public class MichiganFGBML_Basic <RuleObject extends Rule> extends AbstractMichi
 			int numberOfVariables,
 			int numberOfObjectives,
 			int numberOfConstraints,
-			DataSet train,
+			DataSet_Basic train,
 			RuleBuilder<RuleObject> ruleBuilder) {
 		super(numberOfVariables, numberOfObjectives, numberOfConstraints,
 				train, ruleBuilder);
@@ -35,7 +35,7 @@ public class MichiganFGBML_Basic <RuleObject extends Rule> extends AbstractMichi
 			int numberOfVariables,
 			int numberOfObjectives,
 			int numberOfConstraints,
-			DataSet train,
+			DataSet_Basic train,
 			List<Pair<Integer, Integer>> bounds,
 			RuleBuilder<RuleObject> ruleBuilder) {
 		super(numberOfVariables, numberOfObjectives, numberOfConstraints, train, bounds, ruleBuilder);
@@ -50,7 +50,7 @@ public class MichiganFGBML_Basic <RuleObject extends Rule> extends AbstractMichi
 
 		/* The first objective */
 		for(int i=0; i<train.getDataSize(); i++) {
-			double fitnessValue = solution.getFitnessValue(train.getPattern(i).getInputVector());
+			double fitnessValue = solution.getFitnessValue(train.getPattern(i).getAttributeVector());
 			double maxFitnessValue = winnerSolutionForEachPattern.get(i).getMaxFitnessValue();
 			if(maxFitnessValue < fitnessValue) {
 				winnerSolutionForEachPattern.set(i, new WinnerSolution(fitnessValue, solution));

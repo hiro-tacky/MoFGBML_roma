@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import org.uma.jmetal.solution.integersolution.IntegerSolution;
 import org.w3c.dom.Element;
 
-import cilabo.data.InputVector;
+import cilabo.data.AttributeVector;
 import cilabo.data.pattern.Pattern;
 import cilabo.fuzzy.rule.Rule;
 import cilabo.fuzzy.rule.consequent.classLabel.ClassLabel;
@@ -40,7 +40,7 @@ public interface MichiganSolution<RuleObject extends Rule> extends IntegerSoluti
 	/** 入力された未知パターンに対して適応度を返す．
 	 * @param inputVector 未知パターンの属性値クラス
 	 * @return 算出された適応度 */
-	public double getFitnessValue(InputVector inputVector);
+	public double getFitnessValue(AttributeVector inputVector);
 
 	/** 前件部のルール長を返す
 	 * @return このインスタンスが持つ前件部のルール長 */

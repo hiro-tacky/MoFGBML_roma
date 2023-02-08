@@ -21,8 +21,10 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
-import cilabo.data.DataSet;
-import cilabo.data.TrainTestDatasetManager;
+import cilabo.data.DatasetManager;
+import cilabo.data.dataSet.impl.DataSet_Basic;
+import cilabo.data.pattern.Pattern;
+import cilabo.data.pattern.impl.Pattern_Basic;
 import cilabo.fuzzy.classifier.Classifier;
 import cilabo.fuzzy.classifier.classification.Classification;
 import cilabo.fuzzy.classifier.classification.impl.SingleWinnerRuleSelection;
@@ -31,6 +33,7 @@ import cilabo.fuzzy.knowledge.factory.HomoTriangleKnowledgeFactory;
 import cilabo.fuzzy.knowledge.membershipParams.Parameters;
 import cilabo.fuzzy.rule.Rule.RuleBuilder;
 import cilabo.fuzzy.rule.antecedent.factory.impl.HeuristicRuleGenerationMethod;
+import cilabo.fuzzy.rule.consequent.classLabel.impl.ClassLabel_Basic;
 import cilabo.fuzzy.rule.consequent.factory.impl.MoFGBML_Learning;
 import cilabo.fuzzy.rule.impl.Rule_Basic;
 import cilabo.gbml.algorithm.HybridMoFGBMLwithNSGAII;
@@ -107,12 +110,12 @@ public class MoFGBML_Basic_Main {
 		JMetalRandom.getInstance().setSeed(Consts.RAND_SEED);
 
 		/* Load Dataset ======================== */
-		TrainTestDatasetManager.getInstance().loadTrainTestFiles(MoFGBML_Basic_CommandLineArgs.trainFile,
+		DatasetManager.getInstance().loadTrainTestFiles(MoFGBML_Basic_CommandLineArgs.trainFile,
 				MoFGBML_Basic_CommandLineArgs.testFile);
 
 		/* Run MoFGBML algorithm =============== */
-		DataSet train = TrainTestDatasetManager.getInstance().getTrains().get(0);
-		DataSet test = TrainTestDatasetManager.getInstance().getTests().get(0);
+		DataSet_Basic<Pattern_Basic> train = (DataSet_Basic<Pattern_Basic>) DatasetManager.getInstance().getTrains().get(0);
+		DataSet_Basic<Pattern_Basic> test = (DataSet_Basic<Pattern_Basic>) DatasetManager.getInstance().getTests().get(0);
 
 
 		/** XML ファイル出力ようインスタンスの生成*/
@@ -122,7 +125,7 @@ public class MoFGBML_Basic_Main {
 		/* ===================================== */
 
 		try {
-			XML_manager.output(Consts.EXPERIMENT_ID_DIR);
+			XML_manager.getInstance().output(Consts.EXPERIMENT_ID_DIR);
 		} catch (TransformerException | IOException e) {
 			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
@@ -138,17 +141,17 @@ public class MoFGBML_Basic_Main {
 	/**
 	 *
 	 */
-	public static void HybridStyleMoFGBML(DataSet train, DataSet test) {
+	public static void HybridStyleMoFGBML(DataSet_Basic<Pattern_Basic> train, DataSet_Basic<Pattern_Basic> test) {
 		Random.getInstance().initRandom(2022);
 		String sep = File.separator;
 
 		//Consts出力用
-		XML_manager.addElement(XML_manager.getRoot(), Consts.toElement());
+		XML_manager.getInstance().addElement(XML_manager.getInstance().getRoot(), Consts.toElement());
 
 		int dimension = train.getNdim();
-		Parameters parameters = new Parameters(train, dimension);
-		HomoTriangleKnowledgeFactory KnowledgeFactory = new HomoTriangleKnowledgeFactory(dimension, parameters);
-		KnowledgeFactory.create();
+		Parameters parameters = new Parameters(train);
+		HomoTriangleKnowledgeFactory KnowledgeFactory = new HomoTriangleKnowledgeFactory(parameters);
+		KnowledgeFactory.create2_3_4_5();
 
 		List<Pair<Integer, Integer>> bounds_Michigan = AbstractMichiganSolution.makeBounds();
 		int numberOfObjectives_Michigan = 2;
@@ -160,7 +163,7 @@ public class MoFGBML_Basic_Main {
 
 		RuleBuilder<Rule_Basic> ruleBuilder = new Rule_Basic.RuleBuilder_Basic(
 				new HeuristicRuleGenerationMethod(train),
-				new MoFGBML_Learning(train));
+				new MoFGBML_Learning((DataSet_Basic<Pattern<ClassLabel_Basic>>) train));
 
 		MichiganSolutionBuilder<MichiganSolution_Basic<Rule_Basic>> michiganSolutionBuilder
 			= new MichiganSolution_Basic.MichiganSolutionBuilder_Basic<Rule_Basic>(

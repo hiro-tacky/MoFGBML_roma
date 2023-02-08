@@ -2,28 +2,38 @@ package cilabo.fuzzy.classifier.classification.impl;
 
 import java.util.List;
 
-import cilabo.data.InputVector;
+import cilabo.data.AttributeVector;
 import cilabo.fuzzy.classifier.classification.Classification;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution;
 
+/** 単一勝利ルールの実装クラス
+ * @author Takigawa Hiroki
+ *
+ * @param <michiganSolution> 識別器が扱うMichiganSolutionクラスの型
+ */
 public final class SingleWinnerRuleSelection <michiganSolution extends MichiganSolution<?>> implements Classification <michiganSolution> {
 
 	/**
 	 * 単一勝利ルールに基づいて勝利ルールを出力する．
-	 * @param classifier 識別器
-	 * @param vector 入力パターン
-	 * @return 勝利ルール 識別不能時はMichiganSolution_Rejected
-	 * @see cilabo.fuzzy.classifier.classification.Classification#classify(cilabo.fuzzy.classifier.Classifier, cilabo.data.InputVector)
+	 * 適合度が最大値となるMichiganSolutionを返す．適合度が更新されない場合or適合度が最大値となるMichiganSolutionが複数複数存在し，
+	 * それらの結論部クラスが異なる場合は識別不能とし，nullを返す．
+	 * @param michiganSolutionList 識別器
+	 * @param attributeVector 入力パターン
+	 * @return 勝利となったMichiganSolution 識別不能時はnull
 	 */
 	@Override
-	public michiganSolution classify(List<michiganSolution> michiganSolutionList, InputVector vector) {
+	public michiganSolution classify(List<michiganSolution> michiganSolutionList, AttributeVector attributeVector) {
+		if(michiganSolutionList.size() < 1) {
+			throw new IllegalArgumentException("argument [michiganSolutionList] has no michiganSolution @SingleWinnerRuleSelection.classify()");}
 
-		boolean canClassify = true; //識別可能フラグ
+		boolean canClassify = false; //識別可能フラグ
 		double max = -Double.MAX_VALUE; //適用度最大値保存バッファ
 		int winner = 0; //勝利ルールインデックス保存バッファ
 		for(int q = 0; q < michiganSolutionList.size(); q++) {
 			MichiganSolution<?> michiganSolution = michiganSolutionList.get(q);
-			double value = michiganSolution.getFitnessValue(vector); //適合度計算
+			if(michiganSolution.getClassLabel().isRejectedClassLabel()) {
+				throw new IllegalArgumentException("argument [michiganSolutionList] has michiganSolution with Rejected ClassLabel @SingleWinnerRuleSelection.classify()");}
+			double value = michiganSolution.getFitnessValue(attributeVector); //適合度計算
 
 			//適用度最大値更新ケース
 			if(value > max) {
@@ -42,10 +52,10 @@ public final class SingleWinnerRuleSelection <michiganSolution extends MichiganS
 		}
 
 		//識別可能である場合勝利ルールを返す
-		if(canClassify && max > 0) {
+		if(canClassify && max >= 0) {
 			return michiganSolutionList.get(winner);
 		}
-		//識別不可能である場合はダミーであるMichiganSolution_Rejectedを返す．
+		//識別不可能である場合はnullを返す．
 		else {
 			return null;
 		}

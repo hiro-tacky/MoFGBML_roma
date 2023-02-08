@@ -10,7 +10,7 @@ import org.uma.jmetal.problem.AbstractGenericProblem;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.util.checking.Check;
 
-import cilabo.data.DataSet;
+import cilabo.data.dataSet.impl.DataSet_Basic;
 import cilabo.fuzzy.rule.Rule;
 import cilabo.fuzzy.rule.Rule.RuleBuilder;
 import cilabo.gbml.solution.michiganSolution.AbstractMichiganSolution;
@@ -32,7 +32,7 @@ import cilabo.gbml.solution.michiganSolution.MichiganSolution;
 public abstract class AbstractMichiganFGBML <michiganSolutionObject extends MichiganSolution<RuleObject>, RuleObject extends Rule>
 		extends AbstractGenericProblem <michiganSolutionObject> implements Problem<michiganSolutionObject>{
 
-	protected DataSet train;
+	protected DataSet_Basic train;
 
 	protected List<Pair<Integer, Integer>> bounds;
 
@@ -43,7 +43,7 @@ public abstract class AbstractMichiganFGBML <michiganSolutionObject extends Mich
 			int numberOfVariables,
 			int numberOfObjectives,
 			int numberOfConstraints,
-			DataSet train,
+			DataSet_Basic train,
 			RuleBuilder<RuleObject> ruleBuilder) {
 		this(numberOfVariables, numberOfObjectives, numberOfConstraints,
 				train, AbstractMichiganSolution.makeBounds(), ruleBuilder);
@@ -54,7 +54,7 @@ public abstract class AbstractMichiganFGBML <michiganSolutionObject extends Mich
 			int numberOfVariables,
 			int numberOfObjectives,
 			int numberOfConstraints,
-			DataSet train,
+			DataSet_Basic train,
 			List<Pair<Integer, Integer>> bounds,
 			RuleBuilder<RuleObject> ruleBuilder) {
 		setNumberOfVariables(bounds.size());
@@ -66,7 +66,7 @@ public abstract class AbstractMichiganFGBML <michiganSolutionObject extends Mich
 		this.ruleBuilder = ruleBuilder;
 	}
 
-	public DataSet getTrain() {
+	public DataSet_Basic getTrain() {
 		return train;
 	}
 

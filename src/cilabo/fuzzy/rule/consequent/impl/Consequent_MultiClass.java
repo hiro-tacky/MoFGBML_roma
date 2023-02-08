@@ -3,7 +3,6 @@ package cilabo.fuzzy.rule.consequent.impl;
 import org.w3c.dom.Element;
 
 import cilabo.fuzzy.rule.consequent.AbstractConsequent;
-import cilabo.fuzzy.rule.consequent.classLabel.ClassLabel;
 import cilabo.fuzzy.rule.consequent.classLabel.impl.ClassLabel_Multi;
 import cilabo.fuzzy.rule.consequent.ruleWeight.impl.RuleWeight_Multi;
 import cilabo.main.impl.multiTasking.MultiTasking;
@@ -34,56 +33,6 @@ public class Consequent_MultiClass extends AbstractConsequent <ClassLabel_Multi,
 	}
 
 	@Override
-	public ClassLabel_Multi getClassLabel() {
-		return this.classLabel;
-	}
-
-	@Override
-	public RuleWeight_Multi getRuleWeight() {
-		return this.ruleWeight;
-	}
-
-	@Override
-	public boolean equals(ClassLabel<Integer[]> classLabel) {
-		return this.classLabel.equals(classLabel);
-	}
-
-	@Override
-	public Integer[] getClassLabelValue() {
-		return this.classLabel.getClassLabelValue();
-	}
-
-	@Override
-	public void setClassLabelValue(Integer[] classLabelValue) {
-		this.classLabel.setClassLabelValue(classLabelValue);
-	}
-
-	@Override
-	public Integer getClassLabelInteger() {
-		return this.classLabel.getClassLabelInteger();
-	}
-
-	@Override
-	public boolean equalsValueOf(Integer[] classLabelValue) {
-		return this.classLabel.equalsValueOf(classLabelValue);
-	}
-
-	@Override
-	public Double[] getRuleWeightValue() {
-		return this.ruleWeight.getRuleWeightValue();
-	}
-
-	@Override
-	public void setRuleWeightValue(Double[] ruleWeightValue) {
-		this.ruleWeight.setRuleWeightValue(ruleWeightValue);
-	}
-
-	@Override
-	public Double getRuleWeightDouble() {
-		return this.ruleWeight.getRuleWeightDouble();
-	}
-
-	@Override
 	public String toString() {
 		String str = null;
 
@@ -97,15 +46,15 @@ public class Consequent_MultiClass extends AbstractConsequent <ClassLabel_Multi,
 	@Override
 	public Element toElement() {
 		//後件部
-		Element consequent = XML_manager.createElement(XML_TagName.consequent);
+		Element consequent = XML_manager.getInstance().createElement(XML_TagName.consequent);
 
 		//結論部クラス
 		Element classLabel = this.classLabel.toElement();
-		XML_manager.addElement(consequent, classLabel);
+		XML_manager.getInstance().addElement(consequent, classLabel);
 
 		//ルール重み
 		Element ruleWeight = this.ruleWeight.toElement();
-		XML_manager.addElement(consequent, ruleWeight);
+		XML_manager.getInstance().addElement(consequent, ruleWeight);
 
 		return consequent;
 	}

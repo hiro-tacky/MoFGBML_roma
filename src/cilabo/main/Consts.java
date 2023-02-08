@@ -156,13 +156,13 @@ public class Consts {
 	 */
 	public static Element toElement() {
 		Consts consts = new Consts();
-		Element constsElement = XML_manager.createElement(XML_TagName.consts);
+		Element constsElement = XML_manager.getInstance().createElement(XML_TagName.consts);
 		for(Field field : consts.getClass().getDeclaredFields()) {
 			if(!field.getType().isArray()) {
 				Element fieldElement;
 				try {
-					fieldElement = XML_manager.createElement(field.getName(), field.get(consts).toString());
-					XML_manager.addElement(constsElement, fieldElement);
+					fieldElement = XML_manager.getInstance().createElement(field.getName(), field.get(consts).toString());
+					XML_manager.getInstance().addElement(constsElement, fieldElement);
 				} catch (IllegalArgumentException | IllegalAccessException e) {
 					e.printStackTrace();
 				}

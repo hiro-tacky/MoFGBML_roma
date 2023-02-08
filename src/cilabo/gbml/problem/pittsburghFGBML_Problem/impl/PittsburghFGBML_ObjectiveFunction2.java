@@ -3,14 +3,13 @@ package cilabo.gbml.problem.pittsburghFGBML_Problem.impl;
 import org.uma.jmetal.problem.Problem;
 import org.w3c.dom.Element;
 
-import cilabo.data.DataSet;
+import cilabo.data.dataSet.impl.DataSet_Basic;
 import cilabo.fuzzy.classifier.Classifier;
 import cilabo.gbml.objectivefunction.pittsburgh.ErrorRate;
 import cilabo.gbml.objectivefunction.pittsburgh.RuleInterpretation;
 import cilabo.gbml.problem.pittsburghFGBML_Problem.AbstractPittsburghFGBML;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution.MichiganSolutionBuilder;
-import cilabo.gbml.solution.michiganSolution.impl.MichiganSolution_Rejected;
 import cilabo.gbml.solution.pittsburghSolution.impl.PittsburghSolution_Basic;
 import cilabo.gbml.solution.util.attribute.NumberOfWinner;
 import cilabo.main.ExperienceParameter.OBJECTIVES_FOR_PITTSBURGH;
@@ -22,7 +21,7 @@ public class PittsburghFGBML_ObjectiveFunction2 <michiganSolution extends Michig
 			int numberOfVariables,
 			int numberOfObjectives,
 			int numberOfConstraints,
-			DataSet train,
+			DataSet_Basic train,
 			MichiganSolutionBuilder<michiganSolution> michiganSolutionBuilder,
 			Classifier<michiganSolution> classifier) {
 		super(numberOfVariables, numberOfObjectives, numberOfConstraints,
@@ -54,7 +53,7 @@ public class PittsburghFGBML_ObjectiveFunction2 <michiganSolution extends Michig
 		if(solution.getNumberOfVariables() == 0) {
 			solution.clearVariable(this.getNumberOfVariables());
 			for(int i=0; i<this.getNumberOfVariables(); i++) {
-				solution.setVariable(i, (michiganSolution) MichiganSolution_Rejected.getInstance());
+				solution.setVariable(i, null);
 			}
 			solution.setObjective(0, 1);
 			solution.setObjective(1, this.getNumberOfVariables());

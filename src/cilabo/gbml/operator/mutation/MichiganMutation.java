@@ -7,7 +7,7 @@ import org.uma.jmetal.util.pseudorandom.BoundedRandomGenerator;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 import org.uma.jmetal.util.pseudorandom.RandomGenerator;
 
-import cilabo.data.DataSet;
+import cilabo.data.dataSet.impl.DataSet_Basic;
 import cilabo.data.pattern.Pattern;
 import cilabo.fuzzy.knowledge.Knowledge;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution;
@@ -16,17 +16,17 @@ public class MichiganMutation implements MutationOperator<MichiganSolution<?>> {
 	private double mutationProbability;
 	private RandomGenerator<Double> randomGenerator;
 	private BoundedRandomGenerator<Integer> intRandomGenerator;
-	private DataSet data;
+	private DataSet_Basic data;
 
 	  /** Constructor */
-	  public MichiganMutation(double mutationProbability, DataSet data) {
+	  public MichiganMutation(double mutationProbability, DataSet_Basic data) {
 	    this(mutationProbability, data,
 	    	 () -> JMetalRandom.getInstance().nextDouble(),
 	    	 (a, b) -> JMetalRandom.getInstance().nextInt(a, b));
 	  }
 
 	  /** Constructor */
-	  public MichiganMutation(double mutationProbability, DataSet data, RandomGenerator<Double> randomGenerator) {
+	  public MichiganMutation(double mutationProbability, DataSet_Basic data, RandomGenerator<Double> randomGenerator) {
 		  this(
 			mutationProbability, data,
 			randomGenerator,
@@ -34,7 +34,7 @@ public class MichiganMutation implements MutationOperator<MichiganSolution<?>> {
 	  }
 
 	  /** Constructor */
-	  public MichiganMutation(double mutationProbability, DataSet data, RandomGenerator<Double> randomGenerator, BoundedRandomGenerator<Integer> intRandomGenerator) {
+	  public MichiganMutation(double mutationProbability, DataSet_Basic data, RandomGenerator<Double> randomGenerator, BoundedRandomGenerator<Integer> intRandomGenerator) {
 	    if (mutationProbability < 0) {
 	      throw new JMetalException("Mutation probability is negative: " + mutationProbability);
 	    }
@@ -72,10 +72,11 @@ public class MichiganMutation implements MutationOperator<MichiganSolution<?>> {
 
 			// Decide new variable
 			int fuzzySetNum = Knowledge.getInstance().getFuzzySetNum(i);
+			if(fuzzySetNum <= 1) {return;}
 			int newFuzzySet = intRandomGenerator.getRandomValue(0, fuzzySetNum-2);
 
 			if(randomGenerator.getRandomValue() < probability) {
-				if(randPattern.getInputValue(i) >= 0) {
+				if(randPattern.getAttributeValue(i) >= 0) {
 					// Numerical attribute:
 					if(newFuzzySet < (int)solution.getVariable(i)) {
 						solution.setVariable(i, newFuzzySet);
@@ -86,7 +87,7 @@ public class MichiganMutation implements MutationOperator<MichiganSolution<?>> {
 				}
 				else {
 					// Categorical attribute:
-					solution.setVariable(i, (int)randPattern.getInputValue(i));
+					solution.setVariable(i, (int)randPattern.getAttributeValue(i));
 				}
 			}
 		  }

@@ -31,7 +31,7 @@ class FIGURE_PARAMETER_CLASS:
         self.savePath = 'results/graph/tmp'
         
         #scatterの基本設定
-        self.MARKER_SIZE = 100
+        self.MARKER_SIZE = 250
         self.MARKER_ALPHA = 1.0
         self.MARKER_COLOR = 'Black'
         self.MARKER_SHAPE = 'o'
@@ -43,35 +43,41 @@ class FIGURE_PARAMETER_CLASS:
         self.BETWEEN_COLOR = 'blue'
         
         #figureの基本設定
-        self.PLOT_TITLE_FLAG = True
+        self.PLOT_TITLE_FLAG = False
         self.PLOT_TICK_FLAG = True
         self.PLOT_LABEL_FLAG = True
-        self.PLOT_LEGEND_FLAG = True
+        self.PLOT_LEGEND_FLAG = False
         self.PLOT_GRID_FLAG = True
         
         self.TITLE_FONTSIZE = 30 #タイトルのフォントサイズ
-        self.LABEL_FONTSIZE = 30 #ラベルのフォントサイズ
-        self.TICK_FONTSIZE = 20 #目盛りのフォントサイズ
+        self.LABEL_FONTSIZE = 50 #ラベルのフォントサイズ
+        self.TICK_FONTSIZE = 30 #目盛りのフォントサイズ
         self.LEGEND_FONTSIZE = 20 #汎用のフォントサイズ
         self.MARGIN_SIZE = {'left':0.06, 'right':0.94, 'bottom':0.06, 'top':0.94} #余白サイズ
         self.IS_TRANSPARENT = False #背景の透過
         
-    def simple(self):
+    def paper(self):
         #figureの基本設定
         self.PLOT_TITLE_FLAG = False
-        self.PLOT_TICK_FLAG = False
-        self.PLOT_LABEL_FLAG = False
-        self.PLOT_LEGEND_FLAG = True
+        self.PLOT_TICK_FLAG = True
+        self.PLOT_LABEL_FLAG = True
+        self.PLOT_LEGEND_FLAG = False
         self.PLOT_GRID_FLAG = True
+        
+        self.MARKER_SIZE = 200
+        self.LABEL_FONTSIZE = 60 #ラベルのフォントサイズ
+        self.TICK_FONTSIZE = 45 #目盛りのフォントサイズ
+        self.MARGIN_SIZE = {'left':0.15, 'right':0.98, 'bottom':0.17, 'top':0.98} #余白サイズ
 
 
 FIGURE_PARAMETER = FIGURE_PARAMETER_CLASS()
+FIGURE_PARAMETER.paper()
 
 class RULE_BOOK_CLASS:
     def __init__(self):
-        self.IS_DTRA = True
+        self.IS_DTRA = False
         self.IS_RULENUM_MORE_TAHN_2 = True
-        self.COVER_ALL_CLASS = True
+        self.COVER_ALL_CLASS = False
         self.TRIAL_NUM_MORE_THAN_HALF = True
         
 RULE_BOOK = RULE_BOOK_CLASS()
@@ -161,7 +167,7 @@ def singleFig_set(FIGURE_PARAMETER, title):
     fig.subplots_adjust(left=FIGURE_PARAMETER.MARGIN_SIZE['left'], right=FIGURE_PARAMETER.MARGIN_SIZE['right'], \
                         bottom=FIGURE_PARAMETER.MARGIN_SIZE['bottom'], top=FIGURE_PARAMETER.MARGIN_SIZE['top'])
     fig.add_subplot(1, 1, 1)
-    if title is not None: fig.suptitle(title, size = FIGURE_PARAMETER.TITLE_FONTSIZE)        
+    if title is not None and FIGURE_PARAMETER.PLOT_TITLE_FLAG: fig.suptitle(title, size = FIGURE_PARAMETER.TITLE_FONTSIZE)        
     return fig
 
 # SETTING MULTI FIGURE OBJECT    
@@ -181,7 +187,9 @@ def saveFig(fig, filePath, filename, FIGURE_PARAMETER):
     """画像を保存する
     入力:figureオブジェクト, ファイル名, データセット名"""
     os.makedirs(filePath, exist_ok=True)
-    fig.savefig(filePath + "/" + filename, transparent=FIGURE_PARAMETER.IS_TRANSPARENT) 
+    plt.rcParams['pdf.fonttype'] = 42
+    fig.savefig(filePath + "/" + filename + ".png", transparent=FIGURE_PARAMETER.IS_TRANSPARENT) 
+    fig.savefig(filePath + "/" + filename + ".pdf", transparent=FIGURE_PARAMETER.IS_TRANSPARENT) 
     
 def plotRuleSetting(ax, FIGURE_PARAMETER):
     ax.set_xlim([-0.05, 1.05])
@@ -200,9 +208,15 @@ def plotRuleSetting(ax, FIGURE_PARAMETER):
         ax.grid(True)
         
     if FIGURE_PARAMETER.PLOT_LEGEND_FLAG:
-        ax.legend().get_frame().set_alpha(1.0)
+        ax.legend(fontsize=FIGURE_PARAMETER.LEGEND_FONTSIZE).get_frame().set_alpha(1.0)
         
 def plotResultSetting(ax, FIGURE_PARAMETER):
+    ylim = ax.get_ylim()
+    xlim = ax.get_xlim()
+    e = 0.2
+    ax.set_ylim(ylim[0]*(1+e) - ylim[1]*e, ylim[1]*(1+e) - ylim[0]*e)
+    ax.set_xlim(xlim[0], xlim[1]*(1+e) - xlim[0]*e)
+    
     if FIGURE_PARAMETER.PLOT_TICK_FLAG:
         ax.tick_params(axis="x", labelsize=FIGURE_PARAMETER.TICK_FONTSIZE)
         ax.tick_params(axis="y", labelsize=FIGURE_PARAMETER.TICK_FONTSIZE)
@@ -214,7 +228,7 @@ def plotResultSetting(ax, FIGURE_PARAMETER):
         ax.set_ylabel("誤識別率[%]", fontsize=FIGURE_PARAMETER.LABEL_FONTSIZE,  fontname="MS Gothic")
         
     if FIGURE_PARAMETER.PLOT_LEGEND_FLAG:
-        ax.legend().get_frame().set_alpha(1.0)
+        ax.legend(fontsize=FIGURE_PARAMETER.LEGEND_FONTSIZE).get_frame().set_alpha(1.0)
         
     if FIGURE_PARAMETER.PLOT_GRID_FLAG:
         ax.grid(True)
@@ -702,42 +716,36 @@ class Master:
         alpha: ドットの透明度, ruleBook: 表示個体の制限, plotData: 評価用データor学習用データ, saveFigFlag: 画像を保存するか否か"""
         
         if type(experimentLabelList) is not list: experimentLabelList = [experimentLabelList]
-
         if mode=='Allsolutions':
             fig = singleFig_set(FIGURE_PARAMETER, 'Allsolutions' + str(evaluation))
-            fig.subplots_adjust(bottom=0.12)
             ax = fig.gca()
             for experimentLabel in experimentLabelList:
                 experimentManager = self.master[experimentLabel]
                 data = experimentManager.getPittsburghObjectives_Allsolutions(evaluation=evaluation, RULE_BOOK=RULE_BOOK)
-                print(data)
-                ax.scatter([data_i[0] for data_i in data], [data_i[1] for data_i in data], s=FIGURE_PARAMETER.MARKER_SIZE, alpha=FIGURE_PARAMETER.MARKER_ALPHA, label=experimentLabel)
+                ax.scatter([data_i[0] for data_i in data], [data_i[1]*100 for data_i in data], s=FIGURE_PARAMETER.MARKER_SIZE, alpha=FIGURE_PARAMETER.MARKER_ALPHA, label=experimentLabel)
 
         elif mode=='Alltrials':
             fig = singleFig_set(FIGURE_PARAMETER, 'Alltrials' + str(evaluation))
-            fig.subplots_adjust(bottom=0.12)
             ax = fig.gca()        
             for experimentLabel in experimentLabelList:
                 experimentManager = self.master[experimentLabel]
                 data = experimentManager.getPittsburghObjectives_Alltrials(evaluation=evaluation, RULE_BOOK=RULE_BOOK)
-                ax.scatter([data_i[0] for data_i in data], [data_i[1] for data_i in data], s=FIGURE_PARAMETER.MARKER_SIZE, alpha=FIGURE_PARAMETER.MARKER_ALPHA, label=experimentLabel)                
+                ax.scatter([data_i[0] for data_i in data], [data_i[1]*100 for data_i in data], s=FIGURE_PARAMETER.MARKER_SIZE, alpha=FIGURE_PARAMETER.MARKER_ALPHA, label=experimentLabel)                
         
         elif mode=='Average':
             fig = singleFig_set(FIGURE_PARAMETER, 'Average' + str(evaluation))
-            fig.subplots_adjust(bottom=0.12)
             ax = fig.gca()        
             for experimentLabel in experimentLabelList:
                 experimentManager = self.master[experimentLabel]
                 data = experimentManager.getPittsburghObjectives_Average(evaluation=evaluation, RULE_BOOK=RULE_BOOK)
-                print(data)
-                ax.scatter([data_i[0] for data_i in data], [data_i[1] for data_i in data], s=FIGURE_PARAMETER.MARKER_SIZE, alpha=FIGURE_PARAMETER.MARKER_ALPHA, label=experimentLabel)
-                
+                ax.scatter([data_i[0] for data_i in data], [data_i[1]*100 for data_i in data], s=FIGURE_PARAMETER.MARKER_SIZE, alpha=FIGURE_PARAMETER.MARKER_ALPHA, label=experimentLabel)
+        
         plotResultSetting(ax, FIGURE_PARAMETER)
         
         if saveFigFlag:
             dataType = "Dtra" if RULE_BOOK.IS_DTRA else "Dtst"
             fileName = "result_{:s}_{:s}_{:08}".format(self.dataName, dataType, evaluation)
-            saveFig(fig, self.ROOTFOLDER + "/results/graph/" + self.dataName + "/", fileName, FIGURE_PARAMETER)
+            saveFig(fig, self.ROOTFOLDER + "/results/graph/" + self.dataName + "/" + dataType + "/" + mode, fileName, FIGURE_PARAMETER)
         plt.show()
         
 ###############################################################################

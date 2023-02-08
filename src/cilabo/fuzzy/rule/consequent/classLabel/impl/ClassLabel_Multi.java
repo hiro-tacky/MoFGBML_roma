@@ -25,24 +25,19 @@ public final class ClassLabel_Multi extends AbstractClassLabel <Integer[]> {
 	 * @param index クラスラベルの配列のインデックス
 	 * @return 指定されたインデックスにあるクラスラベル
 	 */
-	public Integer getClassLabelValueAt(int index) {
+	public Integer getClassLabel(int index) {
 		if( Objects.isNull(this.classLabel) ) {
 			throw new NullPointerException();
 		}
 		return this.classLabel[index];
 	}
 
-	@Override
-	public Integer getClassLabelInteger() {
-		return this.classLabel[0];
-	}
-
-	/** 指定したインデックスのクラスラベルを置き換え
+	/** 指定したインデックスのクラスラベルを置き換える
 	 * @param index 置き換えるクラスラベルのインデックス
-	 * @param value 指定されたインデックスに格納されるクラスラベル
+	 * @param classLabel 指定されたインデックスに格納されるクラスラベル
 	 */
-	public void setClassLabelValueAt(int index, Integer value) {
-		this.classLabel[index] = value;
+	public void setClassLabel(int index, int classLabel) {
+		this.classLabel[index] = classLabel;
 	}
 
 	/** 結論部クラスの個数を取得する
@@ -53,43 +48,55 @@ public final class ClassLabel_Multi extends AbstractClassLabel <Integer[]> {
 	}
 
 	@Override
-	public ClassLabel_Multi copy() {
-		return new ClassLabel_Multi(this.classLabel);
-	}
-
-	@Override
-	public boolean equals(ClassLabel<Integer[]> x) {
+	public boolean equalsClassLabel(ClassLabel<?> classLabel) {
 		//同じクラスのオブィエクトか調べる
-		if(!(x instanceof ClassLabel_Multi)) {return false;}
-		//配列長の検証
-		if( x.getClassLabelValue().length != this.classLabel.length ) {return false;}
+		if(!(classLabel instanceof ClassLabel_Multi)) {return false;}
+		else {
+			ClassLabel_Multi classLabel_tmp = (ClassLabel_Multi)classLabel;
+			//配列長の検証
+			if( classLabel_tmp.getClassLabelValue().length != this.classLabel.length ) {return false;}
 
-		for(int i=0; i<this.classLabel.length; i++) {
-			//クラスラベルの値が同値か調べる
-			if( !x.getClassLabelValue()[i].equals(this.getClassLabelValue()[i]) ){return false;}
+			for(int i=0; i<this.classLabel.length; i++) {
+				//クラスラベルの値が同値か調べる
+				if( !classLabel_tmp.getClassLabelValue()[i].equals(this.getClassLabelValue()[i]) ){return false;}
+			}
+			return true;
 		}
-		return true;
 	}
 
-	@Override
-	public boolean equalsValueOf(Integer[] x) {
-		//配列長の検証
-		if(x.length != this.classLabel.length) {return false;}
-		for(int i=0; i<this.classLabel.length; i++) {
-			//クラスラベルの値が同値か調べる
-			if(!this.getClassLabelValue()[i].equals(x[i])){return false;}
-		}
-		return true;
-	}
-
-	/** 入力されたインデックスのクラスラベルが同値か返す
-	 * @param x 調べたいクラスラベル
+	/**
+	 * 入力されたインデックスに対応するのクラスラベルを比較する
+	 * @param index 比較するクラスラベルのインデックス
+	 * @param classLabel 比較対象となるクラスラベル
 	 * @return 同値である場合:true 同値でない場合:false
 	 */
-	public boolean equalsValueOf(int index, Integer x) {
+	public boolean equalsClassLabel(int index, int classLabel) {
 		//クラスラベルの値が同値か調べる
-		if(!this.getClassLabelValue()[index].equals(x)){return false;}
-		return true;
+		return this.getClassLabelValue()[index].equals(classLabel);
+	}
+
+	@Override
+	public boolean equalsClassLabel(int classLabel) {
+		return this.classLabel[0].equals(classLabel);
+	}
+
+	@Override
+	public boolean isRejectedClassLabel() {
+		boolean flag = false;
+		for(Integer buf: this.classLabel) {
+			if(buf == RejectedClassLabel) flag = true;
+		}
+		return flag;
+	}
+
+	@Override
+	public void setRejectedClassLabel(){
+		this.classLabel[0] = RejectedClassLabel;
+	}
+
+	@Override
+	public ClassLabel_Multi copy() {
+		return new ClassLabel_Multi(this.classLabel);
 	}
 
 	@Override
@@ -114,18 +121,9 @@ public final class ClassLabel_Multi extends AbstractClassLabel <Integer[]> {
 	public Element toElement() {
 		Element classLabel = XML_manager.getInstance().createElement(XML_TagName.classLabelMulti);
 		for(int i=0; i<this.classLabel.length; i++) {
-			XML_manager.addElement(classLabel, XML_TagName.classLabel, String.valueOf(this.classLabel[i]),
+			XML_manager.getInstance().addElement(classLabel, XML_TagName.classLabel, String.valueOf(this.classLabel[i]),
 					XML_TagName.id, String.valueOf(i));
 		}
 		return classLabel;
-	}
-
-	@Override
-	public boolean isRejectedClassLabel() {
-		boolean flag = true;
-		for(Integer buf: this.classLabel) {
-			if(buf == AbstractClassLabel.RejectedClassLabel) flag = false;
-		}
-		return flag;
 	}
 }

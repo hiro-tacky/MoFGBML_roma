@@ -21,8 +21,8 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
-import cilabo.data.DataSet;
-import cilabo.data.TrainTestDatasetManager;
+import cilabo.data.DatasetManager;
+import cilabo.data.dataSet.impl.DataSet_Basic;
 import cilabo.fuzzy.classifier.Classifier;
 import cilabo.fuzzy.classifier.classification.Classification;
 import cilabo.fuzzy.classifier.classification.impl.SingleWinnerRuleSelection;
@@ -107,12 +107,12 @@ public class ObjectiveFunction2_Main {
 		JMetalRandom.getInstance().setSeed(Consts.RAND_SEED);
 
 		/* Load Dataset ======================== */
-		TrainTestDatasetManager.getInstance().loadTrainTestFiles(ObjectiveFuntion2_CommandLineArgs.trainFile,
+		DatasetManager.getInstance().loadTrainTestFiles(ObjectiveFuntion2_CommandLineArgs.trainFile,
 				ObjectiveFuntion2_CommandLineArgs.testFile);
 
 		/* Run MoFGBML algorithm =============== */
-		DataSet train = TrainTestDatasetManager.getInstance().getTrains().get(0);
-		DataSet test = TrainTestDatasetManager.getInstance().getTests().get(0);
+		DataSet_Basic train = DatasetManager.getInstance().getTrains().get(0);
+		DataSet_Basic test = DatasetManager.getInstance().getTests().get(0);
 
 
 		/** XML ファイル出力ようインスタンスの生成*/
@@ -122,7 +122,7 @@ public class ObjectiveFunction2_Main {
 		/* ===================================== */
 
 		try {
-			XML_manager.output(Consts.EXPERIMENT_ID_DIR);
+			XML_manager.getInstance().output(Consts.EXPERIMENT_ID_DIR);
 		} catch (TransformerException | IOException e) {
 			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
@@ -138,17 +138,17 @@ public class ObjectiveFunction2_Main {
 	/**
 	 *
 	 */
-	public static void HybridStyleMoFGBML(DataSet train, DataSet test) {
+	public static void HybridStyleMoFGBML(DataSet_Basic train, DataSet_Basic test) {
 		Random.getInstance().initRandom(2022);
 		String sep = File.separator;
 
 		//Consts出力用
-		XML_manager.addElement(XML_manager.getRoot(), Consts.toElement());
+		XML_manager.getInstance().addElement(XML_manager.getInstance().getRoot(), Consts.toElement());
 
 		int dimension = train.getNdim();
-		Parameters parameters = new Parameters(train, dimension);
-		HomoTriangleKnowledgeFactory KnowledgeFactory = new HomoTriangleKnowledgeFactory(dimension, parameters);
-		KnowledgeFactory.create();
+		Parameters parameters = new Parameters(train);
+		HomoTriangleKnowledgeFactory KnowledgeFactory = new HomoTriangleKnowledgeFactory(parameters);
+		KnowledgeFactory.create2_3_4_5();
 
 		List<Pair<Integer, Integer>> bounds_Michigan = AbstractMichiganSolution.makeBounds();
 		int numberOfObjectives_Michigan = 2;

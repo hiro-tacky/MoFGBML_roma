@@ -15,7 +15,7 @@ import org.uma.jmetal.util.pseudorandom.BoundedRandomGenerator;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 import org.uma.jmetal.util.pseudorandom.RandomGenerator;
 
-import cilabo.data.DataSet;
+import cilabo.data.dataSet.impl.DataSet_Basic;
 import cilabo.data.pattern.Pattern;
 import cilabo.fuzzy.rule.antecedent.factory.impl.HeuristicRuleGenerationMethod;
 import cilabo.gbml.component.replacement.RuleReplacementStyleReplacement;
@@ -33,10 +33,10 @@ public class MichiganCrossover implements CrossoverOperator<PittsburghSolution<?
 	private double crossoverProbability;
 	private RandomGenerator<Double> crossoverRandomGenerator;
 	private BoundedRandomGenerator<Integer> selectRandomGenerator;
-	DataSet train;
+	DataSet_Basic train;
 
 	/** Constructor */
-	public MichiganCrossover(double crossoverProbability, DataSet train) {
+	public MichiganCrossover(double crossoverProbability, DataSet_Basic train) {
 		this( crossoverProbability, train,
 			() -> JMetalRandom.getInstance().nextDouble(),
 			(a, b) -> JMetalRandom.getInstance().nextInt(a, b));
@@ -45,7 +45,7 @@ public class MichiganCrossover implements CrossoverOperator<PittsburghSolution<?
 
 	/** Constructor */
 	public MichiganCrossover(
-			double crossoverProbability, DataSet train, RandomGenerator<Double> randomGenerator) {
+			double crossoverProbability, DataSet_Basic train, RandomGenerator<Double> randomGenerator) {
 		this( crossoverProbability, train,
 			randomGenerator,
 			BoundedRandomGenerator.fromDoubleToInteger(randomGenerator));
@@ -53,7 +53,7 @@ public class MichiganCrossover implements CrossoverOperator<PittsburghSolution<?
 
 	/** Constructor */
 	public MichiganCrossover(
-			double crossoverProbability, DataSet train,
+			double crossoverProbability, DataSet_Basic train,
 			RandomGenerator<Double> crossoverRandomGenerator,
 			BoundedRandomGenerator<Integer> selectRandomGenerator) {
 		if(crossoverProbability < 0) {

@@ -7,12 +7,14 @@ import cilabo.fuzzy.rule.antecedent.factory.AntecedentIndexFactory;
 import cilabo.fuzzy.rule.consequent.Consequent;
 import cilabo.fuzzy.rule.consequent.classLabel.ClassLabel;
 import cilabo.fuzzy.rule.consequent.factory.ConsequentFactory;
+import cilabo.fuzzy.rule.consequent.ruleWeight.RuleWeight;
 
 /** if-thenルールを表現する抽象クラス
  * @author hirot
  */
-public abstract class AbstractRule <AntecedentObject extends Antecedent, ConsequentObject extends Consequent>
-	implements Rule<AntecedentObject, ConsequentObject>{
+public abstract class AbstractRule <AntecedentObject extends Antecedent, ConsequentObject extends Consequent<classLabel, ruleWeight>,
+	classLabel extends ClassLabel<?>, ruleWeight extends RuleWeight<?>>
+	implements Rule<AntecedentObject, ConsequentObject, classLabel, ruleWeight>{
 
 	/** 前件部クラス */
 	protected AntecedentObject antecedent;
@@ -40,13 +42,18 @@ public abstract class AbstractRule <AntecedentObject extends Antecedent, Consequ
 	}
 
 	@Override
-	public boolean equalsClassLabel(ClassLabel classLabel) {
-		return this.consequent.equals(classLabel);
+	public boolean equalsClassLabel(ClassLabel<?> classLabel) {
+		return this.consequent.getClassLabel().equalsClassLabel(classLabel);
+	}
+
+	@Override
+	public boolean isRejectedClassLabel() {
+		return this.consequent.getClassLabel().isRejectedClassLabel();
 	}
 
 	public abstract static class RuleBuilderCore<
 		AntecedentObject extends Antecedent,
-		ConsequentObject extends Consequent>{
+		ConsequentObject extends Consequent<?, ?>>{
 
 		protected AntecedentIndexFactory antecedentFactory;
 		protected ConsequentFactory<ConsequentObject> consequentFactory;
@@ -59,23 +66,17 @@ public abstract class AbstractRule <AntecedentObject extends Antecedent, Consequ
 			this.consequentFactory = consequentFactory;
 		}
 
-		public int[] createAntecedentIndex() {
-			if(Objects.isNull(antecedentFactory)) {throw new NullPointerException();}
-			return this.antecedentFactory.create();
+		protected int[] createAntecedentIndex() {
+			return antecedentFactory.create();
 		}
 
-		public int[][] createAntecedentIndex(int numberOfGenerateRule) {
-			if(Objects.isNull(antecedentFactory)) {throw new NullPointerException();}
-			return this.antecedentFactory.create(numberOfGenerateRule);
-		}
-
-		/** 入力された遺伝子情報と前件部オブジェクトを基に後件部オブジェクトを複数生成する
+		/** 入力された遺伝子情報と前件部オブジェクトを基に後件部オブジェクトを生成する
 		 * @param antecedent 前件部オブジェクト
 		 * @param antecedentIndex 遺伝子情報
 		 * @return 生成された後件部 */
 		public ConsequentObject learning(AntecedentObject antecedent, int[] antecedentIndex) {
-			if(Objects.isNull(consequentFactory)) {throw new NullPointerException("consequentFactory hasn't been initialised");}
-			if(Objects.isNull(antecedent)) {throw new IllegalArgumentException("Inputed antecedent hasn't been initialised");}
+			if(Objects.isNull(consequentFactory)) {throw new NullPointerException("consequentFactory hasn't been initialised@RuleBuilderCore.learning");}
+			if(Objects.isNull(antecedent)) {throw new IllegalArgumentException("antecedent is null@RuleBuilderCore.learning");}
 			return this.consequentFactory.learning(antecedent, antecedentIndex);
 		}
 	}

@@ -9,11 +9,9 @@ import cilabo.fuzzy.rule.consequent.ruleWeight.RuleWeight;
  * @author Takigawa Hiroki
  *
  * @param <ClassLabelObject> 実装した後件部クラスが持つ結論部クラス
- * @param <T1> 結論部クラスが結論部クラスを記憶するための変数
  * @param <RuleWeightObject> 実装した後件部クラスが持つルール重みクラス
- * @param <T2> ルール重みクラスがルール重みを記憶するための変数
  */
-public interface Consequent<ClassLabelObject extends ClassLabel, RuleWeightObject extends RuleWeight>{
+public interface Consequent<ClassLabelObject extends ClassLabel<?>, RuleWeightObject extends RuleWeight<?>>{
 
 	/** クラスラベルのコピーインスタンスを取得
 	 * @return このインスタンスが持つクラスラベルのコピーインスタンス

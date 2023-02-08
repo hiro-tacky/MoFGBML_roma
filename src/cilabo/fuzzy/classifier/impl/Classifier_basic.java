@@ -1,26 +1,35 @@
 package cilabo.fuzzy.classifier.impl;
 
 import java.util.List;
+import java.util.Objects;
 
-import cilabo.data.InputVector;
+import cilabo.data.AttributeVector;
 import cilabo.fuzzy.classifier.Classifier;
 import cilabo.fuzzy.classifier.classification.Classification;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution;
 
-/**ルールベース識別器
- * @author hirot
+/** 基本的なpittsuburgh型識別器のメソッド定義クラス．
+ * @author Takigawa Hiroki
+ *
+ * @param <michiganSolution> pittsuburgh識別器が持つmichiganSolutionクラスの型
  */
 public class Classifier_basic<michiganSolution extends MichiganSolution<?>> implements Classifier<michiganSolution> {
 
+	/** 識別方式定義クラス */
 	protected Classification<michiganSolution> classification;
 
-	/** 空のインスタンスを生成します <br> Constructs an empty instance of class */
+	/**
+	 * 空のインスタンスを生成 <br> Constructs an empty instance of class
+	 * @param classification 識別方式定義クラス
+	 */
 	public Classifier_basic(Classification<michiganSolution> classification) {
+		if(Objects.isNull(classification)) {
+			throw new NullPointerException("classification is null @" + this.getClass().getSimpleName());}
 		this.classification = classification;
 	}
 
 	@Override
-	public michiganSolution classify(List<michiganSolution> michiganSolutionList, InputVector vector) {
+	public michiganSolution classify(List<michiganSolution> michiganSolutionList, AttributeVector vector) {
 		return this.classification.classify(michiganSolutionList, vector);
 	}
 
@@ -33,6 +42,7 @@ public class Classifier_basic<michiganSolution extends MichiganSolution<?>> impl
 	public int getRuleLength(List<michiganSolution> michiganSolutionList) {
 		int length = 0;
 		for(int i = 0; i < michiganSolutionList.size(); i++) {
+			//michiganSolutionListが持つルールオブジェクトを呼び出し，ルール長を加算する．
 			length += michiganSolutionList.get(i).getRuleLength();
 		}
 		return length;

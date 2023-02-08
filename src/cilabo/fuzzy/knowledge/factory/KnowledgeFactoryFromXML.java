@@ -1,5 +1,7 @@
 package cilabo.fuzzy.knowledge.factory;
 
+import java.util.Objects;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -8,19 +10,30 @@ import cilabo.fuzzy.knowledge.Knowledge;
 import cilabo.main.ExperienceParameter.DIVISION_TYPE;
 import xml.XML_TagName;
 
+/**
+ * XMLファイルからKnowledgeBaseを読み込む
+ * @author Takigawa Hiroki
+ *
+ */
 public class KnowledgeFactoryFromXML {
 
 	/** Number of features */
 	public int dimension;
+	/** KnowledgeBase保有Element */
 	public Element knowledge;
 
-
-
+	/** インスタンスを生成
+	 * @param dimension 次元数
+	 * @param knowledge KnowledgeBase保有Element
+	 */
 	public KnowledgeFactoryFromXML(int dimension, Element knowledge) {
 		this.dimension = dimension;
 		this.knowledge = knowledge;
 	}
 
+	/**
+	 * KnowledgeBaseを読み込み
+	 */
 	public void create(){
 		NodeList fuzzySetsList = knowledge.getElementsByTagName(XML_TagName.fuzzySets.toString());
 		this.dimension = fuzzySetsList.getLength();
@@ -36,11 +49,13 @@ public class KnowledgeFactoryFromXML {
 			for(int fuzzyTerm_i=0; fuzzyTerm_i<fuzzyTermList.getLength(); fuzzyTerm_i++) {
 				Element fuzzyTerm = (Element) fuzzyTermList.item(fuzzyTerm_i);
 
-				int fuzzyTermID = 0;
+				//FuzzyTermType 必須データ
+				int fuzzyTermID = -1;
 				String fuzzyTermName = null;
-				int ShapeTypeID = 0;
-				DIVISION_TYPE divisionType = null;
+				int ShapeTypeID = -1;
 				float[] parameterSet = null;
+				//FuzzyTermTypeForMixed用 オプションデータ
+				DIVISION_TYPE divisionType = DIVISION_TYPE.entropyDivision;
 				int partitionNum = 0;
 				int partition_i = 0;
 
@@ -73,6 +88,9 @@ public class KnowledgeFactoryFromXML {
 						}
 					}
 				}
+
+				if(Objects.isNull(fuzzyTermName) || ShapeTypeID<0 || Objects.isNull(parameterSet) || Objects.isNull(divisionType)) {
+					throw new NullPointerException("Failed to read FuzzyTerm information @" + this.getClass().getSimpleName());}
 
 				fuzzySets[dim_i][fuzzyTermID] = new FuzzyTermTypeForMixed(
 						fuzzyTermName,

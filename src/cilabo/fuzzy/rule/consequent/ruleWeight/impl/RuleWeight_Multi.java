@@ -67,9 +67,9 @@ public final class RuleWeight_Multi extends AbstractRuleWeight <Double[]>{
 
 	@Override
 	public Element toElement() {
-		Element ruleWeight = XML_manager.createElement(XML_TagName.ruleWeightMulti);
+		Element ruleWeight = XML_manager.getInstance().createElement(XML_TagName.ruleWeightMulti);
 		for(int i=0; i<this.ruleWeight.length; i++) {
-			XML_manager.addElement(ruleWeight, XML_TagName.ruleWeight, String.valueOf(this.ruleWeight[i]),
+			XML_manager.getInstance().addElement(ruleWeight, XML_TagName.ruleWeight, String.valueOf(this.ruleWeight[i]),
 					XML_TagName.id, String.valueOf(i));
 		}
 		return ruleWeight;

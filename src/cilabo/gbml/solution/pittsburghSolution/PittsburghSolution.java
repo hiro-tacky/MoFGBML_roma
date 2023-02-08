@@ -5,7 +5,7 @@ import java.util.List;
 import org.uma.jmetal.solution.Solution;
 import org.w3c.dom.Element;
 
-import cilabo.data.InputVector;
+import cilabo.data.AttributeVector;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution.MichiganSolutionBuilder;
 
@@ -55,7 +55,7 @@ public interface PittsburghSolution <michiganSolution extends MichiganSolution<?
 	 * @param x 識別対象となるパターンの属性値クラス
 	 * @return 勝者となったMichiganSolution
 	 */
-	public MichiganSolution classify(InputVector x);
+	public MichiganSolution classify(AttributeVector x);
 
 	public Element toElement();
 

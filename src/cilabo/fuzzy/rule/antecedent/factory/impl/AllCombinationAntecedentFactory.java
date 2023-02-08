@@ -11,7 +11,7 @@ import cilabo.fuzzy.rule.antecedent.factory.AntecedentIndexFactory;
 import cilabo.utility.GeneralFunctions;
 import cilabo.utility.Random;
 
-/** 全組み合わせを持つ前件部のファジィセットのインデックス配列のFactory
+/** 全組み合わせを持つ前件部のFactory
  * @author Takigawa Hiroki
  */
 public class AllCombinationAntecedentFactory implements AntecedentIndexFactory{
@@ -23,7 +23,7 @@ public class AllCombinationAntecedentFactory implements AntecedentIndexFactory{
 	/** コンストラクタ */
 	public AllCombinationAntecedentFactory() {
 		generateAntecedents();
-		dimension = Knowledge.getInstance().getDimension();
+		dimension = Knowledge.getInstance().getNumberOfDimension();
 	}
 
 	/** 全てのファジィ集合の組わせを生成する．*/

@@ -20,24 +20,30 @@ public final class ClassLabel_Basic extends AbstractClassLabel <Integer>{
 	}
 
 	@Override
-	public boolean equals(ClassLabel<Integer> classLabel) {
+	public boolean equalsClassLabel(ClassLabel<?> classLabel) {
 		//同じクラスのオブィエクトか調べる
 		if(!(classLabel instanceof ClassLabel_Basic)) {return false;}
 		//クラスラベルの値が同値か調べる
-		if( !classLabel.getClassLabelValue().equals(this.getClassLabelValue()) ){return false;}
+		if( !((ClassLabel_Basic)classLabel).getClassLabelValue().equals(this.getClassLabelValue())){return false;}
 		return true;
 	}
 
-	@Override
-	public boolean equalsValueOf(Integer x) {
-		//クラスラベルの値が同値か調べる
-		if(!(this.getClassLabelValue().equals(x))){return false;}
-		return true;
+	/** 入力されたクラスラベルIDとこのインスタンスを比較する
+	 * @param classLabel 比較対象クラスラベルID
+	 * @return 同値である場合:true 同値でない場合:false
+	 */
+	public boolean equalsClassLabel(int classLabel) {
+		return this.classLabel.equals(classLabel);
 	}
 
 	@Override
-	public Integer getClassLabelInteger() {
-		return this.classLabel;
+	public boolean isRejectedClassLabel() {
+		return this.classLabel.equals(RejectedClassLabel);
+	}
+
+	@Override
+	public void setRejectedClassLabel(){
+		this.setClassLabelValue(RejectedClassLabel);
 	}
 
 	@Override
@@ -56,13 +62,7 @@ public final class ClassLabel_Basic extends AbstractClassLabel <Integer>{
 
 	@Override
 	public Element toElement() {
-		Element classLabel = XML_manager.createElement(XML_TagName.classLabel, String.valueOf(this.classLabel));
+		Element classLabel = XML_manager.getInstance().createElement(XML_TagName.classLabel, String.valueOf(this.classLabel));
 		return classLabel;
 	}
-
-	@Override
-	public boolean isRejectedClassLabel() {
-		return this.classLabel == AbstractClassLabel.RejectedClassLabel;
-	}
-
 }

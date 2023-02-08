@@ -138,16 +138,16 @@ public class HybridMoFGBMLwithNSGAII <S extends PittsburghSolution<?>>extends Ab
 		/* JMetal progress initialization */
 		initProgress();
 
-		Element population_ = XML_manager.createElement(XML_TagName.population);
+		Element population_ = XML_manager.getInstance().createElement(XML_TagName.population);
 		for(S solution: this.getResult()) {
 			Element pittsburghSolution_ = solution.toElement();
-			XML_manager.addElement(population_, pittsburghSolution_);
+			XML_manager.getInstance().addElement(population_, pittsburghSolution_);
 		}
-		Element generations_ = XML_manager.createElement(XML_TagName.generations, XML_TagName.evaluation, String.valueOf(evaluations));
+		Element generations_ = XML_manager.getInstance().createElement(XML_TagName.generations, XML_TagName.evaluation, String.valueOf(evaluations));
 		//knowlwdge出力用
-		XML_manager.addElement(generations_, Knowledge.getInstance().toElement());
-		XML_manager.addElement(generations_, population_);
-    	XML_manager.addElement(XML_manager.getRoot(), generations_);
+		XML_manager.getInstance().addElement(generations_, Knowledge.getInstance().toElement());
+		XML_manager.getInstance().addElement(generations_, population_);
+    	XML_manager.getInstance().addElement(XML_manager.getInstance().getRoot(), generations_);
 
 		/* GA loop */
 		while(!isStoppingConditionReached()) {
@@ -214,19 +214,19 @@ public class HybridMoFGBMLwithNSGAII <S extends PittsburghSolution<?>>extends Ab
 		            .setFunFileOutputContext(new DefaultFileOutputContext(outputRootDir + sep + String.format("FUN-%010d.csv", evaluations), ","))
 		            .print();
 
-	    		Element population = XML_manager.createElement(XML_TagName.population);
+	    		Element population = XML_manager.getInstance().createElement(XML_TagName.population);
 
 	    		for(S solution: this.getResult()) {
 	    			Element pittsburghSolution = solution.toElement();
-	    			XML_manager.addElement(population, pittsburghSolution);
+	    			XML_manager.getInstance().addElement(population, pittsburghSolution);
 	    		}
 
-	    		Element generations = XML_manager.createElement(XML_TagName.generations, XML_TagName.evaluation, String.valueOf(evaluations));
+	    		Element generations = XML_manager.getInstance().createElement(XML_TagName.generations, XML_TagName.evaluation, String.valueOf(evaluations));
 
 	    		//knowlwdge出力用
-	    		XML_manager.addElement(generations, Knowledge.getInstance().toElement());
-	    		XML_manager.addElement(generations, population);
-		    	XML_manager.addElement(XML_manager.getRoot(), generations);
+	    		XML_manager.getInstance().addElement(generations, Knowledge.getInstance().toElement());
+	    		XML_manager.getInstance().addElement(generations, population);
+		    	XML_manager.getInstance().addElement(XML_manager.getInstance().getRoot(), generations);
 	    	}
 	    }
 		else {

@@ -24,7 +24,7 @@ import xml.XML_manager;
  *
  * @param <RuleObject> このMichiganSolutionクラスが持つRuleクラス
  */
-public final class MichiganSolution_Basic<RuleObject extends Rule> extends AbstractMichiganSolution<RuleObject> implements IntegerSolution {
+public final class MichiganSolution_Basic<RuleObject extends Rule<?, ?, ?, ?>> extends AbstractMichiganSolution<RuleObject> implements IntegerSolution {
 
 	/** コンストラクタ
 	 * @param bounds 各遺伝子が取りうる値の上限値と下限値の配列
@@ -37,9 +37,6 @@ public final class MichiganSolution_Basic<RuleObject extends Rule> extends Abstr
 			int numberOfConstraints,
 			RuleBuilder<RuleObject> ruleBuilder) {
 		super(bounds, numberOfObjectives, numberOfConstraints, ruleBuilder);
-		int[] variables = ruleBuilder.createAntecedentIndex();
-		this.setVariables(variables);
-		this.learning();
 	}
 
 	/** コンストラクタ
@@ -157,7 +154,7 @@ public final class MichiganSolution_Basic<RuleObject extends Rule> extends Abstr
 			do {
 				michiganSolution.setVariables(this.ruleBuilder.createAntecedentIndex(pattern));
 				michiganSolution.learning();
-			}while(michiganSolution.getRuleWeight().getRuleWeightDouble()<0);
+			}while(michiganSolution.getRuleWeight().getRuleWeightDouble()<0 || michiganSolution.getClassLabel().isRejectedClassLabel());
 			return michiganSolution;
 		}
 
@@ -168,7 +165,8 @@ public final class MichiganSolution_Basic<RuleObject extends Rule> extends Abstr
 				int index = Random.getInstance().getGEN().nextInt(patterns.size());
 				michiganSolution.setVariables(this.ruleBuilder.createAntecedentIndex(patterns.get(index)));
 				michiganSolution.learning();
-			}while(michiganSolution.getRuleWeight().getRuleWeightDouble()<0);
+			}while(michiganSolution.getRuleWeight().getRuleWeightDouble()<0 ||
+					michiganSolution.getClassLabel().isRejectedClassLabel());
 			return michiganSolution;
 		}
 
@@ -181,7 +179,8 @@ public final class MichiganSolution_Basic<RuleObject extends Rule> extends Abstr
 				do {
 					variables = this.ruleBuilder.createAntecedentIndex();
 					michiganSolution_i = this.createMichiganSolution(variables);
-				}while(michiganSolution_i.getRuleWeight().getRuleWeightDouble()<0);
+				}while(michiganSolution_i.getRuleWeight().getRuleWeightDouble()<0 ||
+						michiganSolution_i.getClassLabel().isRejectedClassLabel());
 				obj[i] = michiganSolution_i;
 			}
 			return obj;
@@ -237,20 +236,20 @@ public final class MichiganSolution_Basic<RuleObject extends Rule> extends Abstr
 	@Override
 	public Element toElement() {
 		//新規のElementを追加する
-		Element michiganSolution = XML_manager.createElement(XML_TagName.michiganSolution);
+		Element michiganSolution = XML_manager.getInstance().createElement(XML_TagName.michiganSolution);
 
 		Element rule = this.rule.toElement();
-		XML_manager.addElement(michiganSolution, rule);
+		XML_manager.getInstance().addElement(michiganSolution, rule);
 
 		//新規のElementを追加する
-		Element fuzzySets = XML_manager.createElement(XML_TagName.fuzzySetList);
+		Element fuzzySets = XML_manager.getInstance().createElement(XML_TagName.fuzzySetList);
 
 		for(int i=0; i<this.getNumberOfVariables(); i++) {
-			XML_manager.addElement(fuzzySets, XML_TagName.fuzzySetID, String.valueOf(this.getVariable(i)),
+			XML_manager.getInstance().addElement(fuzzySets, XML_TagName.fuzzySetID, String.valueOf(this.getVariable(i)),
 					XML_TagName.dimension, String.valueOf(i));
 		}
 
-		XML_manager.addElement(michiganSolution, fuzzySets);
+		XML_manager.getInstance().addElement(michiganSolution, fuzzySets);
 
 		return michiganSolution;
 	}

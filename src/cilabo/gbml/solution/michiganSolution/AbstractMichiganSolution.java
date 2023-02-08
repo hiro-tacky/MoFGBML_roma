@@ -8,16 +8,14 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.uma.jmetal.solution.AbstractSolution;
 
-import cilabo.data.InputVector;
-import cilabo.data.pattern.Pattern;
+import cilabo.data.AttributeVector;
 import cilabo.fuzzy.knowledge.Knowledge;
 import cilabo.fuzzy.rule.Rule;
 import cilabo.fuzzy.rule.Rule.RuleBuilder;
 import cilabo.fuzzy.rule.consequent.classLabel.ClassLabel;
 import cilabo.fuzzy.rule.consequent.ruleWeight.RuleWeight;
-import cilabo.gbml.solution.michiganSolution.impl.MichiganSolution_Basic;
 
-public abstract class AbstractMichiganSolution<RuleObject extends Rule> extends AbstractSolution<Integer> implements MichiganSolution<RuleObject>{
+public abstract class AbstractMichiganSolution<RuleObject extends Rule<?, ?, ?, ?>> extends AbstractSolution<Integer> implements MichiganSolution<RuleObject>{
 
 	/** 前件部の遺伝子が持つインデックスの下限値と上限値のペアの配列 */
 	protected List<Pair<Integer, Integer>> bounds;
@@ -39,6 +37,11 @@ public abstract class AbstractMichiganSolution<RuleObject extends Rule> extends 
 		super(bounds.size(), numberOfObjectives, numberOfConstraints);
 		this.bounds = bounds;
 		this.ruleBuilder = ruleBuilder;
+		do {
+			int[] antecedentIndex = ruleBuilder.createAntecedentIndex();
+			this.setVariables(antecedentIndex);
+			this.learning();
+		}while(this.rule.isRejectedClassLabel());
 	}
 
 	/** コンストラクタ
@@ -52,7 +55,7 @@ public abstract class AbstractMichiganSolution<RuleObject extends Rule> extends 
 	/** MichiganSolutionでの境界値をKnowledgeから自動生成する
 	 * @return 生成された境界値．*/
 	public static List<Pair<Integer, Integer>> makeBounds(){
-		int dimNum = Knowledge.getInstance().getDimension();
+		int dimNum = Knowledge.getInstance().getNumberOfDimension();
 
 		List<Pair<Integer, Integer>> bounds = new ArrayList<Pair<Integer, Integer>>(dimNum);
 	    for (int dim_i = 0; dim_i < dimNum; dim_i++) {
@@ -100,7 +103,7 @@ public abstract class AbstractMichiganSolution<RuleObject extends Rule> extends 
 	}
 
 	@Override
-	public double getFitnessValue(InputVector inputVector) {
+	public double getFitnessValue(AttributeVector inputVector) {
 		return this.rule.getFitnessValue(this.getVariablesAsIntArray(), inputVector);
 	}
 

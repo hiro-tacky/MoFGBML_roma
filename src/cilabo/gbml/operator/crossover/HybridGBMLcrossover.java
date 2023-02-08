@@ -116,6 +116,7 @@ public class HybridGBMLcrossover implements CrossoverOperator<PittsburghSolution
 			offspring.remove(index);
 		}
 
+		if(offspring.get(0).getNumberOfVariables() < 1) {System.err.println("incorrect input: number Of Rules is less than 1");}
 		return offspring;
 	}
 
