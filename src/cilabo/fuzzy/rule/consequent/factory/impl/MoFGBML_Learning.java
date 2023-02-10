@@ -1,28 +1,32 @@
 package cilabo.fuzzy.rule.consequent.factory.impl;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
-import cilabo.data.dataSet.impl.DataSet_Basic;
-import cilabo.data.pattern.Pattern;
+import cilabo.data.DataSet;
+import cilabo.data.pattern.impl.Pattern_Basic;
 import cilabo.fuzzy.rule.antecedent.Antecedent;
 import cilabo.fuzzy.rule.consequent.classLabel.impl.ClassLabel_Basic;
 import cilabo.fuzzy.rule.consequent.factory.ConsequentFactory;
-import cilabo.fuzzy.rule.consequent.factory.ConsequentFactoryCore;
 import cilabo.fuzzy.rule.consequent.impl.Consequent_Basic;
 import cilabo.fuzzy.rule.consequent.ruleWeight.impl.RuleWeight_Basic;
 import cilabo.utility.Parallel;
 
 /** 入力された前件部から後件部クラスConsequent_Basicを生成する
  * @author Takigawa Hiroki */
-public final class MoFGBML_Learning extends ConsequentFactoryCore
-	<ClassLabel_Basic, RuleWeight_Basic, Consequent_Basic, double[]>
-		implements ConsequentFactory <Consequent_Basic>{
+public final class MoFGBML_Learning implements ConsequentFactory <Consequent_Basic>{
+
+	/**	生成不可能と判断するルールの重みの下限 */
+	protected double defaultLimit = 0;
+
+	/** 学習に用いるデータセット*/
+	protected DataSet<Pattern_Basic> train;
 
 	/**コンストラクタ
 	 * @param train 生成時に用いる学習用データ */
-	public MoFGBML_Learning(DataSet_Basic<Pattern<ClassLabel_Basic>> train) {
+	public MoFGBML_Learning(DataSet<Pattern_Basic> train) {
 		this.train = train;
 	}
 
@@ -41,8 +45,10 @@ public final class MoFGBML_Learning extends ConsequentFactoryCore
 		return this.learning(antecedent, antecedentIndex, defaultLimit);
 	}
 
-	@Override
 	public double[] calcConfidence(Antecedent antecedent, int[] antecedentIndex) {
+		if(Objects.isNull(antecedentIndex)){
+			System.out.print("antecedentIndex i null@" + this.getClass().getSimpleName());
+		}
 		int Cnum = train.getCnum();
 		double[] confidence = new double[Cnum];
 
@@ -58,18 +64,16 @@ public final class MoFGBML_Learning extends ConsequentFactoryCore
 						// 正解クラスが「CLASS == c」のパターンを抽出
 						.filter(pattern -> pattern.getTargetClass().equalsClassLabel(CLASSNUM))
 						// 各パターンの入力ベクトルを抽出
-						.map(pattern -> pattern.getAttributeVector().getAttributeValue())
+						.map(pattern -> pattern.getAttributeVector())
 						// 各入力ベクトルとantecedentのcompatible gradeを計算
-						.map(x -> antecedent.getCompatibleGradeValue(antecedentIndex, x))
+						.map(attributeVector -> antecedent.getCompatibleGradeValue(antecedentIndex, attributeVector))
 						// compatible gradeを総和する
 						.reduce( (sum, grade) -> sum+grade)
 				).get();
+			}catch (InterruptedException | ExecutionException e) {
+				System.err.print(e);
+				throw new IllegalArgumentException(e + " @" + this.getClass().getSimpleName());
 			}
-			catch (InterruptedException | ExecutionException e) {
-				System.out.println(e);
-				return null;
-			}
-
 			sumCompatibleGradeForEachClass[c] = partSum.orElse(0.0);
 		}
 
@@ -94,7 +98,6 @@ public final class MoFGBML_Learning extends ConsequentFactoryCore
 	 * @param confidence クラス別信頼度
 	 * @return クラスラベル
 	 */
-	@Override
 	public ClassLabel_Basic calcClassLabel(double[] confidence) {
 		double max = -Double.MAX_VALUE;
 		int consequentClass = -1;
@@ -115,7 +118,6 @@ public final class MoFGBML_Learning extends ConsequentFactoryCore
 		return classLabel;
 	}
 
-	@Override
 	public RuleWeight_Basic calcRuleWeight(ClassLabel_Basic classLabel, double[] confidence, double limit) {
 
 		RuleWeight_Basic zeroWeight = new RuleWeight_Basic(0.0);
@@ -133,11 +135,6 @@ public final class MoFGBML_Learning extends ConsequentFactoryCore
 		}
 		RuleWeight_Basic ruleWeight = new RuleWeight_Basic(CF);
 		return ruleWeight;
-	}
-
-	@Override
-	public DataSet_Basic<Pattern<ClassLabel_Basic>> getTrain() {
-		return this.train;
 	}
 
 	@Override

@@ -89,7 +89,8 @@ public class FuzzyTermBluePrintManager {
 	public int getNdim() {
 		if(numberOfdimension != fuzyyTermsBluePrintList.size()) {
 			System.err.println("dimension has been initialised as " + String.valueOf(numberOfdimension) +
-					", but fuzyyTermsBluePrintList's length is " + String.valueOf(fuzyyTermsBluePrintList.size()));
+					", but fuzyyTermsBluePrintList's length is " + String.valueOf(fuzyyTermsBluePrintList.size() 
+						+ " @"  + this.getClass().getSimpleName()));
 		}
 		return this.numberOfdimension;
 	}

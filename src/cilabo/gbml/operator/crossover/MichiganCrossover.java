@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.uma.jmetal.component.replacement.Replacement;
-import org.uma.jmetal.component.selection.MatingPoolSelection;
 import org.uma.jmetal.component.selection.impl.NaryTournamentMatingPoolSelection;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
-import org.uma.jmetal.operator.mutation.MutationOperator;
 import org.uma.jmetal.util.JMetalException;
 import org.uma.jmetal.util.checking.Check;
 import org.uma.jmetal.util.comparator.ObjectiveComparator;
@@ -15,9 +13,8 @@ import org.uma.jmetal.util.pseudorandom.BoundedRandomGenerator;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 import org.uma.jmetal.util.pseudorandom.RandomGenerator;
 
-import cilabo.data.dataSet.impl.DataSet_Basic;
+import cilabo.data.DataSet;
 import cilabo.data.pattern.Pattern;
-import cilabo.fuzzy.rule.antecedent.factory.impl.HeuristicRuleGenerationMethod;
 import cilabo.gbml.component.replacement.RuleReplacementStyleReplacement;
 import cilabo.gbml.operator.mutation.MichiganMutation;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution;
@@ -28,15 +25,16 @@ import cilabo.main.Consts;
 import cilabo.utility.GeneralFunctions;
 import cilabo.utility.Random;
 
-public class MichiganCrossover implements CrossoverOperator<PittsburghSolution<?>> {
+public class MichiganCrossover <pittsburghSolution extends PittsburghSolution<michiganSolution>, michiganSolution extends MichiganSolution<?>>
+	implements CrossoverOperator<pittsburghSolution> {
 
 	private double crossoverProbability;
 	private RandomGenerator<Double> crossoverRandomGenerator;
 	private BoundedRandomGenerator<Integer> selectRandomGenerator;
-	DataSet_Basic train;
+	DataSet<?> train;
 
 	/** Constructor */
-	public MichiganCrossover(double crossoverProbability, DataSet_Basic train) {
+	public MichiganCrossover(double crossoverProbability, DataSet<?> train) {
 		this( crossoverProbability, train,
 			() -> JMetalRandom.getInstance().nextDouble(),
 			(a, b) -> JMetalRandom.getInstance().nextInt(a, b));
@@ -45,7 +43,7 @@ public class MichiganCrossover implements CrossoverOperator<PittsburghSolution<?
 
 	/** Constructor */
 	public MichiganCrossover(
-			double crossoverProbability, DataSet_Basic train, RandomGenerator<Double> randomGenerator) {
+			double crossoverProbability, DataSet<?> train, RandomGenerator<Double> randomGenerator) {
 		this( crossoverProbability, train,
 			randomGenerator,
 			BoundedRandomGenerator.fromDoubleToInteger(randomGenerator));
@@ -53,7 +51,7 @@ public class MichiganCrossover implements CrossoverOperator<PittsburghSolution<?
 
 	/** Constructor */
 	public MichiganCrossover(
-			double crossoverProbability, DataSet_Basic train,
+			double crossoverProbability, DataSet<?> train,
 			RandomGenerator<Double> crossoverRandomGenerator,
 			BoundedRandomGenerator<Integer> selectRandomGenerator) {
 		if(crossoverProbability < 0) {
@@ -82,7 +80,7 @@ public class MichiganCrossover implements CrossoverOperator<PittsburghSolution<?
 	}
 
 	@Override
-	public List<PittsburghSolution<?>> execute(List<PittsburghSolution<?>> solutions) {
+	public List<pittsburghSolution> execute(List<pittsburghSolution> solutions) {
 		Check.isNotNull(solutions);
 		Check.that(solutions.size() == 1, "There must be single parent instead of " + solutions.size());
 		return doCrossover(crossoverProbability, solutions.get(0));
@@ -94,10 +92,10 @@ public class MichiganCrossover implements CrossoverOperator<PittsburghSolution<?
 	 * @param _parent
 	 * @return
 	 */
-	public List<PittsburghSolution<?>> doCrossover(double probability, PittsburghSolution<?> parent) {
+	public List<pittsburghSolution> doCrossover(double probability, pittsburghSolution parent) {
 		// Cast IntegerSolution to PittsburghSolution
 
-		List<MichiganSolution<?>> generatedMichiganSolution = new ArrayList<>();
+		List<michiganSolution> generatedMichiganSolution = new ArrayList<>();
 
 		/* Step 1. Calculate number of all of generating rules. */
 		int numberOfRulesOnParent = parent.getNumberOfVariables();
@@ -115,11 +113,11 @@ public class MichiganCrossover implements CrossoverOperator<PittsburghSolution<?
 		/* Step 3. Heuristic Rule Generation */
 		if( 0<numberOfHeuristic ) {
 			@SuppressWarnings("unchecked")
-			ArrayList<Pattern> erroredPatterns = (ArrayList<Pattern>) parent.getAttribute(new ErroredPatternsAttribute<>().getAttributeId());
+			List<Pattern<?>> erroredPatterns = (ArrayList<Pattern<?>>) parent.getAttribute(new ErroredPatternsAttribute<>().getAttributeId());
 			//誤識別パターンが足りないor無い場合は，ランダムなパターンをリストに追加
 			int NumberOfLack = numberOfHeuristic - erroredPatterns.size();
 			for(int i = 0; i < NumberOfLack; i++) {
-				Pattern pattern = train.getPattern(Random.getInstance().getGEN()
+				Pattern<?> pattern = train.getPattern(Random.getInstance().getGEN()
 						.nextInt(train.getDataSize()));
 				erroredPatterns.add(pattern);
 			}
@@ -128,8 +126,8 @@ public class MichiganCrossover implements CrossoverOperator<PittsburghSolution<?
 					numberOfHeuristic,
 					Random.getInstance().getGEN());
 			for(Integer pattern_i : erroredPatternsIndex) {
-				Pattern pattern = erroredPatterns.get(pattern_i);
-				MichiganSolution michiganSolution = parent.getMichiganSolutionBuilder().createMichiganSolution(pattern);
+				Pattern<?> pattern = erroredPatterns.get(pattern_i);
+				michiganSolution michiganSolution = parent.getMichiganSolutionBuilder().createMichiganSolution(pattern);
 				generatedMichiganSolution.add(michiganSolution);
 			}
 		}
@@ -139,10 +137,10 @@ public class MichiganCrossover implements CrossoverOperator<PittsburghSolution<?
 		if( 0<NumberOfGA ) {
 
 			/* Crossover: Uniform crossover */
-			CrossoverOperator<MichiganSolution<?>> crossover = new UniformCrossover(Consts.MICHIGAN_CROSS_RT);
+			UniformCrossover<michiganSolution> crossover = new UniformCrossover<michiganSolution>(Consts.MICHIGAN_CROSS_RT);
 			/* Mutation: Michigan-style specific mutation operation */
 			double mutationProbability = 1.0 / (double)train.getNdim();
-			MutationOperator<MichiganSolution<?>> mutation = new MichiganMutation(mutationProbability,	train);
+			MichiganMutation<michiganSolution>  mutation = new MichiganMutation<michiganSolution>(mutationProbability, train);
 			/* Mating Selection: Binray tournament */
 			int tournamentSize = 2;
 			if(parent.getNumberOfVariables() == 1) {
@@ -152,27 +150,34 @@ public class MichiganCrossover implements CrossoverOperator<PittsburghSolution<?
 			}
 			int matingPoolSize = NumberOfGA *
 					crossover.getNumberOfRequiredParents() / crossover.getNumberOfGeneratedChildren();
-			MatingPoolSelection<MichiganSolution<?>> selection = new NaryTournamentMatingPoolSelection<MichiganSolution<?>>(
+			NaryTournamentMatingPoolSelection<michiganSolution> selection = new NaryTournamentMatingPoolSelection<michiganSolution>(
 					tournamentSize,
 					matingPoolSize,
 					new ObjectiveComparator<>(0, ObjectiveComparator.Ordering.DESCENDING));
 			/* == GA START == */
 			/* Mating Selection */
-			List<MichiganSolution<?>> matingPopulation = selection.select((List<MichiganSolution<?>>) parent.getVariables());
+			List<michiganSolution> matingPopulation = selection.select((List<michiganSolution>) parent.getVariables());
 			/* Offspring Generation */
-			List<MichiganSolution<?>> generatedSolutionByGA = new ArrayList<>();
+			List<michiganSolution> generatedSolutionByGA = new ArrayList<>();
 			int numberOfParents = crossover.getNumberOfRequiredParents();
 			for(int i = 0; i < matingPoolSize; i+= numberOfParents) {
-				List<MichiganSolution<?>> parents = new ArrayList<>();
+				List<michiganSolution> parents = new ArrayList<>();
 				for(int j = 0; j < numberOfParents; j++) {
 					parents.add(matingPopulation.get(i + j));
 				}
-				/* Crossover: Uniform crossover */
-				List<MichiganSolution<?>> offspring = crossover.execute(parents);
-				/* Mutation */
-				for(MichiganSolution s : offspring) {
-					mutation.execute(s);
-					generatedSolutionByGA.add(s);
+				List<michiganSolution> offspring = null;
+				do {
+					/* Crossover: Uniform crossover */
+					offspring = crossover.execute(parents);
+					/* Mutation */
+					for(michiganSolution s : offspring) {
+						mutation.execute(s);
+						s.learning();
+					}
+				}while(!GeneralFunctions.checkRule((List<MichiganSolution<?>>) offspring));
+
+				for(michiganSolution michiganSolution_tmp : offspring) {
+					generatedSolutionByGA.add(michiganSolution_tmp);
 					if(generatedSolutionByGA.size() == NumberOfGA) {
 						break;
 					}
@@ -185,25 +190,28 @@ public class MichiganCrossover implements CrossoverOperator<PittsburghSolution<?
 		}
 
 		/* Replacement: Single objective maximization repelacement */
-		Replacement<MichiganSolution<?>> replacement = new RuleReplacementStyleReplacement();
-		List<MichiganSolution<?>> parentMichiganSolution = new ArrayList<>();
-		List<MichiganSolution<?>> childMichiganSolution = new ArrayList<>();
+		Replacement<michiganSolution> replacement = new RuleReplacementStyleReplacement<michiganSolution>();
+		List<michiganSolution> parentMichiganSolution = new ArrayList<>();
+		List<michiganSolution> childMichiganSolution = new ArrayList<>();
 		//Deep copy
 		for(int i = 0; i < parent.getNumberOfVariables(); i++) {
-			parentMichiganSolution.add(parent.getVariable(i).copy());
+			parentMichiganSolution.add((michiganSolution) parent.getVariable(i).copy());
 		}
 		childMichiganSolution = replacement.replace(parentMichiganSolution, generatedMichiganSolution);
 
 		/* Pittsburgh solution */
-		PittsburghSolution child = parent.copy();
+		pittsburghSolution child = (pittsburghSolution) parent.copy();
+		child.clearVariables();
+		child.clearAttributes();
+
 		// Radix sort Michigan solution list
-		SortMichiganPopulation.radixSort(childMichiganSolution);
+		SortMichiganPopulation.radixSort((List<MichiganSolution<?>>) childMichiganSolution);
 		/* Set variables */
-		for(int i=0; i<childMichiganSolution.size(); i++) {
-			child.setVariable(i, childMichiganSolution.get(i));
+		for(michiganSolution childMichiganSolution_tmp: childMichiganSolution) {
+			child.addVariable(childMichiganSolution_tmp);
 		}
 
-		List<PittsburghSolution<?>> offspring = new ArrayList<>();
+		List<pittsburghSolution> offspring = new ArrayList<>();
 		offspring.add(child);
 		return offspring;
 	}
@@ -324,32 +332,4 @@ public class MichiganCrossover implements CrossoverOperator<PittsburghSolution<?
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

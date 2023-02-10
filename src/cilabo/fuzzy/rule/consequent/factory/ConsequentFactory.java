@@ -9,7 +9,11 @@ import cilabo.fuzzy.rule.consequent.Consequent;
  *
  * @param <ConsequentObject> 出力用される後件部クラス
  */
-public interface ConsequentFactory <ConsequentObject extends Consequent<?, ?>>{
+public interface ConsequentFactory <ConsequentObject extends Consequent<?, ?, ?, ?>>{
+
+
+	/**	生成不可能と判断するルールの重みの下限 */
+	double defaultLimit = 0;
 
 	/**前件部から後件部を生成する<br>
 	 * 但し，生成不可能と判断する際に用いるルールの信頼度の下限はデフォルトの値を使用する．

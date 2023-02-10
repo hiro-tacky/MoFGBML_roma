@@ -18,8 +18,19 @@ public class AttributeVector {
 	 */
 	public AttributeVector(double[] attributeVector) {
 		if(Objects.isNull(attributeVector)) {
-			throw new IllegalArgumentException("argument [inputVector] is null @InputVector.InputVector()");}
+			throw new IllegalArgumentException("argument [attributeVector] is null @" + this.getClass().getSimpleName());}
 		this.attributeVector = Arrays.copyOf(attributeVector, attributeVector.length);
+	}
+
+	/**
+	 * このインスタンスが持つ属性値配列を返します。<br>
+	 * Returns Attribute array that this instance has.
+	 * @return 返される属性値配列．Array of AttributeVector to return
+	 */
+	public double[] getAttributeArray() {
+		if(Objects.isNull(attributeVector)) {
+			System.err.println("attributeVector hasn't been initialised @" + this.getClass().getSimpleName());}
+		return attributeVector;
 	}
 
 	/**
@@ -29,16 +40,16 @@ public class AttributeVector {
 	 * @return 指定された位置にある属性値．Attribute value at the specified position in the list
 	 */
 	public double getAttributeValue(int index) {
+		if(attributeVector.length <= index) {
+			throw new ArrayIndexOutOfBoundsException("attributeVector out of index @" + this.getClass().getSimpleName());}
 		return this.attributeVector[index];
 	}
 
-	/**
-	 * このインスタンスが持つ属性値配列を返します。<br>
-	 * Returns list of Attribute value that this instance has.
-	 * @return 返される属性値配列．list of Attribute value to return
+	/** 次元数を返す．
+	 * @return 属性値の個数．次元数
 	 */
-	public double[] getAttributeValue() {
-		return Arrays.copyOf(attributeVector, attributeVector.length);
+	public int getNumberOfDimension() {
+		return this.attributeVector.length;
 	}
 
 	@Override

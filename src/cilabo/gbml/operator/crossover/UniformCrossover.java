@@ -12,7 +12,7 @@ import org.uma.jmetal.util.pseudorandom.RandomGenerator;
 
 import cilabo.gbml.solution.michiganSolution.MichiganSolution;
 
-public class UniformCrossover implements CrossoverOperator<MichiganSolution<?>> {
+public class UniformCrossover <michiganSolution extends MichiganSolution<?>> implements CrossoverOperator<michiganSolution> {
 	private double crossoverProbability;
 	private RandomGenerator<Double> crossoverRandomGenerator;
 	BoundedRandomGenerator<Integer> selectRandomGenerator;
@@ -59,7 +59,7 @@ public class UniformCrossover implements CrossoverOperator<MichiganSolution<?>> 
 	}
 
 	@Override
-	public List<MichiganSolution<?>> execute(List<MichiganSolution<?>> solutions) {
+	public List<michiganSolution> execute(List<michiganSolution> solutions) {
 		Check.isNotNull(solutions);
 		Check.that(solutions.size() == 2, "There must be two parents instead of " + solutions.size());
 		return doCrossover(crossoverProbability, solutions.get(0), solutions.get(1));
@@ -73,12 +73,12 @@ public class UniformCrossover implements CrossoverOperator<MichiganSolution<?>> 
 	 * @param parent2 The second parent
 	 * @return An array containing the one offspring
 	 */
-	public List<MichiganSolution<?>> doCrossover(
-			double probability, MichiganSolution<?> parent1, MichiganSolution<?> parent2){
+	public List<michiganSolution> doCrossover(
+			double probability, michiganSolution parent1, michiganSolution parent2){
 
-		List<MichiganSolution<?>> offspring = new ArrayList<>(1);
-		offspring.add(parent1.copy());
-		offspring.add(parent2.copy());
+		List<michiganSolution> offspring = new ArrayList<>(1);
+		offspring.add((michiganSolution) parent1.copy());
+		offspring.add((michiganSolution) parent2.copy());
 
 		if(crossoverRandomGenerator.getRandomValue() < probability) {
 			// 1. Get the number of variables;

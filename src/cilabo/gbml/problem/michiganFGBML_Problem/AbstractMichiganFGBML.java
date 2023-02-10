@@ -10,7 +10,7 @@ import org.uma.jmetal.problem.AbstractGenericProblem;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.util.checking.Check;
 
-import cilabo.data.dataSet.impl.DataSet_Basic;
+import cilabo.data.DataSet;
 import cilabo.fuzzy.rule.Rule;
 import cilabo.fuzzy.rule.Rule.RuleBuilder;
 import cilabo.gbml.solution.michiganSolution.AbstractMichiganSolution;
@@ -29,22 +29,22 @@ import cilabo.gbml.solution.michiganSolution.MichiganSolution;
  * @param <michiganSolutionObject> 実装MichiganFGBML_Problemクラスが扱うMichiganSolutionクラス
  * @param <RuleObject> MichiganSolutionクラスが持つRuleクラス
  */
-public abstract class AbstractMichiganFGBML <michiganSolutionObject extends MichiganSolution<RuleObject>, RuleObject extends Rule>
+public abstract class AbstractMichiganFGBML <michiganSolutionObject extends MichiganSolution<RuleObject>, RuleObject extends Rule<?, ?, ?, ?, ?, ?>>
 		extends AbstractGenericProblem <michiganSolutionObject> implements Problem<michiganSolutionObject>{
 
-	protected DataSet_Basic train;
+	protected DataSet<?> train;
 
 	protected List<Pair<Integer, Integer>> bounds;
 
-	protected RuleBuilder<RuleObject> ruleBuilder;
+	protected RuleBuilder<RuleObject, ?, ?> ruleBuilder;
 
 	/** Constructor */
 	public AbstractMichiganFGBML(
 			int numberOfVariables,
 			int numberOfObjectives,
 			int numberOfConstraints,
-			DataSet_Basic train,
-			RuleBuilder<RuleObject> ruleBuilder) {
+			DataSet<?> train,
+			RuleBuilder<RuleObject, ?, ?> ruleBuilder) {
 		this(numberOfVariables, numberOfObjectives, numberOfConstraints,
 				train, AbstractMichiganSolution.makeBounds(), ruleBuilder);
 	}
@@ -54,9 +54,9 @@ public abstract class AbstractMichiganFGBML <michiganSolutionObject extends Mich
 			int numberOfVariables,
 			int numberOfObjectives,
 			int numberOfConstraints,
-			DataSet_Basic train,
+			DataSet<?> train,
 			List<Pair<Integer, Integer>> bounds,
-			RuleBuilder<RuleObject> ruleBuilder) {
+			RuleBuilder<RuleObject, ?, ?> ruleBuilder) {
 		setNumberOfVariables(bounds.size());
 		setNumberOfObjectives(numberOfObjectives);
 		setNumberOfConstraints(numberOfConstraints);
@@ -66,12 +66,16 @@ public abstract class AbstractMichiganFGBML <michiganSolutionObject extends Mich
 		this.ruleBuilder = ruleBuilder;
 	}
 
-	public DataSet_Basic getTrain() {
+	public DataSet<?> getTrain() {
 		return train;
 	}
 
 	public List<Pair<Integer, Integer>> getVariableBounds() {
 		return bounds;
+	}
+
+	public RuleBuilder<RuleObject, ?, ?> getRuleBuilder(){
+		return this.ruleBuilder;
 	}
 
 	public void setVariableBounds(List<Integer> lowerBounds, List<Integer> upperBounds) {

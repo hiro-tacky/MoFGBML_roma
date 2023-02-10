@@ -5,8 +5,10 @@ import java.util.Objects;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import cilabo.data.DatasetManager;
-import cilabo.data.dataSet.impl.DataSet_Basic;
+import cilabo.data.DataSet;
+import cilabo.data.DataSetManager;
+import cilabo.data.Input;
+import cilabo.data.pattern.impl.Pattern_Basic;
 import cilabo.fuzzy.classifier.Classifier;
 import cilabo.fuzzy.classifier.classification.Classification;
 import cilabo.fuzzy.classifier.classification.impl.SingleWinnerRuleSelection;
@@ -25,10 +27,10 @@ import cilabo.gbml.solution.michiganSolution.impl.MichiganSolution_Basic;
 import cilabo.gbml.solution.pittsburghSolution.impl.PittsburghSolution_Basic;
 
 public class MakeTestObject {
-	DataSet_Basic train = null;
+	DataSet<Pattern_Basic> train = null;
 	Parameters parameters = null;
 	Knowledge knowledge = null;
-	RuleBuilder<Rule_Basic> ruleBuilder = null;
+	RuleBuilder<Rule_Basic, ?, ?> ruleBuilder = null;
 	MichiganSolutionBuilder<MichiganSolution_Basic<Rule_Basic>> michiganSolutionBuilder = null;
 	Classification<MichiganSolution_Basic<Rule_Basic>> classification = null;
 	Classifier<MichiganSolution_Basic<Rule_Basic>> classifier = null;
@@ -47,17 +49,18 @@ public class MakeTestObject {
 		this.getKnowledge();
 	}
 
-	public DataSet_Basic getTrain() {
+	public DataSet<Pattern_Basic> getTrain() {
 		if(Objects.isNull(train)) {
 			String trainFileName = String.format("dataset/%s/a%d_%d_%s-10tra.dat", this.dataSetName, this.x, this.y, this.dataSetName);
 			String testFileName = String.format("dataset/%s/a%d_%d_%s-10tst.dat", this.dataSetName, this.x, this.y, this.dataSetName);
-			DatasetManager.getInstance().loadTrainTestFiles(trainFileName, testFileName);
-			train = DatasetManager.getInstance().getTrains().get(0);
+			/* Load Dataset ======================== */
+			Input.loadTrainTestFiles_Basic(trainFileName, trainFileName);
+			train = (DataSet<Pattern_Basic>) DataSetManager.getInstance().getTrains().get(0);
 		}
 		return train;
 	}
 
-	public void setTrain(DataSet_Basic train) {
+	public void setTrain(DataSet<Pattern_Basic> train) {
 		this.train = train;
 	}
 
@@ -77,8 +80,8 @@ public class MakeTestObject {
 
 	public Knowledge getKnowledge() {
 		if(Objects.isNull(knowledge)) {
-			HomoTriangleKnowledgeFactory KnowledgeFactory = new HomoTriangleKnowledgeFactory(this.getTrain().getNdim(), this.getParameters());
-			KnowledgeFactory.create();
+			HomoTriangleKnowledgeFactory KnowledgeFactory = new HomoTriangleKnowledgeFactory(this.getParameters());
+			KnowledgeFactory.create2_3_4_5();
 		}
 		return knowledge;
 	}
@@ -87,7 +90,7 @@ public class MakeTestObject {
 		this.knowledge = knowledge;
 	}
 
-	public RuleBuilder<Rule_Basic> getRuleBuilder() {
+	public RuleBuilder<Rule_Basic, ?, ?> getRuleBuilder() {
 		if(Objects.isNull(knowledge)) {
 			ruleBuilder = new Rule_Basic.RuleBuilder_Basic(
 				new HeuristicRuleGenerationMethod(this.getTrain()),
@@ -96,7 +99,7 @@ public class MakeTestObject {
 		return ruleBuilder;
 	}
 
-	public void setRuleBuilder(RuleBuilder<Rule_Basic> ruleBuilder) {
+	public void setRuleBuilder(RuleBuilder<Rule_Basic, ?, ?> ruleBuilder) {
 		this.ruleBuilder = ruleBuilder;
 	}
 
@@ -158,7 +161,7 @@ public class MakeTestObject {
 		return this.michiganSolutionBuilder.createMichiganSolution();
 	}
 
-	public MichiganSolution_Basic<Rule_Basic>[] makeMichiganSolutionArray(int numberOfGenerateRule){
+	public List<MichiganSolution_Basic<Rule_Basic>> makeMichiganSolutionArray(int numberOfGenerateRule){
 		if(Objects.isNull(michiganSolutionBuilder)) {
 			this.getMichiganSolutionBuilder();
 		}

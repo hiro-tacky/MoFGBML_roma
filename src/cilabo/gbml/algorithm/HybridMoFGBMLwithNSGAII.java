@@ -37,15 +37,16 @@ import org.w3c.dom.Element;
 
 import cilabo.fuzzy.knowledge.Knowledge;
 import cilabo.gbml.component.variation.CrossoverAndMutationAndPittsburghLearningVariation;
-import cilabo.gbml.problem.pittsburghFGBML_Problem.impl.PittsburghFGBML_Basic;
+import cilabo.gbml.problem.pittsburghFGBML_Problem.AbstractPittsburghFGBML;
 import cilabo.gbml.solution.pittsburghSolution.PittsburghSolution;
-import cilabo.gbml.solution.pittsburghSolution.impl.PittsburghSolution_Basic;
 import cilabo.util.fileoutput.PittsburghSolutionListOutput;
 import xml.XML_TagName;
 import xml.XML_manager;
 
-public class HybridMoFGBMLwithNSGAII <S extends PittsburghSolution<?>>extends AbstractEvolutionaryAlgorithm<S, List<S>>
-										implements ObservableEntity {
+public class HybridMoFGBMLwithNSGAII <S extends PittsburghSolution<?>>
+	extends AbstractEvolutionaryAlgorithm<S, List<S>>
+	implements ObservableEntity {
+
 	private int evaluations;
 	private int populationSize;
 	private int offspringPopulationSize;
@@ -78,8 +79,8 @@ public class HybridMoFGBMLwithNSGAII <S extends PittsburghSolution<?>>extends Ab
 			int offspringPopulationSize,
 			int frequency,
 			String outputRootDir,
-			CrossoverOperator<PittsburghSolution<?>> crossoverOperator,
-			MutationOperator<PittsburghSolution<?>> mutationOperator,
+			CrossoverOperator<S> crossoverOperator,
+			MutationOperator<S> mutationOperator,
 			Termination termination) {
 		/* Constructor Body */
 		this.problem = problem;
@@ -89,8 +90,8 @@ public class HybridMoFGBMLwithNSGAII <S extends PittsburghSolution<?>>extends Ab
 		this.frequency = frequency;
 		this.outputRootDir = outputRootDir;
 
-		this.crossoverOperator = (CrossoverOperator<S>) crossoverOperator;
-		this.mutationOperator = (MutationOperator<S>) mutationOperator;
+		this.crossoverOperator = crossoverOperator;
+		this.mutationOperator = mutationOperator;
 		this.termination = termination;
 
 		/* NSGA-II */
@@ -103,7 +104,7 @@ public class HybridMoFGBMLwithNSGAII <S extends PittsburghSolution<?>>extends Ab
 
 		this.variation =
 				new CrossoverAndMutationAndPittsburghLearningVariation<S>(
-						offspringPopulationSize, (CrossoverOperator<S>)crossoverOperator, (MutationOperator<S>)mutationOperator);
+						offspringPopulationSize, crossoverOperator, mutationOperator);
 
 		this.selection =
 				new NaryTournamentMatingPoolSelection<>(
@@ -268,7 +269,7 @@ public class HybridMoFGBMLwithNSGAII <S extends PittsburghSolution<?>>extends Ab
 	protected List<S> removeNoWinnerMichiganSolution(List<S> population) {
 		/* 未勝利個体削除*/
 	    IntStream.range(0, population.size())
-	        .forEach(i -> ((PittsburghFGBML_Basic)problem).removeNoWinnerMichiganSolution((PittsburghSolution_Basic) population.get(i)));
+	        .forEach(i -> ((AbstractPittsburghFGBML)problem).removeNoWinnerMichiganSolution(population.get(i)));
 		return population;
 	}
 

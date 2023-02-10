@@ -8,7 +8,9 @@ import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.operator.mutation.MutationOperator;
 import org.uma.jmetal.util.JMetalException;
 
+import cilabo.gbml.solution.michiganSolution.MichiganSolution;
 import cilabo.gbml.solution.pittsburghSolution.PittsburghSolution;
+import cilabo.utility.GeneralFunctions;
 
 public class CrossoverAndMutationAndPittsburghLearningVariation<S extends PittsburghSolution<?>>
 			implements Variation<S>
@@ -51,14 +53,21 @@ public class CrossoverAndMutationAndPittsburghLearningVariation<S extends Pittsb
 
 			/* Crossover */
 			List<S> offspring = crossover.execute(parents);
+			if(!GeneralFunctions.checkRule((PittsburghSolution<MichiganSolution<?>>) offspring.get(0))) {
+				System.err.println("crossover @" + this.getClass().getSimpleName());
+			}
 
 			for(S solution : offspring) {
 				if(solution.getNumberOfVariables() < 1) {
-					System.err.println("number Of Rules is less than 1");}
+					System.err.println("number Of Rules is less than 1 @" + this.getClass().getSimpleName());}
 				/* Mutation */
 				mutation.execute(solution);
 				/* Learning */
 				solution.learning();
+
+				if(!GeneralFunctions.checkRule((PittsburghSolution<MichiganSolution<?>>) offspring.get(0))) {
+					System.err.println("mutation @" + this.getClass().getSimpleName());
+				}
 
 				offspringPopulation.add(solution);
 				if(offspringPopulation.size() == offspringPopulationSize) {

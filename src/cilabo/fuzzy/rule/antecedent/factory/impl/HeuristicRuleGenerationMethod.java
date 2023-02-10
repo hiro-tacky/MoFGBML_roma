@@ -1,6 +1,6 @@
 package cilabo.fuzzy.rule.antecedent.factory.impl;
 
-import cilabo.data.dataSet.impl.DataSet_Basic;
+import cilabo.data.DataSet;
 import cilabo.data.pattern.Pattern;
 import cilabo.fuzzy.knowledge.Knowledge;
 import cilabo.fuzzy.rule.antecedent.factory.AntecedentIndexFactory;
@@ -14,7 +14,7 @@ import cilabo.utility.Random;
 public class HeuristicRuleGenerationMethod implements AntecedentIndexFactory{
 
 	/**  学習用データ*/
-	private DataSet_Basic<?> train;
+	private DataSet<?> train;
 	/** 次元数 */
 	private int dimension;
 	/** データセットのパターン数 */
@@ -23,7 +23,7 @@ public class HeuristicRuleGenerationMethod implements AntecedentIndexFactory{
 	/**コンストラクタ
 	 * @param train 生成時の学習に用いる学習用データ
 	 */
-	public HeuristicRuleGenerationMethod(DataSet_Basic<?> train) {
+	public HeuristicRuleGenerationMethod(DataSet<?> train) {
 		this.train = train;
 		this.dimension = Knowledge.getInstance().getNumberOfDimension();
 		this.dataSize = train.getDataSize();
@@ -43,7 +43,7 @@ public class HeuristicRuleGenerationMethod implements AntecedentIndexFactory{
 	 * @return 決定された前件部のファジィセットのインデックス配列
 	 */
 	public int[] calculateAntecedentPart(Pattern<?> pattern) {
-		double[] vector = pattern.getAttributeVector().getAttributeValue();
+		double[] vector = pattern.getAttributeVector().getAttributeArray();
 
 		//Don't careの決定
 		double dcRate;

@@ -8,7 +8,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
-import cilabo.data.dataSet.impl.DataSet_Basic;
+import cilabo.data.DataSet;
 import cilabo.fuzzy.rule.consequent.classLabel.ClassLabel;
 import cilabo.main.Consts;
 import cilabo.main.ExperienceParameter.DIVISION_TYPE;
@@ -23,7 +23,7 @@ public class Parameters{
 	/** パラメータ保存用バッファ [分割方式][ファジィ集合ID][属性id] */
 	public HashMap<DIVISION_TYPE, ArrayList<HashMap<Integer, Double[]>>> partitions = new HashMap<DIVISION_TYPE, ArrayList<HashMap<Integer, Double[]>>>();//partitions[DIVISION_TYPE][dim][分割数]=[パラメータ配列]
 	/** エントロピー計算用データセット */
-	public DataSet_Basic<?> dataSet;
+	public DataSet<?> dataSet;
 	/** 次元数 */
 	public int numberOfDimension;
 
@@ -31,9 +31,9 @@ public class Parameters{
 	 * インスタンスを生成
 	 * @param dataSet エントロピー計算用データセット
 	 */
-	public Parameters(DataSet_Basic<?> dataSet) {
+	public Parameters(DataSet<?> dataSet) {
 		if(Objects.isNull(dataSet)) {
-			throw new IllegalArgumentException("argument [dataSet] is null @Parameters.Parameters");
+			throw new IllegalArgumentException("argument [dataSet] is null @"  + this.getClass().getSimpleName());
 		}
 		this.dataSet = dataSet;
 		this.numberOfDimension = dataSet.getNdim();

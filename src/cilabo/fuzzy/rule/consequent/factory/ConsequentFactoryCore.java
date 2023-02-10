@@ -1,6 +1,6 @@
 package cilabo.fuzzy.rule.consequent.factory;
 
-import cilabo.data.dataSet.impl.DataSet_Basic;
+import cilabo.data.DataSet;
 import cilabo.data.pattern.Pattern;
 import cilabo.fuzzy.rule.antecedent.Antecedent;
 import cilabo.fuzzy.rule.consequent.Consequent;
@@ -16,18 +16,19 @@ import cilabo.fuzzy.rule.consequent.ruleWeight.RuleWeight;
  * @param <confidence> 信頼度を記憶する変数
  */
 public abstract class ConsequentFactoryCore <
+	patternObject extends Pattern<ClassLabelObject>,
 	ClassLabelObject extends ClassLabel<?>,
 	RuleWeightObject extends RuleWeight<?>,
-	ConsequentObject extends Consequent<ClassLabelObject, RuleWeightObject>,
+	ConsequentObject extends Consequent<ClassLabelObject, ?, RuleWeightObject, ?>,
 	confidence>{
 
 	/**	生成不可能と判断するルールの重みの下限 */
 	protected double defaultLimit = 0;
 
 	/** 学習に用いるデータセット*/
-	protected DataSet_Basic<Pattern<ClassLabelObject>> train;
+	protected DataSet<patternObject> train;
 
-	public DataSet_Basic<Pattern<ClassLabelObject>> getTrain() {
+	public DataSet<patternObject> getTrain() {
 		return this.train;
 	}
 

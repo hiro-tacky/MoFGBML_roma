@@ -4,7 +4,7 @@ import cilabo.fuzzy.rule.consequent.classLabel.ClassLabel;
 import cilabo.fuzzy.rule.consequent.ruleWeight.RuleWeight;
 
 public abstract class AbstractConsequent <ClassLabelObject extends ClassLabel<T1>, T1, RuleWeightObject extends RuleWeight<T2>, T2>
-		implements Consequent<ClassLabelObject, RuleWeightObject>, ClassLabel<T1>, RuleWeight<T2>{
+	implements Consequent<ClassLabelObject, T1, RuleWeightObject, T2>{
 
 	protected ClassLabelObject classLabel;
 
@@ -16,26 +16,18 @@ public abstract class AbstractConsequent <ClassLabelObject extends ClassLabel<T1
 	}
 
 	@Override
-	public abstract AbstractConsequent<ClassLabelObject, T1, RuleWeightObject, T2> copy();
-
-	@Override
 	public ClassLabelObject getClassLabel() {
 		return this.classLabel;
 	}
 
 	@Override
-	public RuleWeightObject getRuleWeight() {
-		return this.ruleWeight;
+	public void setClassLabelValue(T1 classLabelValue) {
+		this.classLabel.setClassLabelValue(classLabelValue);
 	}
 
 	@Override
 	public T1 getClassLabelValue() {
 		return this.classLabel.getClassLabelValue();
-	}
-
-	@Override
-	public void setClassLabelValue(T1 classLabelValue) {
-		this.classLabel.setClassLabelValue(classLabelValue);
 	}
 
 	@Override
@@ -59,6 +51,16 @@ public abstract class AbstractConsequent <ClassLabelObject extends ClassLabel<T1
 	}
 
 	@Override
+	public RuleWeightObject getRuleWeight() {
+		return this.ruleWeight;
+	}
+
+	@Override
+	public Double getRuleWeightDouble() {
+		return this.ruleWeight.getRuleWeightDouble();
+	}
+
+	@Override
 	public T2 getRuleWeightValue() {
 		return this.ruleWeight.getRuleWeightValue();
 	}
@@ -68,8 +70,4 @@ public abstract class AbstractConsequent <ClassLabelObject extends ClassLabel<T1
 		this.ruleWeight.setRuleWeightValue(ruleWeightValue);
 	}
 
-	@Override
-	public Double getRuleWeightDouble() {
-		return this.ruleWeight.getRuleWeightDouble();
-	}
 }

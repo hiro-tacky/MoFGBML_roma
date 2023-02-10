@@ -3,10 +3,9 @@ package cilabo.gbml.solution.pittsburghSolution.impl;
 import java.util.HashMap;
 
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 import cilabo.data.AttributeVector;
-import cilabo.data.DatasetManager;
+import cilabo.data.DataSetManager;
 import cilabo.fuzzy.classifier.Classifier;
 import cilabo.gbml.objectivefunction.pittsburgh.ErrorRate;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution;
@@ -26,10 +25,6 @@ public final class PittsburghSolution_Basic <michiganSolution extends MichiganSo
 			Classifier<michiganSolution> classifier) {
 		super(numberOfVariables, numberOfObjectives, numberOfConstraints,
 				michiganSolutionBuilder, classifier);
-		for(int i=0; i<this.getNumberOfVariables(); i++) {
-			michiganSolution michiganSolution = michiganSolutionBuilder.createMichiganSolution();
-			this.setVariable(i, michiganSolution);
-		}
 	}
 
 	public PittsburghSolution_Basic(int numberOfObjectives,
@@ -37,15 +32,8 @@ public final class PittsburghSolution_Basic <michiganSolution extends MichiganSo
 			MichiganSolutionBuilder<michiganSolution> michiganSolutionBuilder,
 			Classifier<michiganSolution> classifier,
 			Element pittsburghSolution) {
-		super(pittsburghSolution.getElementsByTagName(XML_TagName.michiganSolution.toString()).getLength(),
-				numberOfObjectives, numberOfConstraints,
-				michiganSolutionBuilder, classifier);
-
-		NodeList michiganSolutionList = pittsburghSolution.getElementsByTagName(XML_TagName.michiganSolution.toString());
-		for(int i=0; i<michiganSolutionList.getLength(); i++) {
-			michiganSolution michiganSolution = michiganSolutionBuilder.createMichiganSolution((Element)michiganSolutionList.item(i));
-			this.setVariable(i, michiganSolution);
-		}
+		super(numberOfObjectives, numberOfConstraints,
+				michiganSolutionBuilder, classifier, pittsburghSolution);
 	}
 
 	private PittsburghSolution_Basic(PittsburghSolution_Basic<michiganSolution> solution) {
@@ -73,8 +61,8 @@ public final class PittsburghSolution_Basic <michiganSolution extends MichiganSo
 	}
 
 	@Override
-	public MichiganSolution classify(AttributeVector x) {
-		return this.classifier.classify(this.getVariables(), x);
+	public michiganSolution classify(AttributeVector attributeVector) {
+		return this.classifier.classify(this.getVariables(), attributeVector);
 	}
 
 	@Override
@@ -127,7 +115,7 @@ public final class PittsburghSolution_Basic <michiganSolution extends MichiganSo
 			XML_manager.getInstance().addElement(objectives, f2_);
 
 			ErrorRate<PittsburghSolution_Basic<michiganSolution>> errorRate = new ErrorRate<>();
-			double f3 = errorRate.function(this, DatasetManager.getInstance().getTests().get(0));
+			double f3 = errorRate.function(this, DataSetManager.getInstance().getTests().get(0));
 			Element f3_ = XML_manager.getInstance().createElement(XML_TagName.objective, String.valueOf(f3));
 			f3_.setAttribute(XML_TagName.id.toString(), String.valueOf(OBJECTIVES_FOR_PITTSBURGH.ErrorRateDtst.toInt()));
 			f3_.setAttribute(XML_TagName.objectiveName.toString(), OBJECTIVES_FOR_PITTSBURGH.ErrorRateDtst.toString());

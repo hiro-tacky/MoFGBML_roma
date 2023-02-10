@@ -5,7 +5,7 @@ import cilabo.data.pattern.Pattern;
 import cilabo.fuzzy.rule.consequent.classLabel.impl.ClassLabel_Multi;
 import cilabo.main.impl.multiTasking.MultiTasking;
 
-/** マルチラベル用のなパターンクラス．pattern class for multi label<br>
+/** マルチラベル用のパターンクラス．pattern class for multi label<br>
  * 複数のクラスラベルと各属性値を持つ．this class has multi class labels and own pattern's attributes
  * @author Takigawa Hiroki */
 @MultiTasking

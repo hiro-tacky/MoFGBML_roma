@@ -1,12 +1,15 @@
 package cilabo.gbml.solution.pittsburghSolution;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.uma.jmetal.solution.AbstractSolution;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import cilabo.fuzzy.classifier.Classifier;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution.MichiganSolutionBuilder;
+import xml.XML_TagName;
 
 public abstract class AbstractPittsburghSolution <michiganSolution extends MichiganSolution<?>>
 		extends AbstractSolution<michiganSolution>
@@ -25,6 +28,31 @@ public abstract class AbstractPittsburghSolution <michiganSolution extends Michi
 		super(numberOfVariables, numberOfObjectives, numberOfConstraints);
 		this.michiganSolutionBuilder = michiganSolutionBuilder;
 		this.classifier = classifier;
+		List<michiganSolution> michiganSolutionList = michiganSolutionBuilder.createMichiganSolutions(numberOfVariables);
+		for(int i=0; i<this.getNumberOfVariables(); i++) {
+			this.setVariable(i, michiganSolutionList.get(i));
+		}
+	}
+
+	public AbstractPittsburghSolution(int numberOfObjectives,
+			int numberOfConstraints,
+			MichiganSolutionBuilder<michiganSolution> michiganSolutionBuilder,
+			Classifier<michiganSolution> classifier,
+			Element pittsburghSolution) {
+		super(pittsburghSolution.getElementsByTagName(XML_TagName.michiganSolution.toString()).getLength(),
+				numberOfObjectives, numberOfConstraints);
+		this.michiganSolutionBuilder = michiganSolutionBuilder;
+		this.classifier = classifier;
+		NodeList michiganSolutionList = pittsburghSolution.getElementsByTagName(XML_TagName.michiganSolution.toString());
+		for(int i=0; i<michiganSolutionList.getLength(); i++) {
+			michiganSolution michiganSolution = michiganSolutionBuilder.createMichiganSolution((Element)michiganSolutionList.item(i));
+			this.setVariable(i, michiganSolution);
+		}
+	}
+
+	@Override
+	public MichiganSolutionBuilder<michiganSolution> getMichiganSolutionBuilder() {
+		return this.michiganSolutionBuilder;
 	}
 
 	@Override
@@ -38,23 +66,13 @@ public abstract class AbstractPittsburghSolution <michiganSolution extends Michi
 	}
 
 	@Override
-	public void clearVariable() {
+	public void clearVariables() {
 		this.variables.clear();
 	}
 
 	@Override
-	public void clearVariable(int numberOfVariables) {
-		this.variables = new ArrayList<>(numberOfVariables);
-		for (int i = 0; i < numberOfVariables; i++) {
-			variables.add(i, null);
-		}
-	}
-
-	@Override
-	public void clearAttributes(String attributeID) {
-		for(michiganSolution michiganSolution_i: this.variables) {
-			michiganSolution_i.setAttribute(attributeID, 0);
-		}
+	public void clearAttributes() {
+		this.attributes.clear();
 	}
 
 	@Override
@@ -62,9 +80,5 @@ public abstract class AbstractPittsburghSolution <michiganSolution extends Michi
 		for(int i=0; i<this.getNumberOfVariables(); i++) {
 			this.variables.get(i).learning();
 		}
-	}
-
-	public MichiganSolutionBuilder<michiganSolution> getMichiganSolutionBuilder() {
-		return this.michiganSolutionBuilder;
 	}
 }

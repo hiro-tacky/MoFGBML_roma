@@ -40,8 +40,7 @@ class SingleWinnerRuleSelectionTest {
 		List<MichiganSolution_Basic<Rule_Basic>> michiganSolutionList =
 				new ArrayList<MichiganSolution_Basic<Rule_Basic>>();
 		MichiganSolutionBuilder<MichiganSolution_Basic<Rule_Basic>> michiganSolutionBuilder = testObject.getMichiganSolutionBuilder();
-		michiganSolutionList.add(michiganSolutionBuilder.createMichiganSolution(new int[] {0,1, 2, 3}));
-		michiganSolutionList.add(michiganSolutionBuilder.createMichiganSolution(new int[] {0,1, 2, 3}));
+		michiganSolutionList.addAll(michiganSolutionBuilder.createMichiganSolutions(5));
 		Classification<MichiganSolution_Basic<Rule_Basic>> classification = testObject.getClassification();
 		AttributeVector inputVector = testObject.getTrain().getPattern(0).getAttributeVector();
 		assertTrue(classification.classify(michiganSolutionList, inputVector) instanceof MichiganSolution_Basic);

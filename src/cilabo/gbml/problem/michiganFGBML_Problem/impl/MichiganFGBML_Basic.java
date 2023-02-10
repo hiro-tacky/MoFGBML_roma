@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import cilabo.data.dataSet.impl.DataSet_Basic;
+import cilabo.data.DataSet;
 import cilabo.fuzzy.rule.Rule;
 import cilabo.fuzzy.rule.Rule.RuleBuilder;
 import cilabo.gbml.objectivefunction.michigan.RuleLength;
@@ -13,7 +13,8 @@ import cilabo.gbml.problem.michiganFGBML_Problem.AbstractMichiganFGBML;
 import cilabo.gbml.solution.michiganSolution.impl.MichiganSolution_Basic;
 import cilabo.main.ExperienceParameter.OBJECTIVES_FOR_MICHIGAN;
 
-public class MichiganFGBML_Basic <RuleObject extends Rule> extends AbstractMichiganFGBML <MichiganSolution_Basic<RuleObject>, RuleObject>{
+public class MichiganFGBML_Basic <RuleObject extends Rule<?, ?, ?, ?, ?, ?>>
+	extends AbstractMichiganFGBML <MichiganSolution_Basic<RuleObject>, RuleObject>{
 
 	private List<WinnerSolution> winnerSolutionForEachPattern = new ArrayList<WinnerSolution>(this.getTrain().getDataSize());
 
@@ -21,8 +22,8 @@ public class MichiganFGBML_Basic <RuleObject extends Rule> extends AbstractMichi
 			int numberOfVariables,
 			int numberOfObjectives,
 			int numberOfConstraints,
-			DataSet_Basic train,
-			RuleBuilder<RuleObject> ruleBuilder) {
+			DataSet<?> train,
+			RuleBuilder<RuleObject, ?, ?> ruleBuilder) {
 		super(numberOfVariables, numberOfObjectives, numberOfConstraints,
 				train, ruleBuilder);
 		this.setName("MichiganFGBML_Problem_Basic");
@@ -35,9 +36,9 @@ public class MichiganFGBML_Basic <RuleObject extends Rule> extends AbstractMichi
 			int numberOfVariables,
 			int numberOfObjectives,
 			int numberOfConstraints,
-			DataSet_Basic train,
+			DataSet<?> train,
 			List<Pair<Integer, Integer>> bounds,
-			RuleBuilder<RuleObject> ruleBuilder) {
+			RuleBuilder<RuleObject, ?, ?> ruleBuilder) {
 		super(numberOfVariables, numberOfObjectives, numberOfConstraints, train, bounds, ruleBuilder);
 		this.setName("MichiganFGBML_Problem_Basic");
 		for(int i=0; i<this.getTrain().getDataSize(); i++) {
@@ -69,11 +70,11 @@ public class MichiganFGBML_Basic <RuleObject extends Rule> extends AbstractMichi
 	}
 
 
-	private static class WinnerSolution{
+	private class WinnerSolution{
 		private double maxFitnessValue;
-		private MichiganSolution_Basic solution;
+		private MichiganSolution_Basic<RuleObject> solution;
 
-		public WinnerSolution(double maxFitnessValue, MichiganSolution_Basic solution) {
+		public WinnerSolution(double maxFitnessValue, MichiganSolution_Basic<RuleObject> solution) {
 			this.maxFitnessValue = maxFitnessValue;
 			this.solution = solution;
 		}
@@ -84,11 +85,11 @@ public class MichiganFGBML_Basic <RuleObject extends Rule> extends AbstractMichi
 			return maxFitnessValue;
 		}
 
-		public MichiganSolution_Basic getSolution() {
+		public MichiganSolution_Basic<RuleObject> getSolution() {
 			return solution;
 		}
 
-		public void setWinnerSolution(double maxFitnessValue, MichiganSolution_Basic solution) {
+		public void setWinnerSolution(double maxFitnessValue, MichiganSolution_Basic<RuleObject> solution) {
 			this.maxFitnessValue = maxFitnessValue;
 			this.solution = solution;
 		}

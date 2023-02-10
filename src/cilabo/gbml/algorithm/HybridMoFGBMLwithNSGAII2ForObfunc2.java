@@ -80,8 +80,8 @@ public class HybridMoFGBMLwithNSGAII2ForObfunc2 <S extends PittsburghSolution<?>
 			int offspringPopulationSize,
 			int frequency,
 			String outputRootDir,
-			CrossoverOperator<PittsburghSolution<?>> crossoverOperator,
-			MutationOperator<PittsburghSolution<?>> mutationOperator,
+			CrossoverOperator<S> crossoverOperator,
+			MutationOperator<S> mutationOperator,
 			Termination termination) {
 		/* Constructor Body */
 		this.problem = problem;
@@ -91,8 +91,8 @@ public class HybridMoFGBMLwithNSGAII2ForObfunc2 <S extends PittsburghSolution<?>
 		this.frequency = frequency;
 		this.outputRootDir = outputRootDir;
 
-		this.crossoverOperator = (CrossoverOperator<S>) crossoverOperator;
-		this.mutationOperator = (MutationOperator<S>) mutationOperator;
+		this.crossoverOperator = crossoverOperator;
+		this.mutationOperator = mutationOperator;
 		this.termination = termination;
 
 		/* NSGA-II */
@@ -105,7 +105,7 @@ public class HybridMoFGBMLwithNSGAII2ForObfunc2 <S extends PittsburghSolution<?>
 
 		this.variation =
 				new CrossoverAndMutationAndPittsburghLearningVariation<S>(
-						offspringPopulationSize, (CrossoverOperator<S>)crossoverOperator, (MutationOperator<S>)mutationOperator);
+						offspringPopulationSize, crossoverOperator, mutationOperator);
 
 		this.selection =
 				new NaryTournamentMatingPoolSelection<>(

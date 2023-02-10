@@ -6,8 +6,9 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import cilabo.data.DatasetManager;
-import cilabo.data.dataSet.impl.DataSet_Basic;
+import cilabo.MakeTestObject;
+import cilabo.data.DataSet;
+import cilabo.data.DataSetManager;
 import cilabo.fuzzy.knowledge.FuzzyTermBluePrintManager;
 import cilabo.fuzzy.knowledge.Knowledge;
 import cilabo.fuzzy.knowledge.membershipParams.Parameters;
@@ -15,23 +16,22 @@ import cilabo.main.ExperienceParameter.DIVISION_TYPE;
 import jfml.term.FuzzyTermType;
 
 class MixedKnowledgeFactoryTest {
-	public static DataSet_Basic train;
+	public static DataSet<?> train;
 	public static int dimension;
 	public static Parameters parameters;
 	public static MixedKnowledgeFactory knowledgeFactory;
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
-		DatasetManager.getInstance().loadTrainTestFiles("dataset/iris/a0_0_iris-10tra.dat", "dataset/iris/a0_0_iris-10tst.dat");
-		train = DatasetManager.getInstance().getTrains().get(0);
-		dimension = train.getNdim();
-		parameters = new Parameters(train, dimension);
-		knowledgeFactory = new MixedKnowledgeFactory(dimension, parameters);
+		MakeTestObject MTO = new MakeTestObject("iris", 0, 0);
+		train = MTO.getTrain();
+		parameters = new Parameters(train);
+		knowledgeFactory = new MixedKnowledgeFactory(parameters);
 	}
 
 	@Test
 	void test() {
-		FuzzyTermBluePrintManager FuzzyTermBMP = new FuzzyTermBluePrintManager(train, dimension);
+		FuzzyTermBluePrintManager FuzzyTermBMP = new FuzzyTermBluePrintManager(train.getNdim());
 		for(int dim_i=0; dim_i<dimension; dim_i++) {
 			int[] K = new int[] {2, 3, 4, 5};
 			FuzzyTermBMP.addFuzyyTermsBluePrint(DIVISION_TYPE.equalDivision, dim_i, K, FuzzyTermType.TYPE_triangularShape);
@@ -64,7 +64,7 @@ class MixedKnowledgeFactoryTest {
 
 	@AfterAll
 	static void afterClass() throws Exception {
-		DatasetManager.getInstance().clear();
+		DataSetManager.getInstance().clear();
 		Knowledge.getInstance().clear();
 	}
 

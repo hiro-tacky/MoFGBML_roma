@@ -6,8 +6,9 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import cilabo.data.DatasetManager;
-import cilabo.data.dataSet.impl.DataSet_Basic;
+import cilabo.MakeTestObject;
+import cilabo.data.DataSet;
+import cilabo.data.DataSetManager;
 import cilabo.fuzzy.knowledge.Knowledge;
 import cilabo.fuzzy.knowledge.membershipParams.HomoTriangle_2_3_4_5;
 import cilabo.fuzzy.knowledge.membershipParams.Parameters;
@@ -15,16 +16,14 @@ import cilabo.main.ExperienceParameter.DIVISION_TYPE;
 import jfml.term.FuzzyTermType;
 
 class HomoTriangleKnowledgeFactoryTest {
-	public static DataSet_Basic train;
-	public static int dimension;
+	public static DataSet<?> train;
 	public static HomoTriangleKnowledgeFactory knowledgeFactory;
 
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
-		DatasetManager.getInstance().loadTrainTestFiles("dataset/iris/a0_0_iris-10tra.dat", "dataset/iris/a0_0_iris-10tst.dat");
-		train = DatasetManager.getInstance().getTrains().get(0);
-		dimension = train.getNdim();
+		MakeTestObject MTO = new MakeTestObject("iris", 0, 0);
+		train = MTO.getTrain();
 		Parameters parameters = new Parameters(train);
 		knowledgeFactory = new HomoTriangleKnowledgeFactory(parameters);
 	}
@@ -50,7 +49,7 @@ class HomoTriangleKnowledgeFactoryTest {
 
 	@AfterAll
 	static void afterClass() throws Exception {
-		DatasetManager.getInstance().clear();
+		DataSetManager.getInstance().clear();
 		Knowledge.getInstance().clear();
 	}
 }

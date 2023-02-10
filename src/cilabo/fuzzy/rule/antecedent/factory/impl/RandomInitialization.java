@@ -1,6 +1,6 @@
 package cilabo.fuzzy.rule.antecedent.factory.impl;
 
-import cilabo.data.dataSet.impl.DataSet_Basic;
+import cilabo.data.DataSet;
 import cilabo.data.pattern.Pattern;
 import cilabo.fuzzy.knowledge.Knowledge;
 import cilabo.fuzzy.rule.antecedent.factory.AntecedentIndexFactory;
@@ -14,11 +14,11 @@ public class RandomInitialization implements AntecedentIndexFactory{
 	/**	乱数生成器 */
 	MersenneTwisterFast uniqueRnd;
 	/** 学習用データ */
-	private DataSet_Basic<?> train;
+	private DataSet<?> train;
 	private int dimension;
 	private int seed;
 
-	public RandomInitialization(int seed, DataSet_Basic<?> train) {
+	public RandomInitialization(int seed, DataSet<?> train) {
 		this.seed = seed;
 		this.uniqueRnd = new MersenneTwisterFast(seed);
 		this.train = train;

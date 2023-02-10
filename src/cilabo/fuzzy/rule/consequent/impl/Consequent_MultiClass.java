@@ -3,7 +3,9 @@ package cilabo.fuzzy.rule.consequent.impl;
 import org.w3c.dom.Element;
 
 import cilabo.fuzzy.rule.consequent.AbstractConsequent;
+import cilabo.fuzzy.rule.consequent.classLabel.ClassLabel;
 import cilabo.fuzzy.rule.consequent.classLabel.impl.ClassLabel_Multi;
+import cilabo.fuzzy.rule.consequent.ruleWeight.RuleWeight;
 import cilabo.fuzzy.rule.consequent.ruleWeight.impl.RuleWeight_Multi;
 import cilabo.main.impl.multiTasking.MultiTasking;
 import xml.XML_TagName;
@@ -13,7 +15,8 @@ import xml.XML_manager;
  * @author hirot
  */
 @MultiTasking
-public class Consequent_MultiClass extends AbstractConsequent <ClassLabel_Multi, Integer[], RuleWeight_Multi, Double[]>{
+public class Consequent_MultiClass extends AbstractConsequent <ClassLabel_Multi, Integer[], RuleWeight_Multi, Double[]>
+	implements ClassLabel<Integer[]>, RuleWeight<Double[]>{
 
 	/** 入力された結論部クラスとルール重みを持つインスタンスを生成する
 	 * @param classLabel 代入される結論部クラス
@@ -57,5 +60,25 @@ public class Consequent_MultiClass extends AbstractConsequent <ClassLabel_Multi,
 		XML_manager.getInstance().addElement(consequent, ruleWeight);
 
 		return consequent;
+	}
+
+	@Override
+	public Double[] getRuleWeightValue() {
+		return this.ruleWeight.getRuleWeightValue();
+	}
+
+	@Override
+	public void setRuleWeightValue(Double[] ruleWeightValue) {
+		this.ruleWeight.setRuleWeightValue(ruleWeightValue);
+	}
+
+	@Override
+	public void setClassLabelValue(Integer[] classLabelValue) {
+		this.classLabel.setClassLabelValue(classLabelValue);
+	}
+
+	@Override
+	public Integer[] getClassLabelValue() {
+		return this.classLabel.getClassLabelValue();
 	}
 }

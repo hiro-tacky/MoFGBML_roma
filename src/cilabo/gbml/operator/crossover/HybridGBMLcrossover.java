@@ -10,23 +10,26 @@ import org.uma.jmetal.util.pseudorandom.BoundedRandomGenerator;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 import org.uma.jmetal.util.pseudorandom.RandomGenerator;
 
+import cilabo.gbml.solution.michiganSolution.MichiganSolution;
 import cilabo.gbml.solution.pittsburghSolution.PittsburghSolution;
 import cilabo.gbml.solution.util.EqualsSolution;
+import cilabo.utility.GeneralFunctions;
 
-public class HybridGBMLcrossover implements CrossoverOperator<PittsburghSolution<?>> {
+public class HybridGBMLcrossover <pittsburghSolution extends PittsburghSolution<michiganSolution>, michiganSolution extends MichiganSolution<?>>
+	implements CrossoverOperator<pittsburghSolution> {
 
 	private double crossoverProbability;
 	private RandomGenerator<Double> crossoverRandomGenerator;
 	BoundedRandomGenerator<Integer> selectRandomGenerator;
 
 	private double michiganOperationProbability;
-	CrossoverOperator<PittsburghSolution<?>> michiganX;
-	CrossoverOperator<PittsburghSolution<?>> pittsburghX;
+	CrossoverOperator<pittsburghSolution> michiganX;
+	CrossoverOperator<pittsburghSolution> pittsburghX;
 
 
 	/** Constructor */
 	public HybridGBMLcrossover(double crossoverProbability, double michiganOperationProbability,
-							   CrossoverOperator<PittsburghSolution<?>> michiganX, CrossoverOperator<PittsburghSolution<?>> pittsburghX) {
+							   CrossoverOperator<pittsburghSolution> michiganX, CrossoverOperator<pittsburghSolution> pittsburghX) {
 		this(crossoverProbability,
 			 () -> JMetalRandom.getInstance().nextDouble(),
 			 (a, b) -> JMetalRandom.getInstance().nextInt(a, b));
@@ -78,16 +81,16 @@ public class HybridGBMLcrossover implements CrossoverOperator<PittsburghSolution
 	}
 
 	@Override
-	public List<PittsburghSolution<?>> execute(List<PittsburghSolution<?>> solutions) {
+	public List<pittsburghSolution> execute(List<pittsburghSolution> solutions) {
 		Check.isNotNull(solutions);
 		Check.that(solutions.size() == 2, "There must be two parents instead of " + solutions.size());
 		return doCrossover(crossoverProbability, solutions.get(0), solutions.get(1));
 	}
 
-	public List<PittsburghSolution<?>> doCrossover(
-			double probability, PittsburghSolution<?> parent1, PittsburghSolution<?> parent2)
+	public List<pittsburghSolution> doCrossover(
+			double probability, pittsburghSolution parent1, pittsburghSolution parent2)
 	{
-		List<PittsburghSolution<?>> offspring = new ArrayList<>();
+		List<pittsburghSolution> offspring = new ArrayList<>();
 
 		if(crossoverRandomGenerator.getRandomValue() < probability) {/* Do crossover */
 			/* Judge if two parents are same. */
@@ -97,26 +100,32 @@ public class HybridGBMLcrossover implements CrossoverOperator<PittsburghSolution
 
 			if(crossoverRandomGenerator.getRandomValue() < p) {
 				/* Michigan operation */
-				List<PittsburghSolution<?>> parents = new ArrayList<>();
-				parents.add(parent1.copy());
+				List<pittsburghSolution> parents = new ArrayList<>();
+				parents.add((pittsburghSolution) parent1.copy());
 				offspring = michiganX.execute(parents);
+				if(!GeneralFunctions.checkRule((PittsburghSolution<MichiganSolution<?>>) offspring.get(0))) {
+					System.err.println("michiganX");
+				}
 			}
 			else {
 				/* Pittsburgh operation */
-				List<PittsburghSolution<?>> parents = new ArrayList<>();
-				parents.add(parent1.copy());
-				parents.add(parent2.copy());
+				List<pittsburghSolution> parents = new ArrayList<>();
+				parents.add((pittsburghSolution) parent1.copy());
+				parents.add((pittsburghSolution) parent2.copy());
 				offspring = pittsburghX.execute(parents);
+				if(!GeneralFunctions.checkRule((PittsburghSolution<MichiganSolution<?>>) offspring.get(0))) {
+					System.err.println("pittsburghX");
+				}
 			}
 		}
 		else {/* Don't crossover */
-			offspring.add(parent1.copy());
-			offspring.add(parent2.copy());
+			offspring.add((pittsburghSolution) parent1.copy());
+			offspring.add((pittsburghSolution) parent2.copy());
 			int index = selectRandomGenerator.getRandomValue(0,  1);
 			offspring.remove(index);
 		}
 
-		if(offspring.get(0).getNumberOfVariables() < 1) {System.err.println("incorrect input: number Of Rules is less than 1");}
+		if(offspring.get(0).getNumberOfVariables() < 1) {System.err.println("incorrect input: number Of Rules is less than 1 @" + this.getClass().getSimpleName());}
 		return offspring;
 	}
 

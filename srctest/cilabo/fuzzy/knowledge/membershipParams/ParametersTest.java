@@ -6,24 +6,25 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import cilabo.data.DatasetManager;
-import cilabo.data.dataSet.impl.DataSet_Basic;
+import cilabo.MakeTestObject;
+import cilabo.data.DataSet;
+import cilabo.data.DataSetManager;
 import cilabo.fuzzy.knowledge.Knowledge;
 import cilabo.main.ExperienceParameter.DIVISION_TYPE;
 import jfml.term.FuzzyTermType;
 
 class ParametersTest {
-	public static DataSet_Basic train;
+	public static DataSet<?> train;
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
-		DatasetManager.getInstance().loadTrainTestFiles("dataset/iris/a0_0_iris-10tra.dat", "dataset/iris/a0_0_iris-10tst.dat");
-		train = DatasetManager.getInstance().getTrains().get(0);
+		MakeTestObject MTO = new MakeTestObject("iris", 0, 0);
+		train = MTO.getTrain();
 	}
 
 	@Test
 	void test() {
-		Parameters parameters = new Parameters(train, train.getNdim());
+		Parameters parameters = new Parameters(train);
 		float[][] expected = HomoTriangle_2_3_4_5.getParams();
 		int cnt = 0;
 		int[] K = new int[] {2, 3, 4, 5};
@@ -38,7 +39,7 @@ class ParametersTest {
 
 	@AfterAll
 	static void afterClass() throws Exception {
-		DatasetManager.getInstance().clear();
+		DataSetManager.getInstance().clear();
 		Knowledge.getInstance().clear();
 	}
 }

@@ -21,8 +21,10 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.util.observer.impl.EvaluationObserver;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
-import cilabo.data.DatasetManager;
-import cilabo.data.dataSet.impl.DataSet_Basic;
+import cilabo.data.DataSet;
+import cilabo.data.DataSetManager;
+import cilabo.data.Input;
+import cilabo.data.pattern.impl.Pattern_Basic;
 import cilabo.fuzzy.classifier.Classifier;
 import cilabo.fuzzy.classifier.classification.Classification;
 import cilabo.fuzzy.classifier.classification.impl.SingleWinnerRuleSelection;
@@ -43,7 +45,6 @@ import cilabo.gbml.problem.pittsburghFGBML_Problem.impl.PittsburghFGBML_Objectiv
 import cilabo.gbml.solution.michiganSolution.AbstractMichiganSolution;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution.MichiganSolutionBuilder;
 import cilabo.gbml.solution.michiganSolution.impl.MichiganSolution_Basic;
-import cilabo.gbml.solution.pittsburghSolution.PittsburghSolution;
 import cilabo.gbml.solution.pittsburghSolution.impl.PittsburghSolution_Basic;
 import cilabo.main.Consts;
 import cilabo.utility.Output;
@@ -107,17 +108,15 @@ public class ObjectiveFunction2_Main {
 		JMetalRandom.getInstance().setSeed(Consts.RAND_SEED);
 
 		/* Load Dataset ======================== */
-		DatasetManager.getInstance().loadTrainTestFiles(ObjectiveFuntion2_CommandLineArgs.trainFile,
-				ObjectiveFuntion2_CommandLineArgs.testFile);
-
-		/* Run MoFGBML algorithm =============== */
-		DataSet_Basic train = DatasetManager.getInstance().getTrains().get(0);
-		DataSet_Basic test = DatasetManager.getInstance().getTests().get(0);
+		Input.loadTrainTestFiles_Basic(ObjectiveFuntion2_CommandLineArgs.trainFile, ObjectiveFuntion2_CommandLineArgs.testFile);
+		DataSet<Pattern_Basic> test = (DataSet<Pattern_Basic>) DataSetManager.getInstance().getTests().get(0);
+		DataSet<Pattern_Basic> train = (DataSet<Pattern_Basic>) DataSetManager.getInstance().getTrains().get(0);
 
 
 		/** XML ファイル出力ようインスタンスの生成*/
 		XML_manager.getInstance();
 
+		/* Run MoFGBML algorithm =============== */
 		HybridStyleMoFGBML(train, test);
 		/* ===================================== */
 
@@ -138,7 +137,7 @@ public class ObjectiveFunction2_Main {
 	/**
 	 *
 	 */
-	public static void HybridStyleMoFGBML(DataSet_Basic train, DataSet_Basic test) {
+	public static void HybridStyleMoFGBML(DataSet<Pattern_Basic> train, DataSet<Pattern_Basic> test) {
 		Random.getInstance().initRandom(2022);
 		String sep = File.separator;
 
@@ -158,7 +157,7 @@ public class ObjectiveFunction2_Main {
 		int numberOfObjectives_Pittsburgh = 2;
 		int numberOfConstraints_Pittsburgh = 0;
 
-		RuleBuilder<Rule_Basic> ruleBuilder = new Rule_Basic.RuleBuilder_Basic(
+		RuleBuilder<Rule_Basic, ?, ?> ruleBuilder = new Rule_Basic.RuleBuilder_Basic(
 				new HeuristicRuleGenerationMethod(train),
 				new MoFGBML_Learning(train));
 
@@ -186,19 +185,19 @@ public class ObjectiveFunction2_Main {
 
 		/* Crossover: Hybrid-style GBML specific crossover operator. */
 		double crossoverProbability = 1.0;
+
 		/* Michigan operation */
-		CrossoverOperator<PittsburghSolution<?>> michiganX
-				= new MichiganCrossover(Consts.MICHIGAN_CROSS_RT, train);
+		CrossoverOperator<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>> michiganX
+				= new MichiganCrossover<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>, MichiganSolution_Basic<Rule_Basic>>(Consts.MICHIGAN_CROSS_RT, train);
 		/* Pittsburgh operation */
-		CrossoverOperator<PittsburghSolution<?>> pittsburghX
-				= new PittsburghCrossover(Consts.PITTSBURGH_CROSS_RT);
+		CrossoverOperator<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>> pittsburghX
+				= new PittsburghCrossover<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>, MichiganSolution_Basic<Rule_Basic>>(Consts.PITTSBURGH_CROSS_RT);
 		/* Hybrid-style crossover */
-		CrossoverOperator<PittsburghSolution<?>> crossover
-				= new HybridGBMLcrossover(crossoverProbability, Consts.MICHIGAN_OPE_RT,
-																				michiganX, pittsburghX);
+		CrossoverOperator<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>> crossover
+				= new HybridGBMLcrossover<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>, MichiganSolution_Basic<Rule_Basic>>(crossoverProbability, Consts.MICHIGAN_OPE_RT, michiganX, pittsburghX);
 		/* Mutation: Pittsburgh-style GBML specific mutation operator. */
-		MutationOperator<PittsburghSolution<?>> mutation
-				= new PittsburghMutation(train);
+		MutationOperator<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>> mutation
+				= new PittsburghMutation<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>, MichiganSolution_Basic<Rule_Basic>>(train);
 
 		/* Termination: Number of total evaluations */
 		Termination termination = new TerminationByEvaluations(Consts.TERMINATE_EVALUATION);

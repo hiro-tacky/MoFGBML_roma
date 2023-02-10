@@ -1,4 +1,4 @@
-$dataName = "vehicle"
+$dataName = "iris"
 $parallelCores = 12
 $algorithmID = "basic"
 $experimentID = "trial"

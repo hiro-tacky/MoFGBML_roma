@@ -7,26 +7,26 @@ import org.uma.jmetal.util.pseudorandom.BoundedRandomGenerator;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 import org.uma.jmetal.util.pseudorandom.RandomGenerator;
 
-import cilabo.data.dataSet.impl.DataSet_Basic;
+import cilabo.data.DataSet;
 import cilabo.data.pattern.Pattern;
 import cilabo.fuzzy.knowledge.Knowledge;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution;
 
-public class MichiganMutation implements MutationOperator<MichiganSolution<?>> {
+public class MichiganMutation <michiganSolution extends MichiganSolution<?>> implements MutationOperator<michiganSolution> {
 	private double mutationProbability;
 	private RandomGenerator<Double> randomGenerator;
 	private BoundedRandomGenerator<Integer> intRandomGenerator;
-	private DataSet_Basic data;
+	private DataSet<?> data;
 
 	  /** Constructor */
-	  public MichiganMutation(double mutationProbability, DataSet_Basic data) {
+	  public MichiganMutation(double mutationProbability, DataSet<?> data) {
 	    this(mutationProbability, data,
 	    	 () -> JMetalRandom.getInstance().nextDouble(),
 	    	 (a, b) -> JMetalRandom.getInstance().nextInt(a, b));
 	  }
 
 	  /** Constructor */
-	  public MichiganMutation(double mutationProbability, DataSet_Basic data, RandomGenerator<Double> randomGenerator) {
+	  public MichiganMutation(double mutationProbability, DataSet<?> data, RandomGenerator<Double> randomGenerator) {
 		  this(
 			mutationProbability, data,
 			randomGenerator,
@@ -34,7 +34,7 @@ public class MichiganMutation implements MutationOperator<MichiganSolution<?>> {
 	  }
 
 	  /** Constructor */
-	  public MichiganMutation(double mutationProbability, DataSet_Basic data, RandomGenerator<Double> randomGenerator, BoundedRandomGenerator<Integer> intRandomGenerator) {
+	  public MichiganMutation(double mutationProbability, DataSet<?> data, RandomGenerator<Double> randomGenerator, BoundedRandomGenerator<Integer> intRandomGenerator) {
 	    if (mutationProbability < 0) {
 	      throw new JMetalException("Mutation probability is negative: " + mutationProbability);
 	    }
@@ -52,7 +52,7 @@ public class MichiganMutation implements MutationOperator<MichiganSolution<?>> {
 
 	  /** Execute() method */
 	  @Override
-	  public MichiganSolution<?> execute(MichiganSolution<?> solution) {
+	  public michiganSolution execute(michiganSolution solution) {
 		  Check.isNotNull(solution);
 
 		  doMutation(mutationProbability, solution);
@@ -65,10 +65,10 @@ public class MichiganMutation implements MutationOperator<MichiganSolution<?>> {
 	   * @param probability Mutation setProbability
 	   * @param solution The solution to mutate
 	   */
-	  public void doMutation(double probability, MichiganSolution<?> solution) {
+	  public void doMutation(double probability, michiganSolution solution) {
 		  for(int i = 0; i < solution.getNumberOfVariables(); i++) {
 			// To judge which attribute i is categorical or numerical.
-			Pattern randPattern =data.getPattern(intRandomGenerator.getRandomValue(0, data.getDataSize()-1));
+			Pattern<?> randPattern = data.getPattern(intRandomGenerator.getRandomValue(0, data.getDataSize()-1));
 
 			// Decide new variable
 			int fuzzySetNum = Knowledge.getInstance().getFuzzySetNum(i);
@@ -78,6 +78,7 @@ public class MichiganMutation implements MutationOperator<MichiganSolution<?>> {
 			if(randomGenerator.getRandomValue() < probability) {
 				if(randPattern.getAttributeValue(i) >= 0) {
 					// Numerical attribute:
+					//変更前がnewFuzzySetと同値だった場合の回避用処理
 					if(newFuzzySet < (int)solution.getVariable(i)) {
 						solution.setVariable(i, newFuzzySet);
 					}

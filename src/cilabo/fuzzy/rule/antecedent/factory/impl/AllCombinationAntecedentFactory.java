@@ -55,7 +55,6 @@ public class AllCombinationAntecedentFactory implements AntecedentIndexFactory{
 				antecedents[i][dim_i] = ids.get(i).get(dim_i);
 			}
 		}
-
 	}
 
 	@Override

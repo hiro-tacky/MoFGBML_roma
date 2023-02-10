@@ -14,15 +14,15 @@ import cilabo.main.Consts;
  * 通常のルール置換型ミシガン操作.
  *
  */
-public class RuleReplacementStyleReplacement
-	implements Replacement<MichiganSolution<?>> {
-	public List<MichiganSolution<?>> replace(List<MichiganSolution<?>> currentList, List<MichiganSolution<?>> offspringList) {
+public class RuleReplacementStyleReplacement <michiganSolution extends MichiganSolution<?>>
+	implements Replacement<michiganSolution> {
+	public List<michiganSolution> replace(List<michiganSolution> currentList, List<michiganSolution> offspringList) {
 
 		// 親個体をfitness順にソートする
 		Collections.sort(offspringList,
-						 new ObjectiveComparator<MichiganSolution<?>>(0, ObjectiveComparator.Ordering.DESCENDING));
+						 new ObjectiveComparator<michiganSolution>(0, ObjectiveComparator.Ordering.DESCENDING));
 
-		List<MichiganSolution<?>> buf = new ArrayList<>();
+		List<michiganSolution> buf = new ArrayList<>();
 
 		// Replace rules from bottom of list.
 		for(int i = 0; i < Math.min(offspringList.size(), Consts.MAX_RULE_NUM); i++) {

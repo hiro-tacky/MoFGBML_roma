@@ -9,8 +9,10 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.uma.jmetal.component.initialsolutioncreation.InitialSolutionsCreation;
 
-import cilabo.data.DatasetManager;
-import cilabo.data.dataSet.impl.DataSet_Basic;
+import cilabo.MakeTestObject;
+import cilabo.data.DataSet;
+import cilabo.data.DataSetManager;
+import cilabo.data.pattern.impl.Pattern_Basic;
 import cilabo.fuzzy.classifier.Classifier;
 import cilabo.fuzzy.classifier.classification.Classification;
 import cilabo.fuzzy.classifier.classification.impl.SingleWinnerRuleSelection;
@@ -33,20 +35,21 @@ import xml.XML_reader;
 class InitialSolutionsCreationFromXMLTest {
 
 	private static XML_reader XML_reader;
+	private static DataSet<Pattern_Basic> train;
 	private static InitialSolutionsCreation<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>>
 		initialSolutionsCreation;
 	private static List<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>> population;
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
-		DatasetManager.getInstance().loadTrainTestFiles("dataset/pima/a0_0_pima-10tra.dat", "dataset/pima/a0_0_pima-10tst.dat");
-		DataSet_Basic train = DatasetManager.getInstance().getTrains().get(0);
+		MakeTestObject MTO = new MakeTestObject("pima", 0, 0);
+		train = MTO.getTrain();
 
 		Parameters parameters = new Parameters(train);
-		HomoTriangleKnowledgeFactory KnowledgeFactory = new HomoTriangleKnowledgeFactory(train.getNdim(), parameters);
-		KnowledgeFactory.create();
+		HomoTriangleKnowledgeFactory KnowledgeFactory = new HomoTriangleKnowledgeFactory(parameters);
+		KnowledgeFactory.create2_3_4_5();
 
-		RuleBuilder<Rule_Basic> ruleBuilder = new Rule_Basic.RuleBuilder_Basic(
+		RuleBuilder<Rule_Basic, ?, ?> ruleBuilder = new Rule_Basic.RuleBuilder_Basic(
 				new HeuristicRuleGenerationMethod(train),
 				new MoFGBML_Learning(train));
 
@@ -66,7 +69,7 @@ class InitialSolutionsCreationFromXMLTest {
 
 		try {
 			String ln = File.separator;
-			XML_reader = new XML_reader("results" + ln + "mixedKB" + ln + "pima" + ln + "trial00" + ln + Consts.XML_FILE_NAME + ".xml");
+			XML_reader = new XML_reader("results" + ln + "default" + ln + "pima" + ln + "trial00" + ln + Consts.XML_FILE_NAME + ".xml");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -82,7 +85,7 @@ class InitialSolutionsCreationFromXMLTest {
 
 	@AfterAll
 	static void afterClass() throws Exception {
-		DatasetManager.getInstance().clear();
+		DataSetManager.getInstance().clear();
 		Knowledge.getInstance().clear();
 	}
 }

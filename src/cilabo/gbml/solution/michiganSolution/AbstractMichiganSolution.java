@@ -7,23 +7,27 @@ import java.util.Objects;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.uma.jmetal.solution.AbstractSolution;
+import org.w3c.dom.Element;
 
 import cilabo.data.AttributeVector;
+import cilabo.data.pattern.Pattern;
 import cilabo.fuzzy.knowledge.Knowledge;
 import cilabo.fuzzy.rule.Rule;
 import cilabo.fuzzy.rule.Rule.RuleBuilder;
+import cilabo.fuzzy.rule.antecedent.Antecedent;
+import cilabo.fuzzy.rule.consequent.Consequent;
 import cilabo.fuzzy.rule.consequent.classLabel.ClassLabel;
 import cilabo.fuzzy.rule.consequent.ruleWeight.RuleWeight;
 
-public abstract class AbstractMichiganSolution<RuleObject extends Rule<?, ?, ?, ?>> extends AbstractSolution<Integer> implements MichiganSolution<RuleObject>{
+public abstract class AbstractMichiganSolution<RuleObject extends Rule<?, ?, ?, ?, ?, ?>>
+	extends AbstractSolution<Integer> implements MichiganSolution<RuleObject>{
 
 	/** 前件部の遺伝子が持つインデックスの下限値と上限値のペアの配列 */
 	protected List<Pair<Integer, Integer>> bounds;
 	/**	ルールオブジェクト */
 	protected RuleObject rule;
-
-	/** */
-	protected RuleBuilder<RuleObject> ruleBuilder;
+	/** ルールジェネレーター */
+	protected RuleBuilder<RuleObject, ?, ?> ruleBuilder;
 
 	/** コンストラクタ
 	 * @param bounds 各遺伝子が取りうる値の上限値と下限値の配列
@@ -33,14 +37,54 @@ public abstract class AbstractMichiganSolution<RuleObject extends Rule<?, ?, ?, 
 	protected AbstractMichiganSolution(List<Pair<Integer, Integer>> bounds,
 			int numberOfObjectives,
 			int numberOfConstraints,
-			RuleBuilder<RuleObject> ruleBuilder) {
+			RuleBuilder<RuleObject, ?, ?> ruleBuilder) {
 		super(bounds.size(), numberOfObjectives, numberOfConstraints);
 		this.bounds = bounds;
 		this.ruleBuilder = ruleBuilder;
+		//生成不可ルールの場合は再生成
 		do {
-			int[] antecedentIndex = ruleBuilder.createAntecedentIndex();
-			this.setVariables(antecedentIndex);
-			this.learning();
+			this.createRule();
+		}while(this.rule.isRejectedClassLabel());
+	}
+
+	/** コンストラクタ
+	 * @param bounds 各遺伝子が取りうる値の上限値と下限値の配列
+	 * @param numberOfObjectives 目的関数の個数
+	 * @param numberOfConstraints 制約の個数
+	 * @param ruleBuilder ルール生成器．*/
+	protected AbstractMichiganSolution(List<Pair<Integer, Integer>> bounds,
+			int numberOfObjectives,
+			int numberOfConstraints,
+			RuleBuilder<RuleObject, ?, ?> ruleBuilder,
+			Element michiganSolution) {
+		super(bounds.size(), numberOfObjectives, numberOfConstraints);
+		this.bounds = bounds;
+		this.ruleBuilder = ruleBuilder;
+
+		this.createRule(michiganSolution);
+		//生成不可ルールの場合は再生成
+		while(this.rule.isRejectedClassLabel()) {
+			this.createRule();
+		}
+	}
+
+	/** コンストラクタ
+	 * @param bounds 各遺伝子が取りうる値の上限値と下限値の配列
+	 * @param numberOfObjectives 目的関数の個数
+	 * @param numberOfConstraints 制約の個数
+	 * @param ruleBuilder ルール生成器．*/
+	protected AbstractMichiganSolution(List<Pair<Integer, Integer>> bounds,
+			int numberOfObjectives,
+			int numberOfConstraints,
+			RuleBuilder<RuleObject, ?, ?> ruleBuilder,
+			Pattern<?> pattern) {
+		super(bounds.size(), numberOfObjectives, numberOfConstraints);
+		this.bounds = bounds;
+		this.ruleBuilder = ruleBuilder;
+
+		//生成不可ルールの場合は再生成
+		do {
+			this.createRule(pattern);
 		}while(this.rule.isRejectedClassLabel());
 	}
 
@@ -48,7 +92,7 @@ public abstract class AbstractMichiganSolution<RuleObject extends Rule<?, ?, ?, 
 	 * @param numberOfObjectives 目的関数の個数
 	 * @param numberOfConstraints 制約の個数
 	 * @param ruleBuilder ルール生成器．*/
-	protected AbstractMichiganSolution(int numberOfObjectives, int numberOfConstraints, RuleBuilder<RuleObject> ruleBuilder) {
+	protected AbstractMichiganSolution(int numberOfObjectives, int numberOfConstraints, RuleBuilder<RuleObject, ?, ?> ruleBuilder) {
 		this(AbstractMichiganSolution.makeBounds(), numberOfObjectives, numberOfConstraints, ruleBuilder);
 	}
 
@@ -83,63 +127,107 @@ public abstract class AbstractMichiganSolution<RuleObject extends Rule<?, ?, ?, 
 	}
 
 	@Override
-	public Integer getVariables(int index) {
-		return this.getVariable(index);
+	public Integer getVariable(int index) {
+		return this.variables.get(index);
 	}
 
 	@Override
-	public int[] getVariablesAsIntArray() {
-		int[] variablesAsIntArray = new int[this.getNumberOfVariables()];
-		for(int i=0; i<variablesAsIntArray.length; i++) {
-			variablesAsIntArray[i] = this.getVariable(i);
-		}
-		return variablesAsIntArray;
+	public void createRule() {
+		int[] antecedentIndex = ruleBuilder.createAntecedentIndex();
+		this.setVariables(antecedentIndex);
+		this.learning();
+	}
+
+	@Override
+	public void createRule(Element michiganSolution) {
+		this.setVariables(this.ruleBuilder.createAntecedentIndex(michiganSolution));
+		this.learning();
+	}
+
+	@Override
+	public void createRule(Pattern<?> pattern) {
+		this.setVariables(this.ruleBuilder.createAntecedentIndex(pattern));
+		this.learning();
 	}
 
 	@Override
 	public void learning() {
 		if(Objects.isNull(this.variables)) { throw new IllegalArgumentException("variables Array is null.");}
-		this.rule = this.ruleBuilder.createRule(this.getVariablesAsIntArray());
+		this.rule = this.ruleBuilder.createConsequent(this.getVariablesArray());
 	}
 
 	@Override
 	public double getFitnessValue(AttributeVector inputVector) {
-		return this.rule.getFitnessValue(this.getVariablesAsIntArray(), inputVector);
+		return this.rule.getFitnessValue(this.getVariablesArray(), inputVector);
 	}
 
 	@Override
 	public int getRuleLength() {
-		return this.rule.getRuleLength(this.getVariablesAsIntArray());
+		return this.rule.getRuleLength(this.getVariablesArray());
 	}
 
 	@Override
-	public boolean equalsClassLabel(ClassLabel classLabel) {
-		return this.rule.equalsClassLabel(classLabel);
-	}
-
-	@Override
-	public ClassLabel getClassLabel() {
+	public ClassLabel<?> getClassLabel() {
 		return this.rule.getClassLabel();
 	}
 
-	public RuleWeight getRuleWeight() {
+	public RuleWeight<?> getRuleWeight() {
 		return this.rule.getRuleWeight();
 	}
 
-	public abstract static class AbstractMichiganSolutionBuilder
-		<michiganObject extends MichiganSolution<RuleObject>, RuleObject extends Rule>
+	@Override
+	public int[] getVariablesArray() {
+		int[] buf = new int[this.getNumberOfVariables()];
+		for(int i=0; i<this.getNumberOfVariables(); i++) {
+			buf[i] = this.getVariable(i);
+		}
+		return buf;
+	}
+
+	@Override
+	public RuleObject getRule() {
+		return this.rule;
+	}
+
+	@Override
+	public RuleBuilder<RuleObject, ?, ?> getRuleBuilder() {
+		return this.ruleBuilder;
+	}
+
+	@Override
+	public Consequent<?, ?, ?, ?> getConsequent() {
+		return this.rule.getConsequent();
+	}
+
+	@Override
+	public Antecedent getAntecedent() {
+		return this.rule.getAntecedent();
+	}
+
+	@Override
+	public double[] getCompatibleGrade(AttributeVector attributeVector) {
+		return this.rule.getCompatibleGrade(this.getVariablesArray(), attributeVector);
+	}
+
+	@Override
+	public double getCompatibleGradeValue(AttributeVector attributeVector) {
+		return this.rule.getCompatibleGradeValue(this.getVariablesArray(), attributeVector);
+	}
+
+	public static abstract class MichiganSolutionBuilderCore<michiganObject extends MichiganSolution<RuleObject>,
+		RuleObject extends Rule<?, ?, ?, ?, ?, ?>>
 		implements MichiganSolutionBuilder<michiganObject>{
 
 		protected List<Pair<Integer, Integer>> bounds;
 		protected int numberOfObjectives;
 		protected int numberOfConstraints;
-		protected RuleBuilder<RuleObject> ruleBuilder;
+		protected RuleBuilder<RuleObject, ?, ?> ruleBuilder;
 
-		public AbstractMichiganSolutionBuilder(
+		public MichiganSolutionBuilderCore(
 				List<Pair<Integer, Integer>> bounds,
 				int numberOfObjectives,
 				int numberOfConstraints,
-				RuleBuilder<RuleObject> ruleBuilder) {
+				RuleBuilder<RuleObject, ?, ?> ruleBuilder) {
 			this.bounds = bounds;
 			this.numberOfObjectives = numberOfObjectives;
 			this.numberOfConstraints = numberOfConstraints;

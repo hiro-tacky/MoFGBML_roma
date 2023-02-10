@@ -36,36 +36,30 @@ public interface PittsburghSolution <michiganSolution extends MichiganSolution<?
 	 */
 	public void addVariable(michiganSolution value);
 
-	/** 指定したAttributesをフォーマットする
-	 * @param attributeID Attributesのキー
-	 */
-	public void clearAttributes(String attributeID);
+	/** MichiganSolutionを初期化する */
+	public void clearVariables();
+
+	/** Attributeを初期化する */
+	public void clearAttributes();
 
 	/**
-	 * 遺伝情報をフォーマットする
+	 * このインスタンスが持つミシガン型識別器ジェネレーターを返します。<br>
+	 * Returns michiganSolution builder that this instance has.
+	 * @return 返されるミシガン型識別器ジェネレーター．michiganSolution builder to return
 	 */
-	public void clearVariable();
+	public MichiganSolutionBuilder<michiganSolution> getMichiganSolutionBuilder();
 
-	/** 遺伝情報をフォーマットし，空の配列を生成する
-	 * @param numberOfVariables 新たに生成する配列の配列長
-	 */
-	public void clearVariable(int numberOfVariables);
+	/** このインスタンスが持つ全てのMichiganSolutionを対象に前件部を基に後件部の学習を行う */
+	public void learning();
 
 	/** 識別を行い勝者となったMichiganSolutionを返す
-	 * @param x 識別対象となるパターンの属性値クラス
-	 * @return 勝者となったMichiganSolution
+	 * @param attributeVector 識別対象となるパターンの属性値クラス
+	 * @return 勝者となったMichiganSolution 識別不能時はnullを返す
 	 */
-	public MichiganSolution classify(AttributeVector x);
+	public michiganSolution classify(AttributeVector attributeVector);
 
 	public Element toElement();
 
 	@Override
 	public PittsburghSolution<michiganSolution> copy();
-
-	/**
-	 * このインスタンスが持つ全てのMichiganSolutionを対象に前件部を基に後件部の学習を行う
-	 */
-	public void learning();
-
-	public MichiganSolutionBuilder<michiganSolution> getMichiganSolutionBuilder();
 }

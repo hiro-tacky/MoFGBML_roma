@@ -5,7 +5,7 @@ import java.util.Objects;
 import cilabo.data.AttributeVector;
 import cilabo.fuzzy.rule.consequent.classLabel.ClassLabel;
 
-/** パターン抽象クラス．abstract pattern class<br>
+/** パターンクラス．abstract pattern class<br>
  * @param <ClassLabelObject> 実装したPatternクラスが持つラベルクラス
  * @author Takigawa Hiroki
  */
@@ -24,11 +24,11 @@ public abstract class Pattern <ClassLabelObject extends ClassLabel<?>>{
 	 * @param targetClass クラスラベル．class label */
 	public Pattern(int id, AttributeVector attributeVector, ClassLabelObject targetClass) {
 		if(id < 0) {
-			throw new IllegalArgumentException("argument [id] must be positive integer @Pattern.Pattern()");}
+			throw new IllegalArgumentException("argument [id] must be positive integer @" + this.getClass().getSimpleName());}
 		else if(Objects.isNull(attributeVector)) {
-			throw new IllegalArgumentException("argument [inputVector] is null @Pattern.Pattern()");}
+			throw new IllegalArgumentException("argument [inputVector] is null @" + this.getClass().getSimpleName());}
 		else if(Objects.isNull(targetClass)) {
-			throw new IllegalArgumentException("argument [trueClass] is null @Pattern.Pattern()");}
+			throw new IllegalArgumentException("argument [trueClass] is null @" + this.getClass().getSimpleName());}
 		this.id = id;
 		this.attributeVector = attributeVector;
 		this.targetClass = targetClass;
@@ -49,7 +49,17 @@ public abstract class Pattern <ClassLabelObject extends ClassLabel<?>>{
 	 * @return 返される属性値クラス．AttributeVector to return
 	 */
 	public AttributeVector getAttributeVector() {
+		if(Objects.isNull(attributeVector)) {System.err.print("attributeVector hasn't been initialised");}
 		return this.attributeVector;
+	}
+
+	/**
+	 * このインスタンスが持つ属性値配列を返します。<br>
+	 * Returns Attribute array that this instance has.
+	 * @return 返される属性値配列．Array of AttributeVector to return
+	 */
+	public double[] getAttributeArray() {
+		return this.attributeVector.getAttributeArray();
 	}
 
 	/** 指定された位置にある属性値を返します。<br>

@@ -5,43 +5,48 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import cilabo.data.dataSet.impl.DataSet_Basic;
 import cilabo.data.pattern.impl.Pattern_Basic;
 import cilabo.data.pattern.impl.Pattern_MultiClass;
 import cilabo.fuzzy.rule.consequent.classLabel.impl.ClassLabel_Basic;
 import cilabo.fuzzy.rule.consequent.classLabel.impl.ClassLabel_Multi;
+import cilabo.main.Consts;
 import cilabo.main.ExperienceParameter;
 
+/**
+ * データセット入力用メソッド群
+ * @author Takigawa Hiroki
+ */
 public class Input {
+
+	/**
+	 * <h1>Input File for Classification Dataset</h1>
+	 * @param fileName : String
+	 * @return 入力済みDataSet
+	 */
+	public static DataSet<?> inputDataSet(String fileName) {
+		switch(ExperienceParameter.classlabel) {
+			case Multi:
+				return inputDataSet_MultiLabel(fileName);
+			case Single:
+			default:
+				return inputDataSet_Basic(fileName);
+		}
+	}
 
 	/**
 	 * <h1>Input File for Single-Label Classification Dataset</h1>
 	 * @param fileName : String
 	 * @return 入力済みDataSet
 	 */
-	public static DataSet_Basic<?> inputDataSet(String fileName) {
-		switch(ExperienceParameter.classlabel) {
-			case Multi:
-				return inputMultiLabelDataSet(fileName);
-			case Single:
-			default:
-				return inputSingleLabelDataSet(fileName);
-		}
-	}
-
-	/**
-	 * <h1>Input File for Multi-Label Classification Dataset</h1>
-	 * @param fileName : String
-	 * @return 入力済みDataSet
-	 */
-	private static DataSet_Basic<Pattern_Basic> inputSingleLabelDataSet(String fileName) {
+	public static DataSet<Pattern_Basic> inputDataSet_Basic(String fileName) {
 		List<double[]> lines = inputDataAsList(fileName);
 
 		// The first row is parameters of dataset
-		DataSet_Basic<Pattern_Basic> data = new DataSet_Basic<Pattern_Basic>(
+		DataSet<Pattern_Basic> data = new DataSet<Pattern_Basic>(
 				(int)lines.get(0)[0],
 				(int)lines.get(0)[1],
 				(int)lines.get(0)[2]);
@@ -76,11 +81,11 @@ public class Input {
 	 * @param fileName : String
 	 * @return 入力済みDataSet
 	 */
-	private static DataSet_Basic<Pattern_MultiClass> inputMultiLabelDataSet(String fileName) {
+	public static DataSet<Pattern_MultiClass> inputDataSet_MultiLabel(String fileName) {
 		List<double[]> lines = inputDataAsList(fileName);
 
 		// The first row is parameters of dataset
-		DataSet_Basic<Pattern_MultiClass> data = new DataSet_Basic<Pattern_MultiClass>(
+		DataSet<Pattern_MultiClass> data = new DataSet<Pattern_MultiClass>(
 				(int)lines.get(0)[0],
 				(int)lines.get(0)[1],
 				(int)lines.get(0)[2]);
@@ -110,6 +115,66 @@ public class Input {
 			data.addPattern(pattern);
 		}
 		return data;
+	}
+
+	/**
+	 * ファイル名を指定して複数クラスラベルのデータセットをロード
+	 * @param trainFile 学習用データセットのパス
+	 * @param testFile 評価用データセットのパス
+	 * @return データセットが追加されたDatasetManagerインスタンス
+	 */
+	public static void loadTrainTestFiles_Basic(String trainFile, String testFile) {
+
+		/* Load Dataset ======================== */
+		if(Objects.isNull(DataSetManager.getInstance().getTrains())) {
+			throw new IllegalArgumentException("argument [trainFile] is null @TrainTestDatasetManager.loadTrainTestFiles()");}
+		if(Objects.isNull(DataSetManager.getInstance().getTrains())) {
+			throw new IllegalArgumentException("argument [testFile] is null @TrainTestDatasetManager.loadTrainTestFiles()");}
+
+		DataSet<Pattern_Basic> train = Input.inputDataSet_Basic(trainFile);
+		DataSetManager.getInstance().addTrains(train);
+		Consts.DATA_SIZE = train.getDataSize();
+		Consts.ATTRIBUTE_NUMBER = train.getNdim();
+		Consts.CLASS_LABEL_NUMBER = train.getCnum();
+
+		DataSet<Pattern_Basic> test = Input.inputDataSet_Basic(testFile);
+		DataSetManager.getInstance().addTests(test);
+
+		if(Objects.isNull(DataSetManager.getInstance().getTrains())) {
+			throw new IllegalArgumentException("failed to initialise trains@TrainTestDatasetManager.loadTrainTestFiles()");}
+		else if(Objects.isNull(DataSetManager.getInstance().getTests())) {
+			throw new IllegalArgumentException("failed to initialise tests@TrainTestDatasetManager.loadTrainTestFiles()");}
+		return;
+	}
+
+	/**
+	 * ファイル名を指定して単一クラスラベルのデータセットをロード
+	 * @param trainFile 学習用データセットのパス
+	 * @param testFile 評価用データセットのパス
+	 * @return データセットが追加されたDatasetManagerインスタンス
+	 */
+	public static void loadTrainTestFiles_MultiClass(String trainFile, String testFile) {
+
+		/* Load Dataset ======================== */
+		if(Objects.isNull(DataSetManager.getInstance().getTrains())) {
+			throw new IllegalArgumentException("argument [trainFile] is null @TrainTestDatasetManager.loadTrainTestFiles()");}
+		if(Objects.isNull(DataSetManager.getInstance().getTrains())) {
+			throw new IllegalArgumentException("argument [testFile] is null @TrainTestDatasetManager.loadTrainTestFiles()");}
+
+		DataSet<Pattern_MultiClass> train = Input.inputDataSet_MultiLabel(trainFile);
+		DataSetManager.getInstance().addTrains(train);
+		Consts.DATA_SIZE = train.getDataSize();
+		Consts.ATTRIBUTE_NUMBER = train.getNdim();
+		Consts.CLASS_LABEL_NUMBER = train.getCnum();
+
+		DataSet<Pattern_MultiClass> test = Input.inputDataSet_MultiLabel(testFile);
+		DataSetManager.getInstance().addTests(test);
+
+		if(Objects.isNull(DataSetManager.getInstance().getTrains())) {
+			throw new IllegalArgumentException("failed to initialise trains@TrainTestDatasetManager.loadTrainTestFiles()");}
+		else if(Objects.isNull(DataSetManager.getInstance().getTests())) {
+			throw new IllegalArgumentException("failed to initialise tests@TrainTestDatasetManager.loadTrainTestFiles()");}
+		return;
 	}
 
 //	public static DataSet inputSubdata(DataSet origin, DataSet divided, String fileName) {
@@ -164,7 +229,7 @@ public class Input {
 	 * @param fileName
 	 * @return : List{@literal <double[]>}
 	 */
-	private static List<double[]> inputDataAsList(String fileName) {
+	public static List<double[]> inputDataAsList(String fileName) {
 		List<double[]> lines = new ArrayList<double[]>();
 		try ( Stream<String> line = Files.lines(Paths.get(fileName)) ) {
 		    lines =
@@ -184,5 +249,4 @@ public class Input {
 		}
 		return lines;
 	}
-
 }

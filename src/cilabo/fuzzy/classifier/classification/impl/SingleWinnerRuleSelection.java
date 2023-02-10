@@ -45,7 +45,7 @@ public final class SingleWinnerRuleSelection <michiganSolution extends MichiganS
 			else if(value == max) {
 				MichiganSolution<?> winnerRule = michiganSolutionList.get(winner);
 				// "membership*CF"が同値 かつ 結論部クラスが異なる場合識別不能とする
-				if(!michiganSolution.equalsClassLabel(winnerRule.getClassLabel())) {
+				if(!michiganSolution.getClassLabel().equalsClassLabel(winnerRule.getClassLabel())) {
 					canClassify = false;
 				}
 			}

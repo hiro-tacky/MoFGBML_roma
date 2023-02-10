@@ -1,11 +1,30 @@
 package cilabo.utility;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import cilabo.gbml.solution.michiganSolution.MichiganSolution;
+import cilabo.gbml.solution.pittsburghSolution.PittsburghSolution;
 import random.MersenneTwisterFast;
 
 
 public class GeneralFunctions {
+
+
+	public static boolean checkRule(List<MichiganSolution<?>> offspring) {
+		for(MichiganSolution<?> michiganSolution_tmp : offspring) {
+			if(michiganSolution_tmp.getConsequent().isRejectedClassLabel()) return false;
+		}
+		return true;
+	}
+
+	public static boolean checkRule(PittsburghSolution<MichiganSolution<?>> offspring) {
+		if(offspring.getNumberOfVariables() < 1) {return false;}
+		for(MichiganSolution<?> michiganSolution_tmp : offspring.getVariables()) {
+			if(michiganSolution_tmp.getConsequent().isRejectedClassLabel()) return false;
+		}
+		return true;
+	}
 
 	/**
 	 * <h1> Uniform variant line separator</h1>
@@ -116,6 +135,33 @@ public class GeneralFunctions {
 			answer[i] = list.get(index);
 			list.remove(index);
 		}
+		return answer;
+	}
+
+	/**
+	 * 非復元抽出<br>
+	 * Sampling without replacement<br>
+	 * @param box : int : 元のデータサイズ
+	 * @param want : int : 抽出したいindexの数
+	 * @param rnd 乱数生成器
+	 * @return Integer[] : 非復元抽出したwant個のindex
+	 */
+	public static Integer[][] samplingWithoutForOption2(int box, int want, MersenneTwisterFast rnd) {
+		MersenneTwisterFast uniqueRnd = new MersenneTwisterFast(rnd.nextInt());
+		Integer[][] answer = new Integer[2][want];
+		ArrayList<Integer> list = new ArrayList<Integer>();
+		for(int i = 0; i < box; i++) {
+			list.add(i);
+		}
+		for(int i = 0; i < want; i++) {
+			if(list.size() == 0) {
+				break;
+			}
+			int index = uniqueRnd.nextInt(list.size());
+			answer[0][i] = list.get(index);
+			list.remove(index);
+		}
+		answer[1] = list.toArray(new Integer[list.size()]);
 		return answer;
 	}
 
