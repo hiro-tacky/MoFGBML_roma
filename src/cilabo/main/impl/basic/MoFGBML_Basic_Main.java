@@ -77,12 +77,14 @@ public class MoFGBML_Basic_Main {
 		// make result directory
 		Output.mkdirs(Consts.ROOTFOLDER);
 
+
 		// set command arguments to static variables
 		MoFGBML_Basic_CommandLineArgs.loadArgs(MoFGBML_Basic_CommandLineArgs.class.getCanonicalName(), args);
 		// Output constant parameters
 		String fileName = Consts.EXPERIMENT_ID_DIR + sep + "Consts.txt";
 		Output.writeln(fileName, Consts.getString(), true);
 		Output.writeln(fileName, MoFGBML_Basic_CommandLineArgs.getParamsString(), true);
+		XML_manager.getInstance().addElement(XML_manager.getInstance().getRoot(), Consts.toElement());
 
 		// Initialize ForkJoinPool
 		Parallel.getInstance().initLearningForkJoinPool(MoFGBML_Basic_CommandLineArgs.parallelCores);
@@ -139,9 +141,6 @@ public class MoFGBML_Basic_Main {
 	public static void HybridStyleMoFGBML (DataSet<Pattern_Basic> train, DataSet<Pattern_Basic> test) {
 		Random.getInstance().initRandom(2022);
 		String sep = File.separator;
-
-		//Consts出力用
-		XML_manager.getInstance().addElement(XML_manager.getInstance().getRoot(), Consts.toElement());
 
 		Parameters parameters = new Parameters(train);
 		HomoTriangleKnowledgeFactory KnowledgeFactory = new HomoTriangleKnowledgeFactory(parameters);

@@ -15,7 +15,7 @@ public interface RuleWeight <RuleWeightValue> {
 	 */
 	public RuleWeightValue getRuleWeightValue();
 
-	/** ルール重みのコピーを取得
+	/** ルール重みを取得
 	 * 実装時は取得されたインスタンスへの変更が反映されない(深いコピーとなる)ように
 	 * @return このインスタンスが持つルール重み
 	 */

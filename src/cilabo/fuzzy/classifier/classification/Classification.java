@@ -2,7 +2,7 @@ package cilabo.fuzzy.classifier.classification;
 
 import java.util.List;
 
-import cilabo.data.AttributeVector;
+import cilabo.data.pattern.Pattern;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution;
 
 /**
@@ -17,7 +17,7 @@ public interface Classification <michiganSolution extends MichiganSolution<?>>{
 	 * @param attributeVector 識別対象となる入力パターン
 	 * @return 勝利となったMichiganSolution 但し，識別不能となった場合はnullを返す
 	 */
-	public michiganSolution classify(List<michiganSolution> michiganSolutionList, AttributeVector attributeVector);
+	public michiganSolution classify(List<michiganSolution> michiganSolutionList, Pattern<?> pattern);
 
 	public Classification<michiganSolution> copy();
 }

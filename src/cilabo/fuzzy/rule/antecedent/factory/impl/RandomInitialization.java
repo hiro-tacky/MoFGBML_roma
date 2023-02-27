@@ -10,14 +10,20 @@ import random.MersenneTwisterFast;
 /**ランダムに決定されるヒューリスティックに基づいた前件部のFactory
  * @author Takigawa Hiroki
  */
-public class RandomInitialization implements AntecedentIndexFactory{
+public final class RandomInitialization implements AntecedentIndexFactory{
 	/**	乱数生成器 */
 	MersenneTwisterFast uniqueRnd;
 	/** 学習用データ */
 	private DataSet<?> train;
+	/** 次元数 */
 	private int dimension;
+	/** シード値 */
 	private int seed;
 
+	/** 入力された情報を基にインスタンスを生成
+	 * @param seed シード値
+	 * @param train データセット
+	 */
 	public RandomInitialization(int seed, DataSet<?> train) {
 		this.seed = seed;
 		this.uniqueRnd = new MersenneTwisterFast(seed);

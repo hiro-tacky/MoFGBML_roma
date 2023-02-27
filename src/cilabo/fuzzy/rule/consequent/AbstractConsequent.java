@@ -3,6 +3,15 @@ package cilabo.fuzzy.rule.consequent;
 import cilabo.fuzzy.rule.consequent.classLabel.ClassLabel;
 import cilabo.fuzzy.rule.consequent.ruleWeight.RuleWeight;
 
+/**
+ * 後件部クラスの抽象クラス
+ * @author Takigawa Hiroki
+ *
+ * @param <ClassLabelObject> 実装した後件部クラスが持つ結論部クラス
+ * @param <T1> 結論部クラスが扱うクラスラベル変数クラス
+ * @param <RuleWeightObject> 実装した後件部クラスが持つルール重みクラス
+ * @param <T2> ルール重みクラスが扱うルール重み変数クラス
+ */
 public abstract class AbstractConsequent <ClassLabelObject extends ClassLabel<T1>, T1, RuleWeightObject extends RuleWeight<T2>, T2>
 	implements Consequent<ClassLabelObject, T1, RuleWeightObject, T2>{
 

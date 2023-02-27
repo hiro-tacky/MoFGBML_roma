@@ -28,10 +28,7 @@ public final class ClassLabel_Basic extends AbstractClassLabel <Integer>{
 		return true;
 	}
 
-	/** 入力されたクラスラベルIDとこのインスタンスを比較する
-	 * @param classLabel 比較対象クラスラベルID
-	 * @return 同値である場合:true 同値でない場合:false
-	 */
+	@Override
 	public boolean equalsClassLabel(int classLabel) {
 		return this.classLabel.equals(classLabel);
 	}

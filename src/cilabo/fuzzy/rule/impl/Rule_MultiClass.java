@@ -52,10 +52,8 @@ public final class Rule_MultiClass extends AbstractRule <Antecedent_Basic, Conse
 		this.consequent.setClassLabelValue(classLabelValue);
 	}
 
-	public static class RuleBuilder_MultiClas
-		extends RuleBuilderCore<Antecedent_Basic, Consequent_MultiClass>
-		implements RuleBuilder<Rule_MultiClass,
-		Antecedent_Basic, Consequent_MultiClass>{
+	public final static class RuleBuilder_MultiClas
+		extends RuleBuilderCore<Rule_MultiClass, Antecedent_Basic, Consequent_MultiClass>{
 
 		public RuleBuilder_MultiClas(AntecedentIndexFactory antecedentFactory,
 				ConsequentFactory<Consequent_MultiClass> consequentFactory) {

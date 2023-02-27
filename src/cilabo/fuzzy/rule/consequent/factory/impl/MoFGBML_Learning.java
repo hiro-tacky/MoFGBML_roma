@@ -118,6 +118,12 @@ public final class MoFGBML_Learning implements ConsequentFactory <Consequent_Bas
 		return classLabel;
 	}
 
+	/** ルール重みを計算
+	 * @param classLabel 結論部クラスラベル
+	 * @param confidence 各クラスラベル別信頼度
+	 * @param limit 生成不可能ルール判定用ルール重み下限値
+	 * @return 生成されたルール重み
+	 */
 	public RuleWeight_Basic calcRuleWeight(ClassLabel_Basic classLabel, double[] confidence, double limit) {
 
 		RuleWeight_Basic zeroWeight = new RuleWeight_Basic(0.0);

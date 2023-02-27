@@ -3,7 +3,7 @@ package cilabo.fuzzy.classifier.impl;
 import java.util.List;
 import java.util.Objects;
 
-import cilabo.data.AttributeVector;
+import cilabo.data.pattern.Pattern;
 import cilabo.fuzzy.classifier.Classifier;
 import cilabo.fuzzy.classifier.classification.Classification;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution;
@@ -29,8 +29,8 @@ public class Classifier_basic<michiganSolution extends MichiganSolution<?>> impl
 	}
 
 	@Override
-	public michiganSolution classify(List<michiganSolution> michiganSolutionList, AttributeVector vector) {
-		return this.classification.classify(michiganSolutionList, vector);
+	public michiganSolution classify(List<michiganSolution> michiganSolutionList, Pattern<?> pattern) {
+		return this.classification.classify(michiganSolutionList, pattern);
 	}
 
 	@Override

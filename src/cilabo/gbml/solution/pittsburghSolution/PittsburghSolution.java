@@ -5,7 +5,7 @@ import java.util.List;
 import org.uma.jmetal.solution.Solution;
 import org.w3c.dom.Element;
 
-import cilabo.data.AttributeVector;
+import cilabo.data.pattern.Pattern;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution.MichiganSolutionBuilder;
 
@@ -53,10 +53,10 @@ public interface PittsburghSolution <michiganSolution extends MichiganSolution<?
 	public void learning();
 
 	/** 識別を行い勝者となったMichiganSolutionを返す
-	 * @param attributeVector 識別対象となるパターンの属性値クラス
+	 * @param pattern 識別対象となるパターンクラス
 	 * @return 勝者となったMichiganSolution 識別不能時はnullを返す
 	 */
-	public michiganSolution classify(AttributeVector attributeVector);
+	public michiganSolution classify(Pattern<?> pattern);
 
 	public Element toElement();
 

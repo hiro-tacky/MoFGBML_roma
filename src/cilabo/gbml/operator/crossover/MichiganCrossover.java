@@ -4,23 +4,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.uma.jmetal.component.replacement.Replacement;
+import org.uma.jmetal.component.selection.MatingPoolSelection;
 import org.uma.jmetal.component.selection.impl.NaryTournamentMatingPoolSelection;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
+import org.uma.jmetal.solution.util.attribute.util.attributecomparator.AttributeComparator;
+import org.uma.jmetal.solution.util.attribute.util.attributecomparator.impl.IntegerValueAttributeComparator;
 import org.uma.jmetal.util.JMetalException;
 import org.uma.jmetal.util.checking.Check;
-import org.uma.jmetal.util.comparator.ObjectiveComparator;
 import org.uma.jmetal.util.pseudorandom.BoundedRandomGenerator;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 import org.uma.jmetal.util.pseudorandom.RandomGenerator;
 
 import cilabo.data.DataSet;
 import cilabo.data.pattern.Pattern;
-import cilabo.gbml.component.replacement.RuleReplacementStyleReplacement;
+import cilabo.gbml.component.replacement.RuleAdditionStyleReplacement;
 import cilabo.gbml.operator.mutation.MichiganMutation;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution;
 import cilabo.gbml.solution.pittsburghSolution.PittsburghSolution;
 import cilabo.gbml.solution.util.SortMichiganPopulation;
 import cilabo.gbml.solution.util.attribute.ErroredPatternsAttribute;
+import cilabo.gbml.solution.util.attribute.NumberOfClassifierPatterns;
 import cilabo.main.Consts;
 import cilabo.utility.GeneralFunctions;
 import cilabo.utility.Random;
@@ -150,10 +153,12 @@ public class MichiganCrossover <pittsburghSolution extends PittsburghSolution<mi
 			}
 			int matingPoolSize = NumberOfGA *
 					crossover.getNumberOfRequiredParents() / crossover.getNumberOfGeneratedChildren();
-			NaryTournamentMatingPoolSelection<michiganSolution> selection = new NaryTournamentMatingPoolSelection<michiganSolution>(
+			MatingPoolSelection<michiganSolution> selection = new NaryTournamentMatingPoolSelection<michiganSolution>(
 					tournamentSize,
 					matingPoolSize,
-					new ObjectiveComparator<>(0, ObjectiveComparator.Ordering.DESCENDING));
+					new IntegerValueAttributeComparator<michiganSolution>(new NumberOfClassifierPatterns<michiganSolution>().getAttributeId(),
+							AttributeComparator.Ordering.DESCENDING)
+					);
 			/* == GA START == */
 			/* Mating Selection */
 			List<michiganSolution> matingPopulation = selection.select((List<michiganSolution>) parent.getVariables());
@@ -166,15 +171,16 @@ public class MichiganCrossover <pittsburghSolution extends PittsburghSolution<mi
 					parents.add(matingPopulation.get(i + j));
 				}
 				List<michiganSolution> offspring = null;
-				do {
-					/* Crossover: Uniform crossover */
-					offspring = crossover.execute(parents);
-					/* Mutation */
-					for(michiganSolution s : offspring) {
-						mutation.execute(s);
-						s.learning();
-					}
-				}while(!GeneralFunctions.checkRule((List<MichiganSolution<?>>) offspring));
+				/* Crossover: Uniform crossover */
+				offspring = crossover.execute(parents);
+				/* Mutation */
+				for(michiganSolution s : offspring) {
+					mutation.execute(s);
+					s.learning();
+				}
+				if(!GeneralFunctions.checkRule((List<MichiganSolution<?>>) offspring)) {
+					offspring = new ArrayList<michiganSolution>(parents);
+				}
 
 				for(michiganSolution michiganSolution_tmp : offspring) {
 					generatedSolutionByGA.add(michiganSolution_tmp);
@@ -190,7 +196,7 @@ public class MichiganCrossover <pittsburghSolution extends PittsburghSolution<mi
 		}
 
 		/* Replacement: Single objective maximization repelacement */
-		Replacement<michiganSolution> replacement = new RuleReplacementStyleReplacement<michiganSolution>();
+		Replacement<michiganSolution> replacement = new RuleAdditionStyleReplacement<michiganSolution>();
 		List<michiganSolution> parentMichiganSolution = new ArrayList<>();
 		List<michiganSolution> childMichiganSolution = new ArrayList<>();
 		//Deep copy

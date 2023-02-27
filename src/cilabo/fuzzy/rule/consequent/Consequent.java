@@ -9,7 +9,9 @@ import cilabo.fuzzy.rule.consequent.ruleWeight.RuleWeight;
  * @author Takigawa Hiroki
  *
  * @param <ClassLabelObject> 実装した後件部クラスが持つ結論部クラス
+ * @param <T1> 結論部クラスが扱うクラスラベル変数クラス
  * @param <RuleWeightObject> 実装した後件部クラスが持つルール重みクラス
+ * @param <T2> ルール重みクラスが扱うルール重み変数クラス
  */
 public interface Consequent<ClassLabelObject extends ClassLabel<T1>, T1,  RuleWeightObject extends RuleWeight<T2>, T2>
 	extends ClassLabel<T1>, RuleWeight<T2>{

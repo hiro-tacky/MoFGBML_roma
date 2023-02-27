@@ -14,10 +14,11 @@ import cilabo.utility.Random;
 /** 全組み合わせを持つ前件部のFactory
  * @author Takigawa Hiroki
  */
-public class AllCombinationAntecedentFactory implements AntecedentIndexFactory{
+public final class AllCombinationAntecedentFactory implements AntecedentIndexFactory{
 
 	/**	前件部のファジィセットのインデックスを格納 */
 	private int[][] antecedents;
+	/** 次元数 */
 	private int dimension;
 
 	/** コンストラクタ */

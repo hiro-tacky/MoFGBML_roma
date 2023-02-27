@@ -24,6 +24,9 @@ public enum XML_TagName {
 				objectives,
 					objective, objectiveName,
 
+				attributes,
+					attribute, attributeID,
+
 		knowledgeBase,
 			fuzzySets,
 				fuzzyTerm,

@@ -3,17 +3,22 @@ package cilabo.gbml.solution.michiganSolution.impl;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Objects;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.uma.jmetal.solution.integersolution.IntegerSolution;
 import org.w3c.dom.Element;
 
+import cilabo.data.DataSet;
+import cilabo.data.DataSetManager;
 import cilabo.data.pattern.Pattern;
 import cilabo.fuzzy.rule.Rule;
 import cilabo.fuzzy.rule.Rule.RuleBuilder;
 import cilabo.gbml.solution.michiganSolution.AbstractMichiganSolution;
+import cilabo.gbml.solution.util.attribute.NumberOfClassifierPatterns;
 import cilabo.gbml.solution.util.attribute.NumberOfWinner;
+import cilabo.utility.Random;
 import xml.XML_TagName;
 import xml.XML_manager;
 
@@ -37,6 +42,13 @@ public final class MichiganSolution_Basic<RuleObject extends Rule<?, ?, ?, ?, ?,
 			int numberOfConstraints,
 			RuleBuilder<RuleObject, ?, ?> ruleBuilder) {
 		super(bounds, numberOfObjectives, numberOfConstraints, ruleBuilder);
+		//生成不可ルールの場合は再生成
+		int cnt = 0;
+		do {
+			cnt++;
+			this.createRule();
+			if(cnt > 1000) {System.err.print("number of trials to generaete rule is more than 1000");}
+		}while(this.rule.isRejectedClassLabel());
 	}
 
 	/** コンストラクタ
@@ -60,7 +72,14 @@ public final class MichiganSolution_Basic<RuleObject extends Rule<?, ?, ?, ?, ?,
 			int numberOfConstraints,
 			RuleBuilder<RuleObject, ?, ?> ruleBuilder,
 			Element michiganSolution) {
-		super(bounds, numberOfObjectives, numberOfConstraints, ruleBuilder, michiganSolution);
+		super(bounds, numberOfObjectives, numberOfConstraints, ruleBuilder);
+
+		this.createRule(michiganSolution);
+
+		//生成不可ルールの場合は再生成
+		while(this.rule.isRejectedClassLabel()) {
+			this.createRule();
+		}
 	}
 
 
@@ -75,7 +94,16 @@ public final class MichiganSolution_Basic<RuleObject extends Rule<?, ?, ?, ?, ?,
 			int numberOfConstraints,
 			RuleBuilder<RuleObject, ?, ?> ruleBuilder,
 			Pattern<?> pattern) {
-		super(bounds, numberOfObjectives, numberOfConstraints, ruleBuilder, pattern);
+		super(bounds, numberOfObjectives, numberOfConstraints, ruleBuilder);
+
+		this.createRule(pattern);
+
+		//生成不可ルールの場合はランダムなパターンをから再生成
+		DataSet<?> train = DataSetManager.getInstance().getTrains().get(0);
+		while(this.rule.isRejectedClassLabel()) {
+			int index = Random.getInstance().getGEN().nextInt(train.getDataSize());
+			this.createRule(train.getPattern(index));
+		}
 	}
 
 	/** コピーコンストラクタ
@@ -128,7 +156,9 @@ public final class MichiganSolution_Basic<RuleObject extends Rule<?, ?, ?, ?, ?,
 					this.numberOfConstraints,
 					this.ruleBuilder);
 			String attributeId = new NumberOfWinner<MichiganSolution_Basic<RuleObject>>().getAttributeId();
+			String attributeIdFitness = new NumberOfClassifierPatterns<MichiganSolution_Basic<RuleObject>>().getAttributeId();
 			solution.setAttribute(attributeId, 0);
+			solution.setAttribute(attributeIdFitness, 0);
 			return solution;
 		}
 
@@ -145,7 +175,9 @@ public final class MichiganSolution_Basic<RuleObject extends Rule<?, ?, ?, ?, ?,
 					this.ruleBuilder,
 					michiganSolution);
 			String attributeId = new NumberOfWinner<MichiganSolution_Basic<RuleObject>>().getAttributeId();
+			String attributeIdFitness = new NumberOfClassifierPatterns<MichiganSolution_Basic<RuleObject>>().getAttributeId();
 			solution.setAttribute(attributeId, 0);
+			solution.setAttribute(attributeIdFitness, 0);
 			return solution;
 		}
 
@@ -162,7 +194,9 @@ public final class MichiganSolution_Basic<RuleObject extends Rule<?, ?, ?, ?, ?,
 					this.ruleBuilder,
 					pattern);
 			String attributeId = new NumberOfWinner<MichiganSolution_Basic<RuleObject>>().getAttributeId();
+			String attributeIdFitness = new NumberOfClassifierPatterns<MichiganSolution_Basic<RuleObject>>().getAttributeId();
 			solution.setAttribute(attributeId, 0);
+			solution.setAttribute(attributeIdFitness, 0);
 			return solution;
 		}
 
@@ -193,7 +227,7 @@ public final class MichiganSolution_Basic<RuleObject extends Rule<?, ?, ?, ?, ?,
 
 	@Override
 	public String toString() {
-		String str = "MichiganSolution_Basic [rule=" + this.rule.getClass().getSimpleName() + "],variables=,";
+		String str = "MichiganSolution_Basic,variables=,";
 		str += String.format("%3d", this.getVariable(0));
 		for(int i=1; i<this.getNumberOfVariables(); i++) {str += String.format(", %3d", this.getVariable(i));}
 
@@ -204,7 +238,12 @@ public final class MichiganSolution_Basic<RuleObject extends Rule<?, ?, ?, ?, ?,
 			str += String.format(",Objectives[%d]=,%.4f..", i, this.getObjective(i));
 		}
 
-		str += ",attributes=," + attributes;
+		str += ",attributes={,";
+		for (Entry<Object, Object> entry : attributes.entrySet()) {
+			String[] str2 = ((String)entry.getKey()).split("\\.");
+		    str += String.format("%s,%s,", str2[str2.length-1], entry.getValue().toString());
+		}
+		str += "}";
 
 		return str;
 	}
@@ -219,13 +258,20 @@ public final class MichiganSolution_Basic<RuleObject extends Rule<?, ?, ?, ?, ?,
 
 		//新規のElementを追加する
 		Element fuzzySets = XML_manager.getInstance().createElement(XML_TagName.fuzzySetList);
-
 		for(int i=0; i<this.getNumberOfVariables(); i++) {
 			XML_manager.getInstance().addElement(fuzzySets, XML_TagName.fuzzySetID, String.valueOf(this.getVariable(i)),
 					XML_TagName.dimension, String.valueOf(i));
 		}
-
 		XML_manager.getInstance().addElement(michiganSolution, fuzzySets);
+
+		Element attribute_Element = XML_manager.getInstance().createElement(XML_TagName.attributes);
+		for (Entry<Object, Object> entry : attributes.entrySet()) {
+			String[] str2 = ((String)entry.getKey()).split("\\.");
+			XML_manager.getInstance().addElement(attribute_Element, XML_TagName.attribute, entry.getValue().toString(),
+					XML_TagName.attributeID, str2[str2.length-1]);
+		}
+		XML_manager.getInstance().addElement(michiganSolution, attribute_Element);
+
 
 		return michiganSolution;
 	}

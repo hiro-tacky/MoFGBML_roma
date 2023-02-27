@@ -6,8 +6,8 @@ import java.util.stream.Collectors;
 
 import cilabo.data.pattern.Pattern;
 
-/**データセット用のクラス．<br>
- * Pattern実装クラスを配列として持つ．
+/**データセット用のデータコンテナクラス．<br>
+ * Patternクラスを配列として持つ．
  * @param <pattern> データセットが扱うパターンクラスの型
  * @author Takigawa Hiroki
  */
@@ -28,7 +28,9 @@ public class DataSet<pattern extends Pattern<?>> {
 	 * @param cnum 結論部クラスのラベル種類数
 	 */
 	public DataSet(int dataSize, int ndim, int cnum) {
-		if(dataSize <= 0 || ndim <= 0 || cnum <= 0) { System.err.println("incorect input data set information @" + this.getClass().getSimpleName()); }
+		if(dataSize <= 0 || ndim <= 0 || cnum <= 0) {
+			System.err.println("incorect input data set information @" + this.getClass().getSimpleName());
+		}
 		DataSize = dataSize;
 		Ndim = ndim;
 		Cnum = cnum;
@@ -57,9 +59,9 @@ public class DataSet<pattern extends Pattern<?>> {
 	 * @param index 返されるパターン実装クラスのインデックス．index of pattern class to return
 	 * @return リスト内の指定された位置にあるパターン実装クラス．pattern class at the specified position in the list
 	 */
-	public pattern getPatternWithID(int id) {
+	public pattern getPatternWithID(int index) {
 		List<pattern> list = this.patterns.stream()
-										.filter(p -> p.getID() == id)
+										.filter(p -> p.getID() == index)
 										.collect( Collectors.toList() );
 		return list.get(0);
 	}

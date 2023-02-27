@@ -78,7 +78,7 @@ public class Parameters{
 	 * Returns Partition at the specified divisionType and dimension
 	 * @param divisionType 分割方式
 	 * @param dimension 次元
-	 * @K 分割数
+	 * @param K 分割数
 	 * @return 指定された分割方式・次元にある分割区間．Partition at divisionType, dimension and number of partition
 	 */
 	public Double[] getPartition(DIVISION_TYPE divisionType, int dimension, int K) {
@@ -93,7 +93,7 @@ public class Parameters{
 	 * Generate Partition at the specified divisionType and dimension , dimension and number of partition
 	 * @param divisionType 分割方式
 	 * @param dimension 次元
-	 * @K 分割数
+	 * @param K 分割数
 	 */
 	public void makePartition(DIVISION_TYPE divisionType, int dimension, int[] K) {
 		for(int K_i: K) {
@@ -106,7 +106,7 @@ public class Parameters{
 	 * Generate Partition at the specified divisionType and dimension , dimension and number of partition
 	 * @param divisionType 分割方式
 	 * @param dimension 次元
-	 * @K 分割数
+	 * @param K 分割数
 	 */
 	public void makePartition(DIVISION_TYPE divisionType, int dimension, int K) {
 		switch(divisionType) {
@@ -124,7 +124,7 @@ public class Parameters{
 	 * 指定された次元・分割数での均等分割区間を生成します。<br>
 	 * Generate equal distribution Partition at the specified divisionType and dimension
 	 * @param dimension 次元
-	 * @K 分割数
+	 * @param K 分割数
 	 */
 	public void makeHomePartition(int dimension, int[] K) {
 		for(int K_i: K) {
@@ -136,7 +136,7 @@ public class Parameters{
 	 * 指定された次元・分割数での均等分割区間を生成します。<br>
 	 * Generate equal distribution Partition at the specified divisionType and dimension
 	 * @param dimension 次元
-	 * @K 分割数
+	 * @param K 分割数
 	 */
 	public void makeHomePartition(int dimension, int K) {
 		if (this.getPartition(DIVISION_TYPE.equalDivision, dimension).containsKey(K)) {
@@ -156,7 +156,7 @@ public class Parameters{
 	 * 指定された次元・分割数でのエントロピー分割区間を生成します。<br>
 	 * Generate equal distribution Partition at the specified divisionType and dimension
 	 * @param dimension 次元
-	 * @K 分割数
+	 * @param K 分割数
 	 */
 	public void makeEntropyPartition(int dimension, int[] K) {
 		for(int K_i: K) {
@@ -168,7 +168,7 @@ public class Parameters{
 	 * 指定された次元・分割数でのエントロピー分割区間を生成します。<br>
 	 * Generate equal distribution Partition at the specified divisionType and dimension
 	 * @param dimension 次元
-	 * @K 分割数
+	 * @param K 分割数
 	 */
 	public void makeEntropyPartition(int dimension, int K) {
 		if (this.getPartition(DIVISION_TYPE.entropyDivision, dimension).containsKey(K)) {
@@ -213,7 +213,7 @@ public class Parameters{
 	 * Return triangle parameter at the specified divisionType and dimension , dimension and number of partition
 	 * @param divisionType 分割方式
 	 * @param dimension 次元
-	 * @K 分割数
+	 * @param K 分割数
 	 * @return 生成されたさ三角型ファジィ集合のパラメータ
 	 */
 	public float[][] triangle(DIVISION_TYPE divisionType, int dimension, int K){
@@ -237,7 +237,7 @@ public class Parameters{
 	 * Return linerShape parameter at the specified divisionType and dimension , dimension and number of partition
 	 * @param divisionType 分割方式
 	 * @param dimension 次元
-	 * @K 分割数
+	 * @param K 分割数
 	 * @param F ファジィ度
 	 * @return 生成されたさ線形型ファジィ集合のパラメータ
 	 */
@@ -277,7 +277,7 @@ public class Parameters{
 	 * Return linerShape parameter at the specified divisionType and dimension , dimension and number of partition
 	 * @param divisionType 分割方式
 	 * @param dimension 次元
-	 * @K 分割数
+	 * @param K 分割数
 	 * @return 生成されたさガウシアン型ファジィ集合のパラメータ
 	 */
 	public float[][] gaussian(DIVISION_TYPE divisionType, int dimension, int K){
@@ -329,7 +329,7 @@ public class Parameters{
 	 * Return linerShape parameter at the specified divisionType and dimension , dimension and number of partition
 	 * @param divisionType 分割方式
 	 * @param dimension 次元
-	 * @K 分割数
+	 * @param K 分割数
 	 * @return 生成されたさ区間型条件部集合のパラメータ
 	 */
 	public float[][] rectangle(DIVISION_TYPE divisionType, int dimension, int K){
@@ -346,7 +346,7 @@ public class Parameters{
 	 * Return linerShape parameter at the specified divisionType and dimension , dimension and number of partition
 	 * @param divisionType 分割方式
 	 * @param dimension 次元
-	 * @K 分割数
+	 * @param K 分割数
 	 * @return 生成されたさ台形型ファジィ集合のパラメータ
 	 */
 	public float[][] trapezoid(DIVISION_TYPE divisionType, int dimension, int K){
@@ -369,7 +369,7 @@ public class Parameters{
 	 * @param patterns : {@literal ArrayList<ForSortPattern>} :
 	 * @param K : int : Given number of partitions
 	 * @param Cnum : int : #of classes
-	 * @return
+	 * @return エントロピーに基づいた分割区間
 	 */
 	public static ArrayList<Double> optimalSplitting(ArrayList<ForSortPattern> patterns, int K, int Cnum) {
 		double D = patterns.size();
@@ -457,18 +457,20 @@ public class Parameters{
 			}
 
 			//Find minimize class-entropy.
-			double min = entropy[0];
-			int minIndex = 0;
-			for(int i = 1; i < candidate.size(); i++) {
-				if(entropy[i] < min) {
-					min = entropy[i];
-					minIndex = i;
+			if(entropy.length > 0) {
+				double min = entropy[0];				
+				int minIndex = 0;
+				for(int i = 1; i < candidate.size(); i++) {
+					if(entropy[i] < min) {
+						min = entropy[i];
+						minIndex = i;
+					}
 				}
-			}
-			partitions.add(candidate.get(minIndex));
-			candidate.remove(minIndex);
-			if(candidate.size() == 0) {
-				break;
+				partitions.add(candidate.get(minIndex));
+				candidate.remove(minIndex);
+				if(candidate.size() == 0) {
+					break;
+				}
 			}
 		}
 		if(partitions.size() < K+1) {
@@ -490,7 +492,7 @@ public class Parameters{
 	 * Returns Partition at the specified divisionType and dimension
 	 * @param divisionType 分割方式
 	 * @param dimension 次元
-	 * @K 分割数
+	 * @param K 分割数
 	 * @param fuzzyTermShapeID ファジィ集合形状ID
 	 * @return 生成されたファジィ集合のパラメータ．
 	 */
@@ -520,7 +522,7 @@ public class Parameters{
 	 * Returns Partition at the specified divisionType and dimension
 	 * @param divisionType 分割方式
 	 * @param dimension 次元
-	 * @K 分割数
+	 * @param K 分割数
 	 * @param fuzzyTermShapeName ファジィ集合形状名
 	 * @return 生成されたファジィ集合のパラメータ．
 	 */
@@ -597,7 +599,12 @@ public class Parameters{
 }
 
 
+/**
+ * パターンのソート用の一時的クラス
+ * @author Takigawa Hiroki
+ */
 class ForSortPattern{
+	/**  */
 	double x;
 	double index;
 	ClassLabel<?> trueClass;

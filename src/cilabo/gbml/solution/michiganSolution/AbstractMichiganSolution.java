@@ -41,51 +41,6 @@ public abstract class AbstractMichiganSolution<RuleObject extends Rule<?, ?, ?, 
 		super(bounds.size(), numberOfObjectives, numberOfConstraints);
 		this.bounds = bounds;
 		this.ruleBuilder = ruleBuilder;
-		//生成不可ルールの場合は再生成
-		do {
-			this.createRule();
-		}while(this.rule.isRejectedClassLabel());
-	}
-
-	/** コンストラクタ
-	 * @param bounds 各遺伝子が取りうる値の上限値と下限値の配列
-	 * @param numberOfObjectives 目的関数の個数
-	 * @param numberOfConstraints 制約の個数
-	 * @param ruleBuilder ルール生成器．*/
-	protected AbstractMichiganSolution(List<Pair<Integer, Integer>> bounds,
-			int numberOfObjectives,
-			int numberOfConstraints,
-			RuleBuilder<RuleObject, ?, ?> ruleBuilder,
-			Element michiganSolution) {
-		super(bounds.size(), numberOfObjectives, numberOfConstraints);
-		this.bounds = bounds;
-		this.ruleBuilder = ruleBuilder;
-
-		this.createRule(michiganSolution);
-		//生成不可ルールの場合は再生成
-		while(this.rule.isRejectedClassLabel()) {
-			this.createRule();
-		}
-	}
-
-	/** コンストラクタ
-	 * @param bounds 各遺伝子が取りうる値の上限値と下限値の配列
-	 * @param numberOfObjectives 目的関数の個数
-	 * @param numberOfConstraints 制約の個数
-	 * @param ruleBuilder ルール生成器．*/
-	protected AbstractMichiganSolution(List<Pair<Integer, Integer>> bounds,
-			int numberOfObjectives,
-			int numberOfConstraints,
-			RuleBuilder<RuleObject, ?, ?> ruleBuilder,
-			Pattern<?> pattern) {
-		super(bounds.size(), numberOfObjectives, numberOfConstraints);
-		this.bounds = bounds;
-		this.ruleBuilder = ruleBuilder;
-
-		//生成不可ルールの場合は再生成
-		do {
-			this.createRule(pattern);
-		}while(this.rule.isRejectedClassLabel());
 	}
 
 	/** コンストラクタ

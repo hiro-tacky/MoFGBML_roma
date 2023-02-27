@@ -5,9 +5,12 @@ import org.w3c.dom.Element;
 /** 結論部ラベルクラス．conclusion label class<br>
  * @author Takigawa Hiroki
  *
- * @param <ClassLabelValue> 実装したクラスラベルが結論部クラスとして持つ変数の型
+ * @param <ClassLabelValue> 実装したクラスラベルが結論部クラスとして持つ変数の型(Integer, Integer[], ..., etc.)
  */
 public interface ClassLabel<ClassLabelValue> {
+
+	/** 拒否ルール用クラスラベル*/
+	public final static Integer RejectedClassLabel = -1;
 
 	/** クラスラベルの結論部クラス変数を代入<br>
 	 * @param classLabelValue 代入されるクラスラベル */
@@ -24,8 +27,8 @@ public interface ClassLabel<ClassLabelValue> {
 	public boolean equalsClassLabel(ClassLabel<?> classLabel);
 
 	/**
-	 * 入力された ClassLabel インスタンス と このインスタンスを比較する
-	 * @param classLabel 比較したい ClassLabel インスタンス
+	 * 入力された ClassLabel と このインスタンスを比較する
+	 * @param classLabel 比較したい ClassLabel
 	 * @return 同値である場合:true 同値でない場合:false */
 	public boolean equalsClassLabel(int classLabel);
 

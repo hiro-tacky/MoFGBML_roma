@@ -5,8 +5,6 @@ import java.util.Objects;
 public abstract class AbstractClassLabel <ClassLabelValue> implements ClassLabel<ClassLabelValue>{
 	/** クラスラベル変数 */
 	protected ClassLabelValue classLabel;
-	/** 拒否ルール用クラスラベル*/
-	public final static Integer RejectedClassLabel = -1;
 
 	@Override
 	public ClassLabelValue getClassLabelValue() {

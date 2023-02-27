@@ -9,12 +9,16 @@ import cilabo.fuzzy.rule.consequent.Consequent;
 import cilabo.fuzzy.rule.consequent.classLabel.ClassLabel;
 import cilabo.fuzzy.rule.consequent.ruleWeight.RuleWeight;
 
-/** ルールのインターフェイス．但し，このクラスは遺伝子情報は持たない．
+/**
+ * ルールのインターフェイス．但し，このクラスは遺伝子情報は持たない．
  * @author Takigawa Hiroki
  *
  * @param <AntecedentObject> ルールオブジェクトが持つ前件部のクラス
  * @param <ConsequentObject> ルールオブジェクトが持つ後件部のクラス
- * @see cilabo.gbml.solution.michiganSolution.MichiganSolution
+ * @param <classLabel> 後件部クラスが扱う結論部クラス
+ * @param <T1> 結論部クラスが扱うクラスラベル変数
+ * @param <ruleWeight> 後件部クラスが扱うルール重みクラス
+ * @param <T2> ルール重みクラスが扱うルール重み変数
  */
 public interface Rule<
 	AntecedentObject extends Antecedent,

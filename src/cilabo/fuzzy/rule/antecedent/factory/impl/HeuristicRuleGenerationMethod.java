@@ -11,7 +11,7 @@ import cilabo.utility.Random;
 /**ヒューリスティックに基づいた前件部のFactory
  * @author Takigawa Hiroki
  */
-public class HeuristicRuleGenerationMethod implements AntecedentIndexFactory{
+public final class HeuristicRuleGenerationMethod implements AntecedentIndexFactory{
 
 	/**  学習用データ*/
 	private DataSet<?> train;

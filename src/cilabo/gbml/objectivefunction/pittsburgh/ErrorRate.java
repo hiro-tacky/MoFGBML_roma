@@ -7,6 +7,7 @@ import cilabo.data.pattern.Pattern;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution;
 import cilabo.gbml.solution.pittsburghSolution.PittsburghSolution;
 import cilabo.gbml.solution.util.attribute.ErroredPatternsAttribute;
+import cilabo.gbml.solution.util.attribute.NumberOfClassifierPatterns;
 import cilabo.gbml.solution.util.attribute.NumberOfWinner;
 
 /**
@@ -30,14 +31,16 @@ public final class ErrorRate <S extends PittsburghSolution<?>>{
 		int numberOfErrorPatterns = 0;
 
 		String attributeId = new NumberOfWinner<S>().getAttributeId();
+		String attributeIdFitness = new NumberOfClassifierPatterns<S>().getAttributeId();
 		for(MichiganSolution<?> michiganSolution: solution.getVariables()) {
 			michiganSolution.setAttribute(attributeId, 0);
+			michiganSolution.setAttribute(attributeIdFitness, 0);
 		}
 
 		ArrayList<Pattern<?>> erroredPatterns = new ArrayList<Pattern<?>>();
 		for(int i = 0; i < train.getDataSize(); i++) {
 			Pattern<?> pattern = train.getPattern(i);
-			MichiganSolution<?> winnerSolution = solution.classify(pattern.getAttributeVector());
+			MichiganSolution<?> winnerSolution = solution.classify(pattern);
 
 			// If output is rejected then continue next pattern.
 			if(winnerSolution == null) {
@@ -56,6 +59,9 @@ public final class ErrorRate <S extends PittsburghSolution<?>>{
 					winnerSolution.getClassLabel()) ){
 				numberOfErrorPatterns++;
 				erroredPatterns.add(pattern);
+			}else {
+				int buf2 = (int) winnerSolution.getAttribute(attributeIdFitness);
+				winnerSolution.setAttribute(attributeIdFitness, buf2+1);
 			}
 		}
 

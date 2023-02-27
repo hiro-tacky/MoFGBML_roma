@@ -121,15 +121,14 @@ public class Input {
 	 * ファイル名を指定して複数クラスラベルのデータセットをロード
 	 * @param trainFile 学習用データセットのパス
 	 * @param testFile 評価用データセットのパス
-	 * @return データセットが追加されたDatasetManagerインスタンス
 	 */
 	public static void loadTrainTestFiles_Basic(String trainFile, String testFile) {
 
 		/* Load Dataset ======================== */
 		if(Objects.isNull(DataSetManager.getInstance().getTrains())) {
-			throw new IllegalArgumentException("argument [trainFile] is null @TrainTestDatasetManager.loadTrainTestFiles()");}
+			throw new IllegalArgumentException("argument [trainFile] is null @" + "TrainTestDatasetManager.loadTrainTestFiles()");}
 		if(Objects.isNull(DataSetManager.getInstance().getTrains())) {
-			throw new IllegalArgumentException("argument [testFile] is null @TrainTestDatasetManager.loadTrainTestFiles()");}
+			throw new IllegalArgumentException("argument [testFile] is null @" + "TrainTestDatasetManager.loadTrainTestFiles()");}
 
 		DataSet<Pattern_Basic> train = Input.inputDataSet_Basic(trainFile);
 		DataSetManager.getInstance().addTrains(train);
@@ -151,7 +150,6 @@ public class Input {
 	 * ファイル名を指定して単一クラスラベルのデータセットをロード
 	 * @param trainFile 学習用データセットのパス
 	 * @param testFile 評価用データセットのパス
-	 * @return データセットが追加されたDatasetManagerインスタンス
 	 */
 	public static void loadTrainTestFiles_MultiClass(String trainFile, String testFile) {
 

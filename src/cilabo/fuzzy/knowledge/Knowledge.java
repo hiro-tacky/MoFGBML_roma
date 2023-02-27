@@ -75,16 +75,16 @@ public class Knowledge {
 	 * @param fuzzySets このインスタンスにに格納されるファジィセット．Fuzzy Set to be stored at this instance
 	 */
 	public void setFuzzySets(FuzzyTermTypeForMixed[][] fuzzySets) {
-		if(!Objects.isNull(fuzzySets)) {System.err.println("fuzzySets was overwrited");}
+		if(!Objects.isNull(this.fuzzySets)) {System.err.println("fuzzySets was overwrited");}
 		this.fuzzySets = fuzzySets;
 	}
 
 	/**
 	 * 指定されたファジィセットの入力された属性値に対するメンバシップ値を返す．
-	 * @param x 属性値
+	 * @param attributeValue 属性値
 	 * @param dimension  ファジィセットの次元．dimension of Fuzzy Set
 	 * @param fuzzySet_id ファジィセットのID．ID of Fuzzy Set
-	 * @return
+	 * @return 属性値に対するメンバシップ値
 	 */
 	public double getMembershipValue(double attributeValue, int dimension, int fuzzySet_id) {
 		if(Objects.isNull(fuzzySets)) {System.err.println("Knowledge hasn't been initialised");}
@@ -163,6 +163,10 @@ public class Knowledge {
 		return knowledge;
 	}
 
+	/** ShapeTypeに対応するファジィ集合の形状名を返します
+	 * @param id ShapeTypeID
+	 * @return ファジィ集合の形状名
+	 */
 	public static String getShapeTypeNameFromID(int id) {
 		String ShapeName =null;
 		switch(id) {
@@ -188,6 +192,12 @@ public class Knowledge {
 		return ShapeName;
 	}
 
+	/** 入力された情報を基にファジィ集合名を生成します．
+	 * @param divisionType 分割方式
+	 * @param ShapeTypeID ShapeTypeID
+	 * @param FuzzyTermID 各ファジィに与えられる固有のID
+	 * @return 生成されたファジィ集合名
+	 */
 	public static String makeFuzzyTermName(DIVISION_TYPE divisionType, int ShapeTypeID, int FuzzyTermID) {
 		if(ShapeTypeID == Knowledge.DnotCare_FuzzyTermID) {
 			return "DontCare";

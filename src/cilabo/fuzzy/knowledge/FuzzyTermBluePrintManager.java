@@ -17,7 +17,7 @@ public class FuzzyTermBluePrintManager {
 
 	/**
 	 * インスタンスを生成
-	 * @param dim データセットの次元数
+	 * @param dimension データセットの次元数
 	 */
 	public FuzzyTermBluePrintManager(int dimension) {
 		this.numberOfdimension = dimension;
@@ -71,7 +71,7 @@ public class FuzzyTermBluePrintManager {
 	/**
 	 * fuzzyTermクラスの設計図を追加
 	 * @param divisionType 区間分割方式
-	 * @param dim 次元
+	 * @param dimension 次元
 	 * @param K 区間分割数配列
 	 * @param fuzzyTermType ファジィセット形状id
 	 */

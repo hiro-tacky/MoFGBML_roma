@@ -5,13 +5,13 @@ import java.util.Objects;
 import cilabo.data.AttributeVector;
 import cilabo.fuzzy.rule.consequent.classLabel.ClassLabel;
 
-/** パターンクラス．abstract pattern class<br>
+/** パターン用データコンテナクラス．abstract pattern class<br>
  * @param <ClassLabelObject> 実装したPatternクラスが持つラベルクラス
  * @author Takigawa Hiroki
  */
 public abstract class Pattern <ClassLabelObject extends ClassLabel<?>>{
 
-	/** このインスタンスに与えられたID．ID which is ginve to this instance */
+	/** このインスタンスに与えられたID．ID that is ginve to this instance */
 	protected final int id;
 	/** 属性値クラス．attribute class */
 	protected final AttributeVector attributeVector;
@@ -78,5 +78,4 @@ public abstract class Pattern <ClassLabelObject extends ClassLabel<?>>{
 	public ClassLabelObject getTargetClass() {
 		return this.targetClass;
 	}
-
 }

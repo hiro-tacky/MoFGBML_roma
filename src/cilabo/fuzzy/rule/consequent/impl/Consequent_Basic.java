@@ -3,15 +3,15 @@ package cilabo.fuzzy.rule.consequent.impl;
 import org.w3c.dom.Element;
 
 import cilabo.fuzzy.rule.consequent.AbstractConsequent;
-import cilabo.fuzzy.rule.consequent.classLabel.ClassLabel;
 import cilabo.fuzzy.rule.consequent.classLabel.impl.ClassLabel_Basic;
-import cilabo.fuzzy.rule.consequent.ruleWeight.RuleWeight;
 import cilabo.fuzzy.rule.consequent.ruleWeight.impl.RuleWeight_Basic;
 import xml.XML_TagName;
 import xml.XML_manager;
 
-public class Consequent_Basic extends AbstractConsequent <ClassLabel_Basic, Integer, RuleWeight_Basic, Double>
-	implements ClassLabel<Integer>, RuleWeight<Double>{
+/** 単結論部クラスと単一ルール重みを持つ後件部クラス
+ * @author Takigawa Hiroki
+ */
+public final class Consequent_Basic extends AbstractConsequent <ClassLabel_Basic, Integer, RuleWeight_Basic, Double>{
 
 	/** 入力された結論部クラスとルール重みを持つインスタンスを生成する
 	 * @param classLabel 代入される結論部クラス

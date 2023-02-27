@@ -70,6 +70,7 @@ public class MichiganMutation <michiganSolution extends MichiganSolution<?>> imp
 			// To judge which attribute i is categorical or numerical.
 			Pattern<?> randPattern = data.getPattern(intRandomGenerator.getRandomValue(0, data.getDataSize()-1));
 
+
 			// Decide new variable
 			int fuzzySetNum = Knowledge.getInstance().getFuzzySetNum(i);
 			if(fuzzySetNum <= 1) {return;}
@@ -90,6 +91,7 @@ public class MichiganMutation <michiganSolution extends MichiganSolution<?>> imp
 					// Categorical attribute:
 					solution.setVariable(i, (int)randPattern.getAttributeValue(i));
 				}
+
 			}
 		  }
 	  }

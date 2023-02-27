@@ -1,12 +1,9 @@
 import xml.etree.ElementTree as ET
 import matplotlib.pyplot as plt
+import csv
 import numpy as np
 import os
-from datetime import datetime
 import glob
-from scipy.stats import gaussian_kde
-from sklearn import preprocessing
-from ipywidgets import interact, IntSlider, Select, FloatSlider
 
 #######  setting  ############################################################
 #数値実験基本設定
@@ -16,7 +13,7 @@ ROOTFOLDER = os.getcwd()
 cmap = plt.get_cmap("tab10")
 #その他の基本設定
 IMAGE_SAVE_DIR_PATH = "results/image/" #画像保存用ディレクトリ
-ONLY_FINAL_GENERATION_FLAG = True
+ONLY_FINAL_GENERATION_FLAG = False
 
 class DATASET_INFO_CLASS:
     def __init__(self):
@@ -31,7 +28,7 @@ class FIGURE_PARAMETER_CLASS:
         self.savePath = 'results/graph/tmp'
         
         #scatterの基本設定
-        self.MARKER_SIZE = 250
+        self.MARKER_SIZE = 150
         self.MARKER_ALPHA = 1.0
         self.MARKER_COLOR = 'Black'
         self.MARKER_SHAPE = 'o'
@@ -43,17 +40,17 @@ class FIGURE_PARAMETER_CLASS:
         self.BETWEEN_COLOR = 'blue'
         
         #figureの基本設定
-        self.PLOT_TITLE_FLAG = False
+        self.PLOT_TITLE_FLAG = True
         self.PLOT_TICK_FLAG = True
         self.PLOT_LABEL_FLAG = True
-        self.PLOT_LEGEND_FLAG = False
+        self.PLOT_LEGEND_FLAG = True
         self.PLOT_GRID_FLAG = True
         
-        self.TITLE_FONTSIZE = 30 #タイトルのフォントサイズ
+        self.TITLE_FONTSIZE = 40 #タイトルのフォントサイズ
         self.LABEL_FONTSIZE = 50 #ラベルのフォントサイズ
         self.TICK_FONTSIZE = 30 #目盛りのフォントサイズ
-        self.LEGEND_FONTSIZE = 20 #汎用のフォントサイズ
-        self.MARGIN_SIZE = {'left':0.06, 'right':0.94, 'bottom':0.06, 'top':0.94} #余白サイズ
+        self.LEGEND_FONTSIZE = 30 #汎用のフォントサイズ
+        self.MARGIN_SIZE = {'left':0.06, 'right':0.94, 'bottom':0.06, 'top':0.92} #余白サイズ
         self.IS_TRANSPARENT = False #背景の透過
         
     def paper(self):
@@ -68,17 +65,27 @@ class FIGURE_PARAMETER_CLASS:
         self.LABEL_FONTSIZE = 60 #ラベルのフォントサイズ
         self.TICK_FONTSIZE = 45 #目盛りのフォントサイズ
         self.MARGIN_SIZE = {'left':0.15, 'right':0.98, 'bottom':0.17, 'top':0.98} #余白サイズ
+        
+    def slide(self):
+        #figureの基本設定
+        self.PLOT_TITLE_FLAG = False
+        self.PLOT_TICK_FLAG = True
+        self.PLOT_LABEL_FLAG = True
+        self.PLOT_LEGEND_FLAG = True
+        self.PLOT_GRID_FLAG = True
+        
+        self.MARGIN_SIZE = {'left':0.13, 'right':0.98, 'bottom':0.13, 'top':0.98} #余白サイズ
 
 
 FIGURE_PARAMETER = FIGURE_PARAMETER_CLASS()
-FIGURE_PARAMETER.paper()
+FIGURE_PARAMETER.slide()
 
 class RULE_BOOK_CLASS:
     def __init__(self):
         self.IS_DTRA = False
         self.IS_RULENUM_MORE_TAHN_2 = True
         self.COVER_ALL_CLASS = False
-        self.TRIAL_NUM_MORE_THAN_HALF = True
+        self.TRIAL_NUM_MORE_THAN_HALF = False
         
 RULE_BOOK = RULE_BOOK_CLASS()
 
@@ -184,6 +191,7 @@ def multiFig_set(x_FigNum, y_FigNum, FIGURE_PARAMETER, title):
     
 # OUTPUT FIGURE OBJECT
 def saveFig(fig, filePath, filename, FIGURE_PARAMETER):
+    print(filePath)
     """画像を保存する
     入力:figureオブジェクト, ファイル名, データセット名"""
     os.makedirs(filePath, exist_ok=True)
@@ -297,6 +305,9 @@ class FuzzyTerm:
         self.fuzzyTermName = fuzzyTerm.find("fuzzyTermName").text
         self.ShapeTypeID = int(fuzzyTerm.find("ShapeTypeID").text)
         self.rectangularShape = fuzzyTerm.find("ShapeTypeName").text
+        self.divisionType = fuzzyTerm.find("divisionType").text
+        self.partitionNum = int(fuzzyTerm.find("partitionNum").text)
+        self.partition_i = int(fuzzyTerm.find("partition_i").text)
         self.parameters = {int(parameters_i.get('id')) : float(parameters_i.text) for parameters_i in fuzzyTerm.find('parameterSet')}
     
     def setAx(self, ax, alpha = 1.0, alpha_between = 0.3, color = "black", color_between = "blue", input_x=None):
@@ -576,6 +587,17 @@ class Generations():
     def calcErrorRate(self, pittsburghSolutionID, Dat, isDtra):
         return self.populations.getPittsburghSolution(pittsburghSolutionID).calcErrorRate(self.knowledge, Dat, isDtra)
     
+    def usedFuzzySetsCount(self):
+        usedFuzzySet = []
+        for fuzzySets_dimension in self.getKnowledge().fuzzySets.values():
+            usedFuzzySet.append({fuzzyTerm:0 for fuzzyTerm in fuzzySets_dimension.values()})
+            
+        for pittsburghSolution_i in self.getPopulation().pittsburghSolutions.values():
+            for michiganSolution_i in pittsburghSolution_i.michiganSolutions.values():
+                for dimension, fuzzyTermID in michiganSolution_i.fuzzyTermIDVector.items():
+                    usedFuzzySet[dimension][self.getKnowledge().getFuzzyTerm(dimension, fuzzyTermID)] += 1
+        return usedFuzzySet
+    
 ### Trial Manager ############################################################
 
 class TrialManager(XML):
@@ -624,6 +646,7 @@ class ExperimentManager():
         for id_, XMLpath in enumerate(XMLpaths):
             experimentName = "{:s}{:0>2}".format(experimentID, id_)
             self.TrialManagers[experimentName] = TrialManager(XMLpath, self.savePath + experimentName)
+        print(len(self.TrialManagers))
         
     def getTrialManager(self, trialID):
         return self.TrialManagers["{:s}{:0>2}".format(self.experimentID, trialID)]
@@ -743,9 +766,187 @@ class Master:
         plotResultSetting(ax, FIGURE_PARAMETER)
         
         if saveFigFlag:
-            dataType = "Dtra" if RULE_BOOK.IS_DTRA else "Dtst"
+            print(RULE_BOOK.IS_DTRA)
+            if RULE_BOOK.IS_DTRA:
+                dataType = "Dtra"
+            else:
+                dataType = "Dtst"
             fileName = "result_{:s}_{:s}_{:08}".format(self.dataName, dataType, evaluation)
             saveFig(fig, self.ROOTFOLDER + "/results/graph/" + self.dataName + "/" + dataType + "/" + mode, fileName, FIGURE_PARAMETER)
         plt.show()
         
+    def plotUsedFuzzySets(self, dataLabel, evaluation):
+        return_obj = []
+        for trial in self.getExperimentManager(dataLabel).TrialManagers.values():
+            generation = trial.getGeneration(evaluation)
+            return_obj.append(generation.usedFuzzySetsCount())
+        return return_obj
+    
+    def plotPie(self, dataLabel, evaluation, FIGURE_PARAMETER=FIGURE_PARAMETER):
+        usedFuzzySets = self.plotUsedFuzzySets(dataLabel, evaluation)
+        dim = len(usedFuzzySets[0])
+    
+        label_1 = ['均等分割区間集合', '不均等分割区間集合', '均等分割三角型条件部集合', '不均等分割三角型条件部集合', '均等分割ガウシアン集合', '不均等分割ガウシアン集合']
+        partition = [2, 3, 4, 5]
+        k = len(partition)
+        
+        x_1 = [[0] * len(label_1) for i in range(dim)]
+        x_2 = [[0] * (len(label_1) * len(partition)) for i in range(dim)]
+        
+        colors_1 = [cmap(0), cmap(1), cmap(2), cmap(3), cmap(4), cmap(5)]
+        colors_2 = []
+        alphas = [1, 0.8, 0.6, 0.4]
+        for i in range(len(label_1)):
+            for j in range(len(partition)):
+                c_r, c_g, c_b, _ = cmap(i)
+                colors_2.append((c_r, c_g, c_b, alphas[j])) 
+                
+        for trial_i, usedFuzzySets_trial in enumerate(usedFuzzySets):
+            for dim_i, usedFuzzySets_dim in enumerate(usedFuzzySets_trial):
+                for fuzzyTerm, fuzzySetNum in usedFuzzySets_dim.items():
+                    if fuzzyTerm.fuzzyTermID == 0:
+                        continue
+                    if fuzzyTerm.divisionType == 'equalDivision' and fuzzyTerm.ShapeTypeID == 9:
+                        x_1[dim_i][0] += fuzzySetNum
+                        x_2[dim_i][k*0 + (fuzzyTerm.partitionNum-2)] += fuzzySetNum
+                    elif fuzzyTerm.divisionType == 'entropyDivision' and fuzzyTerm.ShapeTypeID == 9:
+                        x_1[dim_i][1] += fuzzySetNum
+                        x_2[dim_i][k*1 + (fuzzyTerm.partitionNum-2)] += fuzzySetNum
+                    elif fuzzyTerm.divisionType == 'equalDivision' and (fuzzyTerm.ShapeTypeID == 3 or fuzzyTerm.ShapeTypeID == 7):
+                        x_1[dim_i][2] += fuzzySetNum
+                        x_2[dim_i][k*2 + (fuzzyTerm.partitionNum-2)] += fuzzySetNum                
+                    elif fuzzyTerm.divisionType == 'entropyDivision' and (fuzzyTerm.ShapeTypeID == 3 or fuzzyTerm.ShapeTypeID == 7):
+                        x_1[dim_i][3] += fuzzySetNum
+                        x_2[dim_i][k*3 + (fuzzyTerm.partitionNum-2)] += fuzzySetNum           
+                    elif fuzzyTerm.divisionType == 'equalDivision' and fuzzyTerm.ShapeTypeID == 4:
+                        x_1[dim_i][4] += fuzzySetNum
+                        x_2[dim_i][k*4 + (fuzzyTerm.partitionNum-2)] += fuzzySetNum              
+                    elif fuzzyTerm.divisionType == 'entropyDivision' and fuzzyTerm.ShapeTypeID == 4:
+                        x_1[dim_i][5] += fuzzySetNum
+                        x_2[dim_i][k*5 + (fuzzyTerm.partitionNum-2)] += fuzzySetNum
+                        
+        for dim_i in range(dim):
+            label_2 = [2, 3, 4, 5] * len(label_1)
+            fig, ax = plt.subplots(figsize = (9, 9))
+            fig.subplots_adjust(left=0, right=1, bottom=0,  top=1)
+            print(x_1[dim_i], x_2[dim_i])
+            for index_, value_ in enumerate(x_2[dim_i]):
+                if value_ == 0 : label_2[index_] = ''
+            patches, texts = ax.pie(x_2[dim_i], colors=colors_2, labels=label_2, radius=1.2, labeldistance=0.85, startangle=90, wedgeprops={'linewidth': 0.5, 'edgecolor':"black"}, counterclock = False)
+            for t in texts:
+                t.set_size(35)
+            ax.pie(x_1[dim_i], colors=colors_1, radius=0.8, startangle=90, wedgeprops={'linewidth': 0.5, 'edgecolor':"black"}, counterclock = False)
+            saveFig(fig, os.getcwd() + "/results/graph/" + self.dataName + "/usedFuzzySetRate/" + dataLabel, "usedFuzzySetRate_" + str(dim_i), FIGURE_PARAMETER)
+            saveFig(fig, os.getcwd() + "/results/graph/" + self.dataName + "/usedFuzzySetRate/" + dataLabel, "usedFuzzySetRate_" + str(dim_i), FIGURE_PARAMETER)
+            plt.show()
+            plt.close('all')
+        
+    def plotCsv(self, dataLabel, evaluation):
+        usedFuzzySets = self.plotUsedFuzzySets(dataLabel, evaluation)
+        dim = len(usedFuzzySets[0])
+    
+        label = ['均等分割区間集合', '不均等分割区間集合', '均等分割三角型条件部集合', '不均等分割三角型条件部集合', '均等分割ガウシアン集合', '不均等分割ガウシアン集合']
+        partition_num = [2, 3, 4, 5]
+        
+        dim_buf = [[]for i in range(dim)]
+                
+        for trial_i, usedFuzzySets_trial in enumerate(usedFuzzySets):
+            for dim_i, usedFuzzySets_dim in enumerate(usedFuzzySets_trial):
+                usedFuzzySets_buf = {}
+                for label_i in label:
+                    tmp = {}
+                    for partition_i in partition_num:
+                        tmp2 = {}
+                        for i in range(partition_i):
+                            tmp2[i] = 0
+                        tmp[partition_i] = tmp2
+                    usedFuzzySets_buf[label_i] = tmp
+                        
+                for fuzzyTerm, fuzzySetNum in usedFuzzySets_dim.items():
+                    if fuzzyTerm.fuzzyTermID == 0:
+                        continue
+                    if fuzzyTerm.divisionType == 'equalDivision' and fuzzyTerm.ShapeTypeID == 9:
+                        usedFuzzySets_buf['均等分割区間集合'][fuzzyTerm.partitionNum][fuzzyTerm.partition_i] += fuzzySetNum
+                    elif fuzzyTerm.divisionType == 'entropyDivision' and fuzzyTerm.ShapeTypeID == 9:
+                        usedFuzzySets_buf['不均等分割区間集合'][fuzzyTerm.partitionNum][fuzzyTerm.partition_i] += fuzzySetNum
+                    elif fuzzyTerm.divisionType == 'equalDivision' and (fuzzyTerm.ShapeTypeID == 3 or fuzzyTerm.ShapeTypeID == 7):
+                        usedFuzzySets_buf['均等分割三角型条件部集合'][fuzzyTerm.partitionNum][fuzzyTerm.partition_i] += fuzzySetNum          
+                    elif fuzzyTerm.divisionType == 'entropyDivision' and (fuzzyTerm.ShapeTypeID == 3 or fuzzyTerm.ShapeTypeID == 7):
+                        usedFuzzySets_buf['不均等分割三角型条件部集合'][fuzzyTerm.partitionNum][fuzzyTerm.partition_i] += fuzzySetNum
+                    elif fuzzyTerm.divisionType == 'equalDivision' and fuzzyTerm.ShapeTypeID == 4:
+                        usedFuzzySets_buf['均等分割ガウシアン集合'][fuzzyTerm.partitionNum][fuzzyTerm.partition_i] += fuzzySetNum           
+                    elif fuzzyTerm.divisionType == 'entropyDivision' and fuzzyTerm.ShapeTypeID == 4:
+                        usedFuzzySets_buf['不均等分割ガウシアン集合'][fuzzyTerm.partitionNum][fuzzyTerm.partition_i] += fuzzySetNum
+                
+                dim_buf[dim_i].append(usedFuzzySets_buf)
+        
+        for dim_i in range(dim):
+            os.makedirs(ROOTFOLDER + "/results/graph/" + self.dataName + "/usedFuzzySetRate/csv/", exist_ok=True)
+            f = open(ROOTFOLDER + "/results/graph/" + self.dataName + "/usedFuzzySetRate/csv/out_" + str(dim_i)+'.csv', 'w', newline='')
+            writer = csv.writer(f)
+            for trial_i, trial in enumerate(dim_buf[dim_i]):
+                row = ["trial:{:2d}".format(trial_i)]
+                for label_i in trial.values():
+                    for partition_num_i in label_i.values():
+                        for partition_i in partition_num_i.values():
+                            row.append(partition_i)
+                writer.writerow(row)
+            f.close()
+    
+        
+    def plotCsv2(self, dataLabel, evaluation):
+        usedFuzzySets = self.plotUsedFuzzySets(dataLabel, evaluation)
+        dim = len(usedFuzzySets[0])
+    
+        label = ['均等分割区間集合', '不均等分割区間集合', '均等分割三角型条件部集合', '不均等分割三角型条件部集合', '均等分割ガウシアン集合', '不均等分割ガウシアン集合']
+        partition_num = [2, 3, 4, 5]
+        
+        dim_buf = [[]for i in range(dim)]
+                
+        for trial_i, usedFuzzySets_trial in enumerate(usedFuzzySets):
+            for dim_i, usedFuzzySets_dim in enumerate(usedFuzzySets_trial):
+                usedFuzzySets_buf = {}
+                for label_i in label:
+                    for partition_i in partition_num:
+                        for i in range(partition_i):
+                            usedFuzzySets_buf[label_i + '_' + str(partition_i) + '_' + str(i+1)] = 0
+                 
+                        
+                for fuzzyTerm, fuzzySetNum in usedFuzzySets_dim.items():
+                    if fuzzyTerm.fuzzyTermID == 0:
+                        continue
+                    if fuzzyTerm.divisionType == 'equalDivision' and fuzzyTerm.ShapeTypeID == 9:
+                        usedFuzzySets_buf['均等分割区間集合_' + str(fuzzyTerm.partitionNum) + '_' + str(fuzzyTerm.partition_i+1)] += fuzzySetNum
+                    elif fuzzyTerm.divisionType == 'entropyDivision' and fuzzyTerm.ShapeTypeID == 9:
+                        usedFuzzySets_buf['不均等分割区間集合_' + str(fuzzyTerm.partitionNum) + '_' + str(fuzzyTerm.partition_i+1)] += fuzzySetNum
+                    elif fuzzyTerm.divisionType == 'equalDivision' and (fuzzyTerm.ShapeTypeID == 3 or fuzzyTerm.ShapeTypeID == 7):
+                        usedFuzzySets_buf['均等分割三角型条件部集合_' + str(fuzzyTerm.partitionNum) + '_' + str(fuzzyTerm.partition_i+1)] += fuzzySetNum          
+                    elif fuzzyTerm.divisionType == 'entropyDivision' and (fuzzyTerm.ShapeTypeID == 3 or fuzzyTerm.ShapeTypeID == 7):
+                        usedFuzzySets_buf['不均等分割三角型条件部集合_' + str(fuzzyTerm.partitionNum) + '_' + str(fuzzyTerm.partition_i+1)] += fuzzySetNum
+                    elif fuzzyTerm.divisionType == 'equalDivision' and fuzzyTerm.ShapeTypeID == 4:
+                        usedFuzzySets_buf['均等分割ガウシアン集合_' + str(fuzzyTerm.partitionNum) + '_' + str(fuzzyTerm.partition_i+1)] += fuzzySetNum           
+                    elif fuzzyTerm.divisionType == 'entropyDivision' and fuzzyTerm.ShapeTypeID == 4:
+                        usedFuzzySets_buf['不均等分割ガウシアン集合_' + str(fuzzyTerm.partitionNum) + '_' + str(fuzzyTerm.partition_i+1)] += fuzzySetNum
+                
+                dim_buf[dim_i].append(usedFuzzySets_buf)
+        
+        for dim_i, usedFuzzySets_dim in enumerate(dim_buf):
+            print('dim: ' + str(dim_i))
+            os.makedirs(ROOTFOLDER + "/results/graph/" + self.dataName + "/usedFuzzySetRate/csv/", exist_ok=True)
+            f = open(ROOTFOLDER + "/results/graph/" + self.dataName + "/usedFuzzySetRate/csv/out_" + str(dim_i)+'.csv', 'w', newline='')
+            writer = csv.writer(f)
+            row = ['']
+            for i in range(15):
+                row.append(str(i+1))
+                row.append('')
+            writer.writerow(row)
+            for trial_i, usedFuzzySets_trial in enumerate(usedFuzzySets_dim):
+                row = ['trial: ' + str(trial_i)]
+                usedFuzzySets_sorted = sorted(usedFuzzySets_trial.items(), key = lambda fuzzyTermNum : fuzzyTermNum[1],reverse=True)
+                for usedFuzzySets_tmp in usedFuzzySets_sorted[:15]:
+                    if usedFuzzySets_tmp[1] != 0:
+                        row.append(usedFuzzySets_tmp[0])
+                        row.append(str(usedFuzzySets_tmp[1]))
+                writer.writerow(row)
+            f.close()
 ###############################################################################

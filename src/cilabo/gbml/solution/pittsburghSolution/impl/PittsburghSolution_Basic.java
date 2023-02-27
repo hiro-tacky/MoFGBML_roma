@@ -1,16 +1,20 @@
 package cilabo.gbml.solution.pittsburghSolution.impl;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map.Entry;
 
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
-import cilabo.data.AttributeVector;
 import cilabo.data.DataSetManager;
+import cilabo.data.pattern.Pattern;
 import cilabo.fuzzy.classifier.Classifier;
 import cilabo.gbml.objectivefunction.pittsburgh.ErrorRate;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution.MichiganSolutionBuilder;
 import cilabo.gbml.solution.pittsburghSolution.AbstractPittsburghSolution;
+import cilabo.gbml.solution.util.attribute.ErroredPatternsAttribute;
 import cilabo.main.ExperienceParameter.OBJECTIVES_FOR_PITTSBURGH;
 import xml.XML_TagName;
 import xml.XML_manager;
@@ -25,6 +29,10 @@ public final class PittsburghSolution_Basic <michiganSolution extends MichiganSo
 			Classifier<michiganSolution> classifier) {
 		super(numberOfVariables, numberOfObjectives, numberOfConstraints,
 				michiganSolutionBuilder, classifier);
+		List<michiganSolution> michiganSolutionList = michiganSolutionBuilder.createMichiganSolutions(numberOfVariables);
+		for(int i=0; i<this.getNumberOfVariables(); i++) {
+			this.setVariable(i, michiganSolutionList.get(i));
+		}
 	}
 
 	public PittsburghSolution_Basic(int numberOfObjectives,
@@ -34,6 +42,11 @@ public final class PittsburghSolution_Basic <michiganSolution extends MichiganSo
 			Element pittsburghSolution) {
 		super(numberOfObjectives, numberOfConstraints,
 				michiganSolutionBuilder, classifier, pittsburghSolution);
+		NodeList michiganSolutionList = pittsburghSolution.getElementsByTagName(XML_TagName.michiganSolution.toString());
+		for(int i=0; i<michiganSolutionList.getLength(); i++) {
+			michiganSolution michiganSolution = michiganSolutionBuilder.createMichiganSolution((Element)michiganSolutionList.item(i));
+			this.setVariable(i, michiganSolution);
+		}
 	}
 
 	private PittsburghSolution_Basic(PittsburghSolution_Basic<michiganSolution> solution) {
@@ -61,8 +74,8 @@ public final class PittsburghSolution_Basic <michiganSolution extends MichiganSo
 	}
 
 	@Override
-	public michiganSolution classify(AttributeVector attributeVector) {
-		return this.classifier.classify(this.getVariables(), attributeVector);
+	public michiganSolution classify(Pattern<?> pattern) {
+		return this.classifier.classify(this.getVariables(), pattern);
 	}
 
 	@Override
@@ -79,7 +92,16 @@ public final class PittsburghSolution_Basic <michiganSolution extends MichiganSo
 		for(michiganSolution tmp: this.variables) {
 			str += " ->" + tmp + ln;
 		}
-		str += "[classifier=" + classifier + ", attributes=" + attributes + "]" + ln + ln;
+
+		str += ",attributes={,";
+		for (Entry<Object, Object> entry : attributes.entrySet()) {
+			if(((String)entry.getKey()).equals(new ErroredPatternsAttribute<>().getAttributeId())) {
+				continue;
+			};
+			String[] str2 = ((String)entry.getKey()).split("\\.");
+		    str += String.format("%s,%s,", str2[str2.length-1], entry.getValue().toString());
+		}
+		str += "}" + ln + ln;
 		return str;
 	}
 
@@ -98,7 +120,6 @@ public final class PittsburghSolution_Basic <michiganSolution extends MichiganSo
 			XML_manager.getInstance().addElement(pittsburghSolution, michiganSolution,
 					XML_TagName.id, String.valueOf(i));
 		}
-
 		//各目的関数の結果
 		Element objectives = XML_manager.getInstance().createElement(XML_TagName.objectives);
 
@@ -122,6 +143,18 @@ public final class PittsburghSolution_Basic <michiganSolution extends MichiganSo
 			XML_manager.getInstance().addElement(objectives, f3_);
 
 		XML_manager.getInstance().addElement(pittsburghSolution, objectives);
+
+
+		Element attribute_Element = XML_manager.getInstance().createElement(XML_TagName.attributes);
+		for (Entry<Object, Object> entry : attributes.entrySet()) {
+			if(((String)entry.getKey()).equals(new ErroredPatternsAttribute<>().getAttributeId())) {
+				continue;
+			};
+			String[] str2 = ((String)entry.getKey()).split("\\.");
+			XML_manager.getInstance().addElement(attribute_Element, XML_TagName.attribute, entry.getValue().toString(),
+					XML_TagName.attributeID, str2[str2.length-1]);
+		}
+		XML_manager.getInstance().addElement(pittsburghSolution, attribute_Element);
 		return pittsburghSolution;
 	}
 

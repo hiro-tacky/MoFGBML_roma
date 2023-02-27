@@ -1,10 +1,7 @@
 package cilabo.gbml.solution.pittsburghSolution;
 
-import java.util.List;
-
 import org.uma.jmetal.solution.AbstractSolution;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 import cilabo.fuzzy.classifier.Classifier;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution;
@@ -28,10 +25,6 @@ public abstract class AbstractPittsburghSolution <michiganSolution extends Michi
 		super(numberOfVariables, numberOfObjectives, numberOfConstraints);
 		this.michiganSolutionBuilder = michiganSolutionBuilder;
 		this.classifier = classifier;
-		List<michiganSolution> michiganSolutionList = michiganSolutionBuilder.createMichiganSolutions(numberOfVariables);
-		for(int i=0; i<this.getNumberOfVariables(); i++) {
-			this.setVariable(i, michiganSolutionList.get(i));
-		}
 	}
 
 	public AbstractPittsburghSolution(int numberOfObjectives,
@@ -43,11 +36,6 @@ public abstract class AbstractPittsburghSolution <michiganSolution extends Michi
 				numberOfObjectives, numberOfConstraints);
 		this.michiganSolutionBuilder = michiganSolutionBuilder;
 		this.classifier = classifier;
-		NodeList michiganSolutionList = pittsburghSolution.getElementsByTagName(XML_TagName.michiganSolution.toString());
-		for(int i=0; i<michiganSolutionList.getLength(); i++) {
-			michiganSolution michiganSolution = michiganSolutionBuilder.createMichiganSolution((Element)michiganSolutionList.item(i));
-			this.setVariable(i, michiganSolution);
-		}
 	}
 
 	@Override

@@ -9,7 +9,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import cilabo.MakeTestObject;
-import cilabo.data.AttributeVector;
+import cilabo.data.pattern.Pattern;
 import cilabo.fuzzy.classifier.classification.Classification;
 import cilabo.fuzzy.rule.impl.Rule_Basic;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution.MichiganSolutionBuilder;
@@ -31,8 +31,8 @@ class SingleWinnerRuleSelectionTest {
 			michiganSolutionList.add(solution_i);
 		}
 		Classification<MichiganSolution_Basic<Rule_Basic>> classification = testObject.getClassification();
-		AttributeVector inputVector = testObject.getTrain().getPattern(0).getAttributeVector();
-		assertTrue(classification.classify(michiganSolutionList, inputVector) instanceof MichiganSolution_Basic);
+		Pattern<?> pattern = testObject.getTrain().getPattern(0);
+		assertTrue(classification.classify(michiganSolutionList, pattern) instanceof MichiganSolution_Basic);
 	}
 
 	@Test
@@ -42,7 +42,7 @@ class SingleWinnerRuleSelectionTest {
 		MichiganSolutionBuilder<MichiganSolution_Basic<Rule_Basic>> michiganSolutionBuilder = testObject.getMichiganSolutionBuilder();
 		michiganSolutionList.addAll(michiganSolutionBuilder.createMichiganSolutions(5));
 		Classification<MichiganSolution_Basic<Rule_Basic>> classification = testObject.getClassification();
-		AttributeVector inputVector = testObject.getTrain().getPattern(0).getAttributeVector();
-		assertTrue(classification.classify(michiganSolutionList, inputVector) instanceof MichiganSolution_Basic);
+		Pattern<?> pattern = testObject.getTrain().getPattern(0);
+		assertTrue(classification.classify(michiganSolutionList, pattern) instanceof MichiganSolution_Basic);
 	}
 }

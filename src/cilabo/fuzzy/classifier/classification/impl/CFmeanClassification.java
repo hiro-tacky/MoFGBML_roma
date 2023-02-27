@@ -2,7 +2,7 @@ package cilabo.fuzzy.classifier.classification.impl;
 
 import java.util.List;
 
-import cilabo.data.AttributeVector;
+import cilabo.data.pattern.Pattern;
 import cilabo.fuzzy.classifier.classification.Classification;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution;
 
@@ -16,7 +16,7 @@ import cilabo.gbml.solution.michiganSolution.MichiganSolution;
 public final class CFmeanClassification<michiganSolution extends MichiganSolution<?>> implements Classification<michiganSolution>{
 
 	@Override
-	public michiganSolution classify(List<michiganSolution> michiganSolutionList, AttributeVector vector) {
+	public michiganSolution classify(List<michiganSolution> michiganSolutionList, Pattern<?> pattern) {
 		return null;
 	}
 

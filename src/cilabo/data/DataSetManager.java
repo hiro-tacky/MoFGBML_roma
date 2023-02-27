@@ -5,6 +5,7 @@ import java.util.Objects;
 
 /** 学習用データ，評価用データのデータセットを保持するマネージャークラス.<br>
  * this class has one training dataset and one test dataset.<br>
+ * singleton デザインパターンを採用．使用時はgetInstanceでプロジェクト上のどこからでも呼び出せます．
  * @author Takigawa Hiroki
  */
 public class DataSetManager {
@@ -52,7 +53,7 @@ public class DataSetManager {
 	 */
 	public ArrayList<DataSet<?>> getTrains() {
 		if(Objects.isNull(trains)) {
-			throw new NullPointerException("trains hasn't been initialised@TrainTestDatasetManager.getTrains()");}
+			throw new NullPointerException("trains hasn't been initialised @" + this.getClass().getSimpleName());}
 		return this.trains;
 	}
 
@@ -63,7 +64,7 @@ public class DataSetManager {
 	 */
 	public ArrayList<DataSet<?>> getTests() {
 		if(Objects.isNull(tests)) {
-			throw new NullPointerException("tests hasn't been initialised@TrainTestDatasetManager.getTests()");}
+			throw new NullPointerException("tests hasn't been initialised @" + this.getClass().getSimpleName());}
 		return this.tests;
 	}
 

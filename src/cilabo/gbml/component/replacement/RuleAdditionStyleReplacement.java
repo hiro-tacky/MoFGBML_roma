@@ -13,10 +13,10 @@ import cilabo.main.Consts;
  * FAN2021の面﨑論文で発表されているルール追加型ミシガン操作.
  *
  */
-public class RuleAdditionStyleReplacement
-	implements Replacement<MichiganSolution<?>> {
+public class RuleAdditionStyleReplacement <michiganSolution extends MichiganSolution<?>>
+	implements Replacement<michiganSolution> {
 
-	public List<MichiganSolution<?>> replace(List<MichiganSolution<?>> currentList, List<MichiganSolution<?>> offspringList) {
+	public List<michiganSolution> replace(List<michiganSolution> currentList, List<michiganSolution> offspringList) {
 
 		// 親個体をfitness順にソートする
 		Collections.sort(currentList,

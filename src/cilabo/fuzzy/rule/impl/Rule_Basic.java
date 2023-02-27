@@ -38,9 +38,8 @@ public final class Rule_Basic extends AbstractRule <Antecedent_Basic, Consequent
 		this.consequent.setClassLabelValue(classLabelValue);
 	}
 
-	public static class RuleBuilder_Basic
-		extends RuleBuilderCore<Antecedent_Basic, Consequent_Basic>
-		implements RuleBuilder<Rule_Basic, Antecedent_Basic, Consequent_Basic>{
+	public final static class RuleBuilder_Basic
+		extends RuleBuilderCore<Rule_Basic, Antecedent_Basic, Consequent_Basic>{
 
 		public RuleBuilder_Basic(AntecedentIndexFactory antecedentFactory,
 				ConsequentFactory<Consequent_Basic> consequentFactory) {

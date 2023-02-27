@@ -103,4 +103,28 @@ public class CrossoverAndMutationAndPittsburghLearningVariation<S extends Pittsb
 	public int getOffspringPopulationSize() {
 		return this.offspringPopulationSize;
 	}
+
+	public CrossoverOperator<S> getCrossover() {
+		return crossover;
+	}
+
+	public void setCrossover(CrossoverOperator<S> crossover) {
+		this.crossover = crossover;
+	}
+
+	public MutationOperator<S> getMutation() {
+		return mutation;
+	}
+
+	public void setMutation(MutationOperator<S> mutation) {
+		this.mutation = mutation;
+	}
+
+	public void setMatingPoolSize(int matingPoolSize) {
+		this.matingPoolSize = matingPoolSize;
+	}
+
+	public void setOffspringPopulationSize(int offspringPopulationSize) {
+		this.offspringPopulationSize = offspringPopulationSize;
+	}
 }

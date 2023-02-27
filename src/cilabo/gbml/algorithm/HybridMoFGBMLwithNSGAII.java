@@ -141,10 +141,9 @@ public class HybridMoFGBMLwithNSGAII <S extends PittsburghSolution<?>>
 
 		Element population_ = XML_manager.getInstance().createElement(XML_TagName.population);
 		for(S solution: this.getResult()) {
-			Element pittsburghSolution_ = solution.toElement();
-			XML_manager.getInstance().addElement(population_, pittsburghSolution_);
+			XML_manager.getInstance().addElement(population_, solution.toElement());
 		}
-		Element generations_ = XML_manager.getInstance().createElement(XML_TagName.generations, XML_TagName.evaluation, String.valueOf(evaluations));
+		Element generations_ = XML_manager.getInstance().createElement(XML_TagName.generations, XML_TagName.evaluation, String.valueOf(0));
 		//knowlwdge出力用
 		XML_manager.getInstance().addElement(generations_, Knowledge.getInstance().toElement());
 		XML_manager.getInstance().addElement(generations_, population_);

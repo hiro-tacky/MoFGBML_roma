@@ -1,6 +1,6 @@
-$dataName = "iris"
+$dataName = "vehicle"
 $parallelCores = 12
-$algorithmID = "basic"
+$algorithmID = "basic_fixed"
 $experimentID = "trial"
 $logFileName = $algorithmID + "_log.txt"
 

@@ -2,7 +2,7 @@ package cilabo.fuzzy.classifier.classification.impl;
 
 import java.util.List;
 
-import cilabo.data.AttributeVector;
+import cilabo.data.pattern.Pattern;
 import cilabo.fuzzy.classifier.classification.Classification;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution;
 
@@ -22,7 +22,7 @@ public final class SingleWinnerRuleSelection <michiganSolution extends MichiganS
 	 * @return 勝利となったMichiganSolution 識別不能時はnull
 	 */
 	@Override
-	public michiganSolution classify(List<michiganSolution> michiganSolutionList, AttributeVector attributeVector) {
+	public michiganSolution classify(List<michiganSolution> michiganSolutionList, Pattern<?> pattern) {
 		if(michiganSolutionList.size() < 1) {
 			throw new IllegalArgumentException("argument [michiganSolutionList] has no michiganSolution @SingleWinnerRuleSelection.classify()");}
 
@@ -33,7 +33,7 @@ public final class SingleWinnerRuleSelection <michiganSolution extends MichiganS
 			MichiganSolution<?> michiganSolution = michiganSolutionList.get(q);
 			if(michiganSolution.getClassLabel().isRejectedClassLabel()) {
 				throw new IllegalArgumentException("argument [michiganSolutionList] has michiganSolution with Rejected ClassLabel @SingleWinnerRuleSelection.classify()");}
-			double value = michiganSolution.getFitnessValue(attributeVector); //適合度計算
+			double value = michiganSolution.getFitnessValue(pattern.getAttributeVector()); //適合度計算
 
 			//適用度最大値更新ケース
 			if(value > max) {
