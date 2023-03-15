@@ -6,35 +6,32 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 import cilabo.data.DataSet;
-import cilabo.data.pattern.impl.Pattern_Basic;
+import cilabo.data.pattern.Pattern;
 import cilabo.fuzzy.rule.antecedent.Antecedent;
 import cilabo.fuzzy.rule.consequent.classLabel.impl.ClassLabel_Basic;
 import cilabo.fuzzy.rule.consequent.factory.ConsequentFactory;
+import cilabo.fuzzy.rule.consequent.factory.ConsequentFactoryCore;
 import cilabo.fuzzy.rule.consequent.impl.Consequent_Basic;
 import cilabo.fuzzy.rule.consequent.ruleWeight.impl.RuleWeight_Basic;
 import cilabo.utility.Parallel;
 
 /** 入力された前件部から後件部クラスConsequent_Basicを生成する
  * @author Takigawa Hiroki */
-public final class MoFGBML_Learning implements ConsequentFactory <Consequent_Basic>{
-
-	/**	生成不可能と判断するルールの重みの下限 */
-	protected double defaultLimit = 0;
-
-	/** 学習に用いるデータセット*/
-	protected DataSet<Pattern_Basic> train;
+public final class MoFGBML_Learning
+		extends ConsequentFactoryCore<ClassLabel_Basic, RuleWeight_Basic, double[]>
+		implements ConsequentFactory <Consequent_Basic>{
 
 	/**コンストラクタ
 	 * @param train 生成時に用いる学習用データ */
-	public MoFGBML_Learning(DataSet<Pattern_Basic> train) {
+	public MoFGBML_Learning(DataSet<Pattern<ClassLabel_Basic>> train) {
 		this.train = train;
 	}
 
 	@Override
 	public Consequent_Basic learning(Antecedent antecedent, int[] antecedentIndex, double limit) {
-		double[] confidence = this.calcConfidence(antecedent, antecedentIndex);
-		ClassLabel_Basic classLabel = this.calcClassLabel(confidence);
-		RuleWeight_Basic ruleWeight = this.calcRuleWeight(classLabel, confidence, limit);
+		double[] confidence = this.calculateConfidence(antecedent, antecedentIndex);
+		ClassLabel_Basic classLabel = this.calculateClassLabel(confidence);
+		RuleWeight_Basic ruleWeight = this.calculateRuleWeight(classLabel, confidence, limit);
 
 		Consequent_Basic consequent = new Consequent_Basic(classLabel, ruleWeight);
 		return consequent;
@@ -45,11 +42,12 @@ public final class MoFGBML_Learning implements ConsequentFactory <Consequent_Bas
 		return this.learning(antecedent, antecedentIndex, defaultLimit);
 	}
 
-	public double[] calcConfidence(Antecedent antecedent, int[] antecedentIndex) {
+	@Override
+	public double[] calculateConfidence(Antecedent antecedent, int[] antecedentIndex) {
 		if(Objects.isNull(antecedentIndex)){
 			System.out.print("antecedentIndex i null@" + this.getClass().getSimpleName());
 		}
-		int Cnum = train.getCnum();
+		int Cnum = train.getNumberOfClass();
 		double[] confidence = new double[Cnum];
 
 		// 各クラスのパターンに対する適合度の総和
@@ -88,17 +86,14 @@ public final class MoFGBML_Learning implements ConsequentFactory <Consequent_Bas
 	}
 
 	/**
-	 * <h1>結論部クラス</h1></br>
-	 * 信頼度から結論部クラスを決定する</br>
-	 * confidence[]が最大となるクラスを結論部クラスとする</br>
-	 * </br>
-	 * もし、同じ値をとるクラスが複数存在する場合は生成不可能なルール(-1)とする．</br>
-	 * </br>
+	 * 信頼度から結論部クラスを決定する<br>
+	 * confidence[]が最大となるクラスを結論部クラスとする<br>
+	 * もし、同じ値をとるクラスが複数存在する場合は生成不可能なルール(-1)とする．<br>
 	 *
-	 * @param confidence クラス別信頼度
-	 * @return クラスラベル
+	 * @param confidence クラス別の信頼度 confidences for each class
+	 * @return 結論部クラスラベル decided conclusion class label
 	 */
-	public ClassLabel_Basic calcClassLabel(double[] confidence) {
+	public ClassLabel_Basic calculateClassLabel(double[] confidence) {
 		double max = -Double.MAX_VALUE;
 		int consequentClass = -1;
 		ClassLabel_Basic classLabel;
@@ -118,13 +113,8 @@ public final class MoFGBML_Learning implements ConsequentFactory <Consequent_Bas
 		return classLabel;
 	}
 
-	/** ルール重みを計算
-	 * @param classLabel 結論部クラスラベル
-	 * @param confidence 各クラスラベル別信頼度
-	 * @param limit 生成不可能ルール判定用ルール重み下限値
-	 * @return 生成されたルール重み
-	 */
-	public RuleWeight_Basic calcRuleWeight(ClassLabel_Basic classLabel, double[] confidence, double limit) {
+	@Override
+	public RuleWeight_Basic calculateRuleWeight(ClassLabel_Basic classLabel, double[] confidence, double limit) {
 
 		RuleWeight_Basic zeroWeight = new RuleWeight_Basic(0.0);
 		// 生成不可能ルール判定
@@ -132,7 +122,7 @@ public final class MoFGBML_Learning implements ConsequentFactory <Consequent_Bas
 			return zeroWeight;
 		}
 
-		int C = (int) classLabel.getClassLabelValue();
+		int C = (int) classLabel.getClassLabelVariable();
 		double sumConfidence = Arrays.stream(confidence).sum();
 		double CF = confidence[C] - (sumConfidence - confidence[C]);
 		if(CF <= limit) {
@@ -145,11 +135,11 @@ public final class MoFGBML_Learning implements ConsequentFactory <Consequent_Bas
 
 	@Override
 	public String toString() {
-		return "MoFGBML_Learning [defaultLimit=" + defaultLimit + "]";
+		return "MoFGBML_Learning {defaultLimit:" + defaultLimit + "}";
 	}
 
 	@Override
 	public MoFGBML_Learning copy() {
-		return new MoFGBML_Learning(this.train);
+		return new MoFGBML_Learning(this.train.copy());
 	}
 }

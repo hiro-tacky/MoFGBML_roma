@@ -1,43 +1,54 @@
 package cilabo.fuzzy.rule.consequent.ruleWeight.impl;
 
-import java.util.Objects;
-
 import org.w3c.dom.Element;
 
 import cilabo.fuzzy.rule.consequent.ruleWeight.AbstractRuleWeight;
-import cilabo.main.impl.multiTasking.MultiTasking;
 import xml.XML_TagName;
 import xml.XML_manager;
 
-@MultiTasking
+/**
+ * マルチラベル用ルール重みクラス rule weight class for multi-label
+ * @author Takigawa Hiroki
+ */
 public final class RuleWeight_Multi extends AbstractRuleWeight <Double[]>{
 
 	/**
-	 * 入力されたルール重みを持つインスタンスを生成する
-	 * @param ruleWeight ルール重み
+	 * コンストラクタ．constructor
+	 * @param ruleWeight ルール重み格納変数 vaiable of rule weight
 	 */
 	public RuleWeight_Multi(Double[] ruleWeight) {
 		this.ruleWeight = ruleWeight;
 	}
 
-	/**指定したインデックスのルール重みを取得
-	 * @param index ルール重みの配列のインデックス
-	 * @return 指定されたインデックスにあるルール重み
+	/**
+	 * 指定された位置にあるルール重みを返します。<br>
+	 * Returns rule weight at the specified position
+	 * @param index 返されるルール重みのインデックス．index of rule weight to return
+	 * @return 指定された位置にあるルール重み．rule weight at the specified position in the list
 	 */
 	public Double getRuleWeightAt(int index) {
 		return this.ruleWeight[index];
 	}
 
-	/**指定したインデックスのルール重みを置き換え
-	 * @param index 置き換えるルール重みのインデックス
-	 * @param ruleWeight 指定されたインデックスに格納されるルール重み
+	@Override
+	public Double getRuleWeightValue() {
+		return this.getRuleWeightAt(0);
+	}
+
+	/**
+	 * 指定された位置にあるルール重みを、入力されたルール重みで置き換えます。<br>
+	 * Replaces rule weight at the specified position in the list with the specified rule weight.
+	 * @param index 置換されるルール重みのインデックス．index of rule weight to replace
+	 * @param ruleWeight 指定された位置に格納されるルール重み．rule weightt to be stored at the specified position
 	 */
 	public void setRuleWeightAt(int index, Double ruleWeight) {
 		this.ruleWeight[index] = ruleWeight;
 	}
 
-	/** ルール重み配列の長さを返す
-	 * @return ルール重み配列の長さ
+	/**
+	 * このインスタンスが持つルール重み配列長を返します。<br>
+	 * Returns length of rule weight array that this instance has.
+	 * @return 返されるルール重み配列長．length of rule weight array to return
 	 */
 	public int getRuleWeightLength() {
 		return this.ruleWeight.length;
@@ -50,19 +61,11 @@ public final class RuleWeight_Multi extends AbstractRuleWeight <Double[]>{
 
 	@Override
 	public String toString() {
-		if( Objects.isNull(this.ruleWeight) ) {
-			throw new NullPointerException();
-		}
-
 		String str = String.format("%.4f..", this.ruleWeight[0]);
-		if(this.ruleWeight.length < 2) {
-			return str;
-		}else {
-			for(int i=1; i<this.ruleWeight.length; i++) {
-				str += String.format(", %.4f..", this.ruleWeight[i]);
-			}
-			return str;
+		for(int i=1; i<this.ruleWeight.length; i++) {
+			str += String.format(", %.4f..", this.ruleWeight[i]);
 		}
+		return str;
 	}
 
 	@Override
@@ -74,10 +77,4 @@ public final class RuleWeight_Multi extends AbstractRuleWeight <Double[]>{
 		}
 		return ruleWeight;
 	}
-
-	@Override
-	public Double getRuleWeightDouble() {
-		return this.getRuleWeightAt(0);
-	}
-
 }

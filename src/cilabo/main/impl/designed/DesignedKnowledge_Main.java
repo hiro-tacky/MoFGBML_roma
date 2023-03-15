@@ -25,11 +25,11 @@ import cilabo.data.DataSet;
 import cilabo.data.DataSetManager;
 import cilabo.data.Input;
 import cilabo.data.pattern.impl.Pattern_Basic;
-import cilabo.fuzzy.classifier.Classifier;
-import cilabo.fuzzy.classifier.classification.Classification;
-import cilabo.fuzzy.classifier.classification.impl.SingleWinnerRuleSelection;
-import cilabo.fuzzy.classifier.impl.Classifier_basic;
-import cilabo.fuzzy.knowledge.FuzzyTermTypeForMixed;
+import cilabo.fuzzy.classifier.pittsburgh.Classifier;
+import cilabo.fuzzy.classifier.pittsburgh.classification.Classification;
+import cilabo.fuzzy.classifier.pittsburgh.classification.impl.SingleWinnerRuleSelection;
+import cilabo.fuzzy.classifier.pittsburgh.impl.Classifier_basic;
+import cilabo.fuzzy.knowledge.FuzzySet;
 import cilabo.fuzzy.knowledge.Knowledge;
 import cilabo.fuzzy.knowledge.factory.KnowledgeFactoryFromXML;
 import cilabo.fuzzy.rule.Rule.RuleBuilder;
@@ -42,7 +42,7 @@ import cilabo.gbml.operator.crossover.HybridGBMLcrossover;
 import cilabo.gbml.operator.crossover.MichiganCrossover;
 import cilabo.gbml.operator.crossover.PittsburghCrossover;
 import cilabo.gbml.operator.mutation.PittsburghMutation;
-import cilabo.gbml.problem.pittsburghFGBML_Problem.impl.PittsburghFGBML_Basic;
+import cilabo.gbml.problem.pittsburghFGBML_Problem.impl.PittsburghProblem_Basic;
 import cilabo.gbml.solution.michiganSolution.AbstractMichiganSolution;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution.MichiganSolutionBuilder;
 import cilabo.gbml.solution.michiganSolution.impl.MichiganSolution_Basic;
@@ -111,7 +111,7 @@ public class DesignedKnowledge_Main {
 		JMetalRandom.getInstance().setSeed(Consts.RAND_SEED);
 
 		/* Load Dataset ======================== */
-		Input.loadTrainTestFiles_Basic(DesignedKnowledge_CommandLineArgs.trainFile, DesignedKnowledge_CommandLineArgs.testFile);
+		Input.loadTrainTestFiles(DesignedKnowledge_CommandLineArgs.trainFile, DesignedKnowledge_CommandLineArgs.testFile);
 		DataSet<Pattern_Basic> test = (DataSet<Pattern_Basic>) DataSetManager.getInstance().getTests().get(0);
 		DataSet<Pattern_Basic> train = (DataSet<Pattern_Basic>) DataSetManager.getInstance().getTrains().get(0);
 
@@ -146,7 +146,7 @@ public class DesignedKnowledge_Main {
 		//Consts出力用
 		XML_manager.getInstance().addElement(XML_manager.getInstance().getRoot(), Consts.toElement());
 
-		int dimension = train.getNdim();
+		int dimension = train.getNumberOfDimension();
 
 		XML_reader XML_reader = null;
 		try { XML_reader = new XML_reader(DesignedKnowledge_Consts.LEARNING_EXPERIMENT_ID_DIR + File.separator + Consts.XML_FILE_NAME + ".xml");
@@ -154,7 +154,7 @@ public class DesignedKnowledge_Main {
 		KnowledgeFactoryFromXML knowledgeFactory = new KnowledgeFactoryFromXML(dimension, XML_reader.getKnowledgeElement(DesignedKnowledge_Consts.LEARNING_EVALUATION));
 		knowledgeFactory.create();
 
-		FuzzyTermTypeForMixed[][] buf = FuzzyTermUsedRanking.getUsedFuzzyStyle(XML_reader.getPopulation(DesignedKnowledge_Consts.LEARNING_EVALUATION), dimension);
+		FuzzySet[][] buf = FuzzyTermUsedRanking.getUsedFuzzyStyle(XML_reader.getPopulation(DesignedKnowledge_Consts.LEARNING_EVALUATION), dimension);
 		Knowledge.getInstance().setFuzzySets(buf);
 
 		List<Pair<Integer, Integer>> bounds_Michigan = AbstractMichiganSolution.makeBounds();
@@ -182,7 +182,7 @@ public class DesignedKnowledge_Main {
 
 		/* MOP: Multi-objective Optimization Problem */
 		Problem<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>> problem =
-				new PittsburghFGBML_Basic<MichiganSolution_Basic<Rule_Basic>>(
+				new PittsburghProblem_Basic<MichiganSolution_Basic<Rule_Basic>>(
 						numberOfvariables_Pittsburgh,
 						numberOfObjectives_Pittsburgh,
 						numberOfConstraints_Pittsburgh,

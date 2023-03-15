@@ -13,17 +13,39 @@ public class GeneralFunctions {
 
 	public static boolean checkRule(List<MichiganSolution<?>> offspring) {
 		for(MichiganSolution<?> michiganSolution_tmp : offspring) {
-			if(michiganSolution_tmp.getConsequent().isRejectedClassLabel()) return false;
+			if(michiganSolution_tmp.getRule().getConsequent().getClassLabel().isRejectedClassLabel()) return false;
 		}
 		return true;
 	}
 
-	public static boolean checkRule(PittsburghSolution<MichiganSolution<?>> offspring) {
+	public static boolean checkRule(PittsburghSolution<?> offspring) {
 		if(offspring.getNumberOfVariables() < 1) {return false;}
 		for(MichiganSolution<?> michiganSolution_tmp : offspring.getVariables()) {
-			if(michiganSolution_tmp.getConsequent().isRejectedClassLabel()) return false;
+			if(michiganSolution_tmp.getRule().getConsequent().getClassLabel().isRejectedClassLabel()) return false;
 		}
 		return true;
+	}
+
+	/** 配列の全要素の総和を返す．
+	 * @param array
+	 * @return 総和 */
+	public static int sumOfArray(int[] array) {
+		int sum = 0;
+		for( int i=0; i<array.length; i++ ) {
+			sum += array[i];
+		}
+		return sum;
+	}
+
+	/** 配列の全要素の総和を返す．
+	 * @param array
+	 * @return 総和 */
+	public static double sumOfArray(double[] array) {
+		double sum = 0;
+		for( int i=0; i<array.length; i++ ) {
+			sum += array[i];
+		}
+		return sum;
 	}
 
 	/**
@@ -102,7 +124,7 @@ public class GeneralFunctions {
 	 * @param b : Integer[] :
 	 * @return double :
 	 */
-	public static double HammingDistance(Integer[] a, Integer[] b) {
+	public static double hammingDistance(Integer[] a, Integer[] b) {
 		double distance = 0.0;
 		for(int i = 0; i < a.length; i++) {
 			if(a[i] != b[i]) {

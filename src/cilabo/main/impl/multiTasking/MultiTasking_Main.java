@@ -25,10 +25,10 @@ import cilabo.data.DataSet;
 import cilabo.data.DataSetManager;
 import cilabo.data.Input;
 import cilabo.data.pattern.impl.Pattern_MultiClass;
-import cilabo.fuzzy.classifier.Classifier;
-import cilabo.fuzzy.classifier.classification.Classification;
-import cilabo.fuzzy.classifier.classification.impl.SingleWinnerRuleSelection;
-import cilabo.fuzzy.classifier.impl.Classifier_basic;
+import cilabo.fuzzy.classifier.pittsburgh.Classifier;
+import cilabo.fuzzy.classifier.pittsburgh.classification.Classification;
+import cilabo.fuzzy.classifier.pittsburgh.classification.impl.SingleWinnerRuleSelection;
+import cilabo.fuzzy.classifier.pittsburgh.impl.Classifier_basic;
 import cilabo.fuzzy.knowledge.Knowledge;
 import cilabo.fuzzy.knowledge.factory.HomoTriangleKnowledgeFactory;
 import cilabo.fuzzy.knowledge.membershipParams.Parameters;
@@ -42,7 +42,7 @@ import cilabo.gbml.operator.crossover.HybridGBMLcrossover;
 import cilabo.gbml.operator.crossover.MichiganCrossover;
 import cilabo.gbml.operator.crossover.PittsburghCrossover;
 import cilabo.gbml.operator.mutation.PittsburghMutation;
-import cilabo.gbml.problem.pittsburghFGBML_Problem.impl.PittsburghFGBML_Basic;
+import cilabo.gbml.problem.pittsburghFGBML_Problem.impl.PittsburghProblem_Basic;
 import cilabo.gbml.solution.michiganSolution.AbstractMichiganSolution;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution.MichiganSolutionBuilder;
 import cilabo.gbml.solution.michiganSolution.impl.MichiganSolution_Basic;
@@ -106,7 +106,7 @@ public class MultiTasking_Main {
 		JMetalRandom.getInstance().setSeed(Consts.RAND_SEED);
 
 		/* Load Dataset ======================== */
-		Input.loadTrainTestFiles_Basic(MultiTasking_CommandLineArgs.trainFile, MultiTasking_CommandLineArgs.testFile);
+		Input.loadTrainTestFiles(MultiTasking_CommandLineArgs.trainFile, MultiTasking_CommandLineArgs.testFile);
 		DataSet<Pattern_MultiClass> test = (DataSet<Pattern_MultiClass>) DataSetManager.getInstance().getTests().get(0);
 		DataSet<Pattern_MultiClass> train = (DataSet<Pattern_MultiClass>) DataSetManager.getInstance().getTrains().get(0);
 
@@ -141,7 +141,7 @@ public class MultiTasking_Main {
 		Random.getInstance().initRandom(2022);
 		String sep = File.separator;
 
-		int dimension = train.getNdim();
+		int dimension = train.getNumberOfDimension();
 		Parameters parameters = new Parameters(train);
 		HomoTriangleKnowledgeFactory KnowledgeFactory = new HomoTriangleKnowledgeFactory(parameters);
 		KnowledgeFactory.create2_3_4_5();
@@ -171,7 +171,7 @@ public class MultiTasking_Main {
 
 		/* MOP: Multi-objective Optimization Problem */
 		Problem<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_MultiClass>>> problem =
-				new PittsburghFGBML_Basic<MichiganSolution_Basic<Rule_MultiClass>>(
+				new PittsburghProblem_Basic<MichiganSolution_Basic<Rule_MultiClass>>(
 						numberOfvariables_Pittsburgh,
 						numberOfObjectives_Pittsburgh,
 						numberOfConstraints_Pittsburgh,

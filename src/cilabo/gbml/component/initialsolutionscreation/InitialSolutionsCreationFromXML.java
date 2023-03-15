@@ -7,7 +7,7 @@ import org.uma.jmetal.component.initialsolutioncreation.InitialSolutionsCreation
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import cilabo.gbml.problem.pittsburghFGBML_Problem.impl.PittsburghFGBML_Basic;
+import cilabo.gbml.problem.pittsburghFGBML_Problem.impl.PittsburghProblem_Basic;
 import cilabo.gbml.solution.pittsburghSolution.PittsburghSolution;
 import xml.XML_TagName;
 
@@ -15,9 +15,9 @@ public class InitialSolutionsCreationFromXML <S extends PittsburghSolution<?>>
 	implements InitialSolutionsCreation<S> {
 
 	private final Element population;
-	private final PittsburghFGBML_Basic<?> problem;
+	private final PittsburghProblem_Basic<?> problem;
 
-	public InitialSolutionsCreationFromXML(PittsburghFGBML_Basic<?> problem, Element population) {
+	public InitialSolutionsCreationFromXML(PittsburghProblem_Basic<?> problem, Element population) {
 		this.problem = problem;
 		this.population = population;
 	}

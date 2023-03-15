@@ -3,67 +3,59 @@ package cilabo.fuzzy.rule.consequent.factory;
 import cilabo.data.DataSet;
 import cilabo.data.pattern.Pattern;
 import cilabo.fuzzy.rule.antecedent.Antecedent;
-import cilabo.fuzzy.rule.consequent.Consequent;
 import cilabo.fuzzy.rule.consequent.classLabel.ClassLabel;
 import cilabo.fuzzy.rule.consequent.ruleWeight.RuleWeight;
 
-/** 入力された前件部から後件部を算出する為に使用される関数群
+/**
+ * 入力された前件部から後件部を算出する為に使用される関数群<br>
+ * methods to calculate consequent by geiven antecedent
  * @author Takigawa Hiroki
  *
- * @param <ClassLabelObject> 算出される後件部で使用される結論部クラス
- * @param <RuleWeightObject> 算出される後件部で使用されるルール重みクラス
- * @param <ConsequentObject> 算出される後件部のクラス
- * @param <confidence> 信頼度を記憶する変数
+ * @param <ClassLabelClass> 算出される後件部で使用される結論部クラス
+ * @param <RuleWeightClass> 算出される後件部で使用されるルール重みクラス
+ * @param <ConsequentClass> 算出される後件部のクラス
+ * @param <Confidence> 信頼度を記憶する変数
  */
 public abstract class ConsequentFactoryCore <
-	patternObject extends Pattern<ClassLabelObject>,
-	ClassLabelObject extends ClassLabel<?>,
-	RuleWeightObject extends RuleWeight<?>,
-	ConsequentObject extends Consequent<ClassLabelObject, ?, RuleWeightObject, ?>,
-	confidence>{
+	ClassLabelClass extends ClassLabel<?>,
+	RuleWeightClass extends RuleWeight<?>,
+	Confidence>{
 
 	/**	生成不可能と判断するルールの重みの下限 */
 	protected double defaultLimit = 0;
-
 	/** 学習に用いるデータセット*/
-	protected DataSet<patternObject> train;
+	protected DataSet<Pattern<ClassLabelClass>> train;
 
-	public DataSet<patternObject> getTrain() {
-		return this.train;
+	public double getLimit() {
+		return this.defaultLimit;
 	}
 
-	/**前件部から後件部を生成する<br>
-	 * 但し，生成不可能と判断するルールの信頼度の下限はデフォルトの値を使用する．
-	 * @param antecedent 前件部
-	 * @return 生成された後件部
-	 */
-	public abstract ConsequentObject learning(Antecedent antecedent, int[] antecedentIndex);
+	public void setLimit(double limit) {
+		this.defaultLimit = limit;
+	}
 
-	/**前件部から後件部を生成する
-	 * @param antecedent 前件部
-	 * @param limit 生成不可能と判断するルールの信頼度の下限
-	 * @return 生成された後件部
+	/**
+	 * 前件部からクラス別の信頼度を算出する.calculate confidences for each class by geiven antecedent
+	 * @param antecedent 前件部クラス antecedent class
+	 * @param antecedentIndex 前件部のファジィセットのインデックス配列 array of antecedent index
+	 * @return クラス別の信頼度 confidences for each class
 	 */
-	public abstract ConsequentObject learning(Antecedent antecedent, int[] antecedentIndex, double limit);
+	public abstract Confidence calculateConfidence(Antecedent antecedent, int[] antecedentIndex);
 
-	/** 前件部からクラス別の信頼度を算出する
-	 * @param antecedent 前件部
-	 * @return 信頼度
+	/**
+	 * クラス別の信頼度から結論部クラスラベルを決定 decide conclusion class label from confidences for each class
+	 * @param confidence クラス別の信頼度 confidences for each class
+	 * @return 結論部クラスラベル decided conclusion class label
 	 */
-	public abstract confidence calcConfidence(Antecedent antecedent, int[] antecedentIndex);
+	public abstract ClassLabelClass calculateClassLabel (Confidence confidence);
 
-	/** クラス別の信頼度からクラスラベルを算出する
-	 * @param confidence クラス別の信頼度
-	 * @return クラスラベル
+	/**
+	 * クラス別の信頼度とクラスラベルからルール重みを算出する<br>
+	 * calculate rule weight from conclusion class label and confidences for each class
+	 * @param classLabel 結論部クラスラベル decided conclusion class label
+	 * @param confidence クラス別の信頼度 confidences for each class
+	 * @param limit 生成不可能と判断するルールの重みの下限 limit to judge which a rule is enable to be generated or not
+	 * @return ルール重み calculated rule weight
 	 */
-	public abstract ClassLabelObject calcClassLabel (confidence confidence);
-
-	/** クラス別の信頼度とクラスラベルからルール重みを算出する
-	 * @param classLabel クラスラベル
-	 * @param confidence クラス別の信頼度
-	 * @param limit 生成不可能と判断するルール重みの下限
-	 * @return ルール重み
-	 */
-	public abstract RuleWeightObject calcRuleWeight(ClassLabelObject classLabel, confidence confidence, double limit);
-
+	public abstract RuleWeightClass calculateRuleWeight(ClassLabelClass classLabel, Confidence confidence, double limit);
 }

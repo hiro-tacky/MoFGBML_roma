@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import cilabo.MakeTestObject;
 import cilabo.data.DataSet;
 import cilabo.data.DataSetManager;
-import cilabo.fuzzy.knowledge.FuzzyTermBluePrintManager;
+import cilabo.fuzzy.knowledge.FuzzySetBluePrintManager;
 import cilabo.fuzzy.knowledge.Knowledge;
 import cilabo.fuzzy.knowledge.membershipParams.Parameters;
 import cilabo.main.ExperienceParameter.DIVISION_TYPE;
@@ -31,17 +31,17 @@ class MixedKnowledgeFactoryTest {
 
 	@Test
 	void test() {
-		FuzzyTermBluePrintManager FuzzyTermBMP = new FuzzyTermBluePrintManager(train.getNdim());
+		FuzzySetBluePrintManager FuzzyTermBMP = new FuzzySetBluePrintManager(train.getNumberOfDimension());
 		for(int dim_i=0; dim_i<dimension; dim_i++) {
 			int[] K = new int[] {2, 3, 4, 5};
-			FuzzyTermBMP.addFuzyyTermsBluePrint(DIVISION_TYPE.equalDivision, dim_i, K, FuzzyTermType.TYPE_triangularShape);
-			FuzzyTermBMP.addFuzyyTermsBluePrint(DIVISION_TYPE.equalDivision, dim_i, K, FuzzyTermType.TYPE_trapezoidShape);
-			FuzzyTermBMP.addFuzyyTermsBluePrint(DIVISION_TYPE.equalDivision, dim_i, K, FuzzyTermType.TYPE_rectangularShape);
-			FuzzyTermBMP.addFuzyyTermsBluePrint(DIVISION_TYPE.equalDivision, dim_i, K, FuzzyTermType.TYPE_gaussianShape);
-			FuzzyTermBMP.addFuzyyTermsBluePrint(DIVISION_TYPE.entropyDivision, dim_i, K, FuzzyTermType.TYPE_triangularShape);
-			FuzzyTermBMP.addFuzyyTermsBluePrint(DIVISION_TYPE.entropyDivision, dim_i, K, FuzzyTermType.TYPE_trapezoidShape);
-			FuzzyTermBMP.addFuzyyTermsBluePrint(DIVISION_TYPE.entropyDivision, dim_i, K, FuzzyTermType.TYPE_rectangularShape);
-			FuzzyTermBMP.addFuzyyTermsBluePrint(DIVISION_TYPE.entropyDivision, dim_i, K, FuzzyTermType.TYPE_gaussianShape);
+			FuzzyTermBMP.addFuzzySetBluePrint(DIVISION_TYPE.equalDivision, dim_i, K, FuzzyTermType.TYPE_triangularShape);
+			FuzzyTermBMP.addFuzzySetBluePrint(DIVISION_TYPE.equalDivision, dim_i, K, FuzzyTermType.TYPE_trapezoidShape);
+			FuzzyTermBMP.addFuzzySetBluePrint(DIVISION_TYPE.equalDivision, dim_i, K, FuzzyTermType.TYPE_rectangularShape);
+			FuzzyTermBMP.addFuzzySetBluePrint(DIVISION_TYPE.equalDivision, dim_i, K, FuzzyTermType.TYPE_gaussianShape);
+			FuzzyTermBMP.addFuzzySetBluePrint(DIVISION_TYPE.entropyDivision, dim_i, K, FuzzyTermType.TYPE_triangularShape);
+			FuzzyTermBMP.addFuzzySetBluePrint(DIVISION_TYPE.entropyDivision, dim_i, K, FuzzyTermType.TYPE_trapezoidShape);
+			FuzzyTermBMP.addFuzzySetBluePrint(DIVISION_TYPE.entropyDivision, dim_i, K, FuzzyTermType.TYPE_rectangularShape);
+			FuzzyTermBMP.addFuzzySetBluePrint(DIVISION_TYPE.entropyDivision, dim_i, K, FuzzyTermType.TYPE_gaussianShape);
 		}
 
 		knowledgeFactory.create(FuzzyTermBMP);

@@ -11,7 +11,8 @@ import cilabo.fuzzy.rule.antecedent.factory.AntecedentIndexFactory;
 import cilabo.utility.GeneralFunctions;
 import cilabo.utility.Random;
 
-/** 全組み合わせを持つ前件部のFactory
+/** 全パターンの組み合わせを持つ前件部のファジィ集合のインデックス配列生成クラス
+ * this class define methods to generate all combination array of fuzzy set index
  * @author Takigawa Hiroki
  */
 public final class AllCombinationAntecedentFactory implements AntecedentIndexFactory{
@@ -19,12 +20,12 @@ public final class AllCombinationAntecedentFactory implements AntecedentIndexFac
 	/**	前件部のファジィセットのインデックスを格納 */
 	private int[][] antecedents;
 	/** 次元数 */
-	private int dimension;
+	private int numberOfDimension;
 
-	/** コンストラクタ */
+	/** コンストラクタ．constructor */
 	public AllCombinationAntecedentFactory() {
 		generateAntecedents();
-		dimension = Knowledge.getInstance().getNumberOfDimension();
+		numberOfDimension = Knowledge.getInstance().getNumberOfDimension();
 	}
 
 	/** 全てのファジィ集合の組わせを生成する．*/
@@ -38,8 +39,8 @@ public final class AllCombinationAntecedentFactory implements AntecedentIndexFac
 		while(!que.isEmpty()){
 			ArrayList<Integer> buf = que.poll();
 			int dim_i = buf.size();
-			if(dim_i < dimension) {
-				for(int i=0; i < Knowledge.getInstance().getFuzzySetNum(dim_i); i++) {
+			if(dim_i < numberOfDimension) {
+				for(int i=0; i < Knowledge.getInstance().getNumberOfFuzzySet(dim_i); i++) {
 					ArrayList<Integer> tmp = (ArrayList<Integer>) buf.clone();
 					tmp.add(i);
 					que.add(tmp);
@@ -50,9 +51,9 @@ public final class AllCombinationAntecedentFactory implements AntecedentIndexFac
 		}
 
 		// Antecedent Part
-		antecedents = new int[ids.size()][dimension];
+		antecedents = new int[ids.size()][numberOfDimension];
 		for(int i=0; i<ids.size(); i++) {
-			for(int dim_i=0; dim_i<dimension; dim_i++) {
+			for(int dim_i=0; dim_i<numberOfDimension; dim_i++) {
 				antecedents[i][dim_i] = ids.get(i).get(dim_i);
 			}
 		}
@@ -70,7 +71,7 @@ public final class AllCombinationAntecedentFactory implements AntecedentIndexFac
 	@Override
 	public int[][] create(int numberOfGenerateRule) {
 		if(Objects.isNull(this.antecedents)) {System.err.println("AllCombinationAntecedentFactory hasn't been initialised");}
-		int[][] antecedentIndexArray = new int[numberOfGenerateRule][this.dimension];
+		int[][] antecedentIndexArray = new int[numberOfGenerateRule][this.numberOfDimension];
 		Integer[] antecedentIndexArrayIndex = GeneralFunctions.samplingWithout(this.antecedents.length, numberOfGenerateRule, Random.getInstance().getGEN());
 		for(int i=0; i<numberOfGenerateRule; i++) {
 			antecedentIndexArray[i] = this.antecedents[antecedentIndexArrayIndex[i]];
@@ -81,7 +82,7 @@ public final class AllCombinationAntecedentFactory implements AntecedentIndexFac
 	@Override
 	public String toString() {
 		return "AllCombinationAntecedentFactory [antecedents=" + Arrays.toString(antecedents) + ", dimension="
-				+ dimension + "]";
+				+ numberOfDimension + "]";
 	}
 
 	@Override

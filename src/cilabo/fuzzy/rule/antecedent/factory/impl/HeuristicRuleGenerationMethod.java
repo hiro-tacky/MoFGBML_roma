@@ -9,6 +9,7 @@ import cilabo.utility.GeneralFunctions;
 import cilabo.utility.Random;
 
 /**ヒューリスティックに基づいた前件部のFactory
+ * this class define methods to generate array of fuzzy set index by heuristic
  * @author Takigawa Hiroki
  */
 public final class HeuristicRuleGenerationMethod implements AntecedentIndexFactory{
@@ -16,20 +17,21 @@ public final class HeuristicRuleGenerationMethod implements AntecedentIndexFacto
 	/**  学習用データ*/
 	private DataSet<?> train;
 	/** 次元数 */
-	private int dimension;
+	private int numberOfDimension;
 	/** データセットのパターン数 */
-	private int dataSize;
+	private int dataSetSize;
 
-	/**コンストラクタ
-	 * @param train 生成時の学習に用いる学習用データ
+	/**
+	 * コンストラクタ．constructor
+	 * @param train 生成時の学習に用いる学習用データ training data set to generate antecedent index
 	 */
 	public HeuristicRuleGenerationMethod(DataSet<?> train) {
 		this.train = train;
-		this.dimension = Knowledge.getInstance().getNumberOfDimension();
-		this.dataSize = train.getDataSize();
+		this.numberOfDimension = Knowledge.getInstance().getNumberOfDimension();
+		this.dataSetSize = train.getDataSetSize();
 	}
 
-	/** 前件部のファジィ集合のidを決定する
+	/** 前件部のファジィ集合のインデックス配列を生成
 	 * @param index 前件部の生成時，学習に用いられるパターンのindex
 	 * @return 決定された前件部のファジィセットのインデックス配列
 	 */
@@ -38,7 +40,7 @@ public final class HeuristicRuleGenerationMethod implements AntecedentIndexFacto
 		return this.calculateAntecedentPart(pattern);
 	}
 
-	/** 前件部のファジィ集合のidを決定する
+	/** 前件部のファジィ集合のインデックス配列を生成
 	 * @param pattern 前件部の生成時，学習に用いられるパターン
 	 * @return 決定された前件部のファジィセットのインデックス配列
 	 */
@@ -52,11 +54,11 @@ public final class HeuristicRuleGenerationMethod implements AntecedentIndexFacto
 		}
 		else {
 			// (Ndim - const) / Ndim
-			dcRate = Math.max((dimension - Consts.ANTECEDENT_NUMBER_DO_NOT_DONT_CARE) / (double)dimension, Consts.DONT_CARE_RT);
+			dcRate = Math.max((numberOfDimension - Consts.ANTECEDENT_NUMBER_DO_NOT_DONT_CARE) / (double)numberOfDimension, Consts.DONT_CARE_RT);
 		}
 
-		int[] antecedentIndex = new int[dimension];
-		for(int n = 0; n < dimension; n++) {
+		int[] antecedentIndex = new int[numberOfDimension];
+		for(int n = 0; n < numberOfDimension; n++) {
 			// don't care
 			if(Random.getInstance().getGEN().nextBoolean(dcRate)) {
 				antecedentIndex[n] = 0;
@@ -70,7 +72,7 @@ public final class HeuristicRuleGenerationMethod implements AntecedentIndexFacto
 			}
 
 			// Numerical
-			int fuzzySetNum = Knowledge.getInstance().getFuzzySetNum(n)-1; //dontCare以外のファジィ集合の総数
+			int fuzzySetNum = Knowledge.getInstance().getNumberOfFuzzySet(n)-1; //dontCare以外のファジィ集合の総数
 			if(fuzzySetNum < 1) { antecedentIndex[n] = 0; continue; } //Dont care以外のファジィ集合が存在しない場合はDonat careに固定
 
 			double[] membershipValueRoulette = new double[fuzzySetNum];
@@ -94,7 +96,7 @@ public final class HeuristicRuleGenerationMethod implements AntecedentIndexFacto
 
 	@Override
 	public int[] create() {
-		int patternIndex = Random.getInstance().getGEN().nextInt(this.dataSize);
+		int patternIndex = Random.getInstance().getGEN().nextInt(this.dataSetSize);
 
 		int[] antecedentIndex = this.selectAntecedentPart(patternIndex);
 
@@ -104,24 +106,24 @@ public final class HeuristicRuleGenerationMethod implements AntecedentIndexFacto
 	@Override
 	public int[][] create(int numberOfGenerateRule) {
 
-		int[][] antecedentIndexArray = new int[numberOfGenerateRule][this.dimension];
+		int[][] antecedentIndexArray = new int[numberOfGenerateRule][this.numberOfDimension];
 		Integer[] antecedentIndexArrayIndex;
 
 		//学習に用いるパターンのインデックス配列を生成する
-		if(numberOfGenerateRule <= this.dataSize) {
-			antecedentIndexArrayIndex = GeneralFunctions.samplingWithout(this.dataSize, numberOfGenerateRule, Random.getInstance().getGEN());
+		if(numberOfGenerateRule <= this.dataSetSize) {
+			antecedentIndexArrayIndex = GeneralFunctions.samplingWithout(this.dataSetSize, numberOfGenerateRule, Random.getInstance().getGEN());
 		}else {
 			antecedentIndexArrayIndex = new Integer[numberOfGenerateRule];
 
 			//"未定の学習用パターン数 < データセットのパターン数" になるまでデータセットの全パターンで埋める
-			for(int i=0; i<numberOfGenerateRule/this.dataSize; i++) {
-				for(int j=0; j<this.dataSize; j++) {
-					antecedentIndexArrayIndex[i*this.dataSize + j] = j;
+			for(int i=0; i<numberOfGenerateRule/this.dataSetSize; i++) {
+				for(int j=0; j<this.dataSetSize; j++) {
+					antecedentIndexArrayIndex[i*this.dataSetSize + j] = j;
 				}
 			}
 			//残りの未定の学習用パターンをランダムに選択する．
-			int restArrayIndex = numberOfGenerateRule % this.dataSize;
-			Integer[] buf = GeneralFunctions.samplingWithout(this.dataSize,
+			int restArrayIndex = numberOfGenerateRule % this.dataSetSize;
+			Integer[] buf = GeneralFunctions.samplingWithout(this.dataSetSize,
 					restArrayIndex, Random.getInstance().getGEN());
 			for(int i=0; i<buf.length; i++) {
 				antecedentIndexArrayIndex[numberOfGenerateRule - i -1]= buf[i];

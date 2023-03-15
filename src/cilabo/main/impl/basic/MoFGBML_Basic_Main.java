@@ -24,15 +24,17 @@ import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 import cilabo.data.DataSet;
 import cilabo.data.DataSetManager;
 import cilabo.data.Input;
-import cilabo.data.pattern.impl.Pattern_Basic;
-import cilabo.fuzzy.classifier.Classifier;
-import cilabo.fuzzy.classifier.classification.Classification;
-import cilabo.fuzzy.classifier.classification.impl.SingleWinnerRuleSelection;
-import cilabo.fuzzy.classifier.impl.Classifier_basic;
+import cilabo.data.pattern.Pattern;
+import cilabo.fuzzy.classifier.pittsburgh.Classifier;
+import cilabo.fuzzy.classifier.pittsburgh.classification.Classification;
+import cilabo.fuzzy.classifier.pittsburgh.classification.impl.SingleWinnerRuleSelection;
+import cilabo.fuzzy.classifier.pittsburgh.impl.Classifier_basic;
 import cilabo.fuzzy.knowledge.factory.HomoTriangleKnowledgeFactory;
 import cilabo.fuzzy.knowledge.membershipParams.Parameters;
-import cilabo.fuzzy.rule.Rule.RuleBuilder;
 import cilabo.fuzzy.rule.antecedent.factory.impl.HeuristicRuleGenerationMethod;
+import cilabo.fuzzy.rule.builder.RuleBuilder;
+import cilabo.fuzzy.rule.builder.impl.RuleBuilder_Basic;
+import cilabo.fuzzy.rule.consequent.classLabel.impl.ClassLabel_Basic;
 import cilabo.fuzzy.rule.consequent.factory.impl.MoFGBML_Learning;
 import cilabo.fuzzy.rule.impl.Rule_Basic;
 import cilabo.gbml.algorithm.HybridMoFGBMLwithNSGAII;
@@ -41,12 +43,14 @@ import cilabo.gbml.operator.crossover.HybridGBMLcrossover;
 import cilabo.gbml.operator.crossover.MichiganCrossover;
 import cilabo.gbml.operator.crossover.PittsburghCrossover;
 import cilabo.gbml.operator.mutation.PittsburghMutation;
-import cilabo.gbml.problem.pittsburghFGBML_Problem.impl.PittsburghFGBML_Basic;
+import cilabo.gbml.problem.pittsburghFGBML_Problem.impl.PittsburghProblem_Basic;
 import cilabo.gbml.solution.michiganSolution.AbstractMichiganSolution;
-import cilabo.gbml.solution.michiganSolution.MichiganSolution.MichiganSolutionBuilder;
+import cilabo.gbml.solution.michiganSolution.builder.MichiganSolutionBuilder;
+import cilabo.gbml.solution.michiganSolution.builder.impl.MichiganSolutionBuilder_Basic;
 import cilabo.gbml.solution.michiganSolution.impl.MichiganSolution_Basic;
 import cilabo.gbml.solution.pittsburghSolution.impl.PittsburghSolution_Basic;
 import cilabo.main.Consts;
+import cilabo.main.ExperienceParameter.CLASS_LABEL_TYPE;
 import cilabo.utility.Output;
 import cilabo.utility.Parallel;
 import cilabo.utility.Random;
@@ -110,9 +114,13 @@ public class MoFGBML_Basic_Main {
 		JMetalRandom.getInstance().setSeed(Consts.RAND_SEED);
 
 		/* Load Dataset ======================== */
-		Input.loadTrainTestFiles_Basic(MoFGBML_Basic_CommandLineArgs.trainFile, MoFGBML_Basic_CommandLineArgs.testFile);
-		DataSet<Pattern_Basic> test = (DataSet<Pattern_Basic>) DataSetManager.getInstance().getTests().get(0);
-		DataSet<Pattern_Basic> train = (DataSet<Pattern_Basic>) DataSetManager.getInstance().getTrains().get(0);
+		Input.loadTrainTestFiles(
+				MoFGBML_Basic_CommandLineArgs.trainFile,
+				MoFGBML_Basic_CommandLineArgs.testFile,
+				CLASS_LABEL_TYPE.Single);
+
+		DataSet<Pattern<ClassLabel_Basic>> test = (DataSet<Pattern<ClassLabel_Basic>>) DataSetManager.getInstance().getTests().get(0);
+		DataSet<Pattern<ClassLabel_Basic>> train = (DataSet<Pattern<ClassLabel_Basic>>) DataSetManager.getInstance().getTrains().get(0);
 
 
 		/** XML ファイル出力ようインスタンスの生成*/
@@ -135,10 +143,7 @@ public class MoFGBML_Basic_Main {
 		System.exit(0);
 	}
 
-	/**
-	 *
-	 */
-	public static void HybridStyleMoFGBML (DataSet<Pattern_Basic> train, DataSet<Pattern_Basic> test) {
+	public static void HybridStyleMoFGBML (DataSet<Pattern<ClassLabel_Basic>> train, DataSet<Pattern<ClassLabel_Basic>> test) {
 		Random.getInstance().initRandom(2022);
 		String sep = File.separator;
 
@@ -151,34 +156,29 @@ public class MoFGBML_Basic_Main {
 		int numberOfConstraints_Michigan = 0;
 
 		int numberOfvariables_Pittsburgh = Consts.INITIATION_RULE_NUM;
-		int numberOfObjectives_Pittsburgh = 2;
-		int numberOfConstraints_Pittsburgh = 0;
 
-		RuleBuilder<Rule_Basic, ?, ?> ruleBuilder = new Rule_Basic.RuleBuilder_Basic(
+		RuleBuilder<Rule_Basic> ruleBuilder = new RuleBuilder_Basic(
 				new HeuristicRuleGenerationMethod(train),
 				new MoFGBML_Learning(train));
 
 		MichiganSolutionBuilder<MichiganSolution_Basic<Rule_Basic>> michiganSolutionBuilder
-			= new MichiganSolution_Basic.MichiganSolutionBuilder_Basic<Rule_Basic>(
+			= new MichiganSolutionBuilder_Basic<Rule_Basic>(
 					bounds_Michigan,
 					numberOfObjectives_Michigan,
 					numberOfConstraints_Michigan,
 					ruleBuilder);
 
-		Classification<MichiganSolution_Basic<Rule_Basic>> classification = new SingleWinnerRuleSelection<MichiganSolution_Basic<Rule_Basic>>();
+		Classification<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>> classification = new SingleWinnerRuleSelection<>();
 
-		Classifier<MichiganSolution_Basic<Rule_Basic>> classifier = new Classifier_basic<>(classification);
+		Classifier<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>> classifier = new Classifier_basic(classification);
 
 		/* MOP: Multi-objective Optimization Problem */
 		Problem<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>> problem =
-				new PittsburghFGBML_Basic<MichiganSolution_Basic<Rule_Basic>>(
+				new PittsburghProblem_Basic<MichiganSolution_Basic<Rule_Basic>>(
 						numberOfvariables_Pittsburgh,
-						numberOfObjectives_Pittsburgh,
-						numberOfConstraints_Pittsburgh,
 						train,
 						michiganSolutionBuilder,
 						classifier);
-
 
 		/* Crossover: Hybrid-style GBML specific crossover operator. */
 		double crossoverProbability = 1.0;

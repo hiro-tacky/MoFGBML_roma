@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import cilabo.MakeTestObject;
 import cilabo.data.pattern.Pattern;
-import cilabo.fuzzy.classifier.classification.Classification;
+import cilabo.fuzzy.classifier.pittsburgh.classification.Classification;
 import cilabo.fuzzy.rule.impl.Rule_Basic;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution.MichiganSolutionBuilder;
 import cilabo.gbml.solution.michiganSolution.impl.MichiganSolution_Basic;

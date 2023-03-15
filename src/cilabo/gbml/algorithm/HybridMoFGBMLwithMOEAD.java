@@ -36,7 +36,7 @@ import cilabo.data.DataSetManager;
 import cilabo.fuzzy.knowledge.Knowledge;
 import cilabo.gbml.component.replacement.MOEADReplacementoForPittsburgh;
 import cilabo.gbml.component.variation.CrossoverAndMutationAndPittsburghLearningVariation;
-import cilabo.gbml.problem.pittsburghFGBML_Problem.AbstractPittsburghFGBML;
+import cilabo.gbml.problem.pittsburghFGBML_Problem.AbstractPittsburghProblem;
 import cilabo.gbml.solution.pittsburghSolution.PittsburghSolution;
 import cilabo.gbml.util.aggregativefunction.impl.TschebyscheffForGBML;
 import cilabo.main.Consts;
@@ -112,7 +112,7 @@ public class HybridMoFGBMLwithMOEAD<S extends PittsburghSolution<?>> extends Abs
 		AggregativeFunction aggregativeFunction =
 				new TschebyscheffForGBML(
 						Consts.MAX_RULE_NUM,
-						DataSetManager.getInstance().getTrains().get(0).getDataSize());
+						DataSetManager.getInstance().getTrains().get(0).getDataSetSize());
 
 		this.replacement =
 				new MOEADReplacementoForPittsburgh(
@@ -309,7 +309,7 @@ public class HybridMoFGBMLwithMOEAD<S extends PittsburghSolution<?>> extends Abs
 	protected List<S> removeNoWinnerMichiganSolution(List<S> population) {
 		/* 未勝利個体削除*/
 	    IntStream.range(0, population.size())
-	        .forEach(i -> ((AbstractPittsburghFGBML)problem).removeNoWinnerMichiganSolution(population.get(i)));
+	        .forEach(i -> ((AbstractPittsburghProblem)problem).removeNoWinnerMichiganSolution(population.get(i)));
 		return population;
 	}
 

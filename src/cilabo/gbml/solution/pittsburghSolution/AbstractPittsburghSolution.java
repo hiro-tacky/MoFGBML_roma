@@ -3,43 +3,42 @@ package cilabo.gbml.solution.pittsburghSolution;
 import org.uma.jmetal.solution.AbstractSolution;
 import org.w3c.dom.Element;
 
-import cilabo.fuzzy.classifier.Classifier;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution;
-import cilabo.gbml.solution.michiganSolution.MichiganSolution.MichiganSolutionBuilder;
+import cilabo.gbml.solution.michiganSolution.builder.MichiganSolutionBuilder;
 import xml.XML_TagName;
 
-public abstract class AbstractPittsburghSolution <michiganSolution extends MichiganSolution<?>>
-		extends AbstractSolution<michiganSolution>
-		implements PittsburghSolution<michiganSolution>{
+/**
+ * Pittsburgh型識別器抽象クラス abstract pittsburgh solution class
+ * @author Takigawa Hiroki
+ *
+ * @param <MichiganSolutionClass> このPittsburgh型識別器が持つMichigan型識別器クラス michigan solution class that this class has
+ */
+public abstract class AbstractPittsburghSolution <MichiganSolutionClass extends MichiganSolution<?>>
+		extends AbstractSolution<MichiganSolutionClass>
+		implements PittsburghSolution<MichiganSolutionClass>{
 
-	/** 識別器 */
-	protected Classifier<michiganSolution> classifier;
-	public MichiganSolutionBuilder<michiganSolution> michiganSolutionBuilder;
+	/** ミシガン型識別器生成器 michigan solution builder */
+	public MichiganSolutionBuilder<MichiganSolutionClass> michiganSolutionBuilder;
 
-	/** Constructor */
+	/** コンストラクタ constructor
+	 * @param numberOfVariables Michigan型識別器の個数 number of variables
+	 * @param numberOfObjectives 目的関数の個数 number of objectives
+	 * @param numberOfConstraints 制約の個数 number of constraints
+	 * @param michiganSolutionBuilder ミシガン型識別器生成器 michigan solution builder*/
 	protected AbstractPittsburghSolution(int numberOfVariables,
 			int numberOfObjectives,
 			int numberOfConstraints,
-			MichiganSolutionBuilder<michiganSolution> michiganSolutionBuilder,
-			Classifier<michiganSolution> classifier) {
+			MichiganSolutionBuilder<MichiganSolutionClass> michiganSolutionBuilder) {
 		super(numberOfVariables, numberOfObjectives, numberOfConstraints);
 		this.michiganSolutionBuilder = michiganSolutionBuilder;
-		this.classifier = classifier;
 	}
 
-	public AbstractPittsburghSolution(int numberOfObjectives,
-			int numberOfConstraints,
-			MichiganSolutionBuilder<michiganSolution> michiganSolutionBuilder,
-			Classifier<michiganSolution> classifier,
-			Element pittsburghSolution) {
-		super(pittsburghSolution.getElementsByTagName(XML_TagName.michiganSolution.toString()).getLength(),
-				numberOfObjectives, numberOfConstraints);
-		this.michiganSolutionBuilder = michiganSolutionBuilder;
-		this.classifier = classifier;
+	public static int getNumberOfVariables(Element pittsburghSolutionEL) {
+		return pittsburghSolutionEL.getElementsByTagName(XML_TagName.michiganSolution.toString()).getLength();
 	}
 
 	@Override
-	public MichiganSolutionBuilder<michiganSolution> getMichiganSolutionBuilder() {
+	public MichiganSolutionBuilder<MichiganSolutionClass> getMichiganSolutionBuilder() {
 		return this.michiganSolutionBuilder;
 	}
 
@@ -49,7 +48,7 @@ public abstract class AbstractPittsburghSolution <michiganSolution extends Michi
 	}
 
 	@Override
-	public void addVariable(michiganSolution value) {
+	public void addVariable(MichiganSolutionClass value) {
 		this.variables.add(value);
 	}
 

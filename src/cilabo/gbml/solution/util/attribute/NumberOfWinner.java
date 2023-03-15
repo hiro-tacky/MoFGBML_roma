@@ -9,7 +9,7 @@ import org.uma.jmetal.solution.util.attribute.util.attributecomparator.impl.Inte
 
 public class NumberOfWinner<S extends Solution<?>> implements Attribute<S> {
 
-	private String attributeId = getClass().getName();
+	private String attributeId = this.getClass().getName();
 	private Comparator<S> solutionComparator;
 
 	public NumberOfWinner() {

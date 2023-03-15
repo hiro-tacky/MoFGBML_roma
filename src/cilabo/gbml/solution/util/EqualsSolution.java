@@ -26,8 +26,8 @@ public class EqualsSolution {
 	public static boolean equalsMichiganSolution(MichiganSolution<?> solution1, MichiganSolution<?> solution2) {
 		boolean flag = true;
 		if(!solution1.getVariables().equals(solution2.getVariables())){ flag = false; }
-		if(!solution1.getClassLabel().equalsClassLabel(solution2.getClassLabel())){ flag = false; }
-		if(!solution1.getRuleWeight().equals(solution2.getRuleWeight())){ flag = false; }
+		if(!solution1.getRule().getConsequent().getClassLabel().equals(solution2.getRule().getConsequent().getClassLabel())){ flag = false; }
+		if(!solution1.getRule().getConsequent().getRuleWeight().equals(solution2.getRule().getConsequent().getRuleWeight())){ flag = false; }
 		return flag;
 	}
 }

@@ -5,49 +5,51 @@ import java.util.Objects;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import cilabo.fuzzy.knowledge.FuzzyTermTypeForMixed;
+import cilabo.fuzzy.knowledge.FuzzySet;
 import cilabo.fuzzy.knowledge.Knowledge;
 import cilabo.main.ExperienceParameter.DIVISION_TYPE;
 import xml.XML_TagName;
 
 /**
- * XMLファイルからKnowledgeBaseを読み込む
+ * XMLファイルからKnowledgeBaseを読み込む．<br>
+ * Load fuzzy sets XML file
  * @author Takigawa Hiroki
- *
  */
 public class KnowledgeFactoryFromXML {
 
 	/** Number of features */
-	public int dimension;
+	public int numberOfDimension;
 	/** KnowledgeBase保有Element */
 	public Element knowledge;
 
-	/** インスタンスを生成
-	 * @param dimension 次元数
-	 * @param knowledge KnowledgeBase保有Element
+	/**
+	 * コンストラクタ．Initialize HomoTriangleKnowledgeFactory by Parameters class
+	 * @param numberOfDimension 次元数 number of dimension
+	 * @param knowledge KnowledgeBase保有Element Element of Knowledge Base
 	 */
-	public KnowledgeFactoryFromXML(int dimension, Element knowledge) {
-		this.dimension = dimension;
+	public KnowledgeFactoryFromXML(int numberOfDimension, Element knowledge) {
+		this.numberOfDimension = numberOfDimension;
 		this.knowledge = knowledge;
 	}
 
 	/**
 	 * KnowledgeBaseを読み込み
+	 * Load Knowledge Base
 	 */
 	public void create(){
-		NodeList fuzzySetsList = knowledge.getElementsByTagName(XML_TagName.fuzzySets.toString());
-		this.dimension = fuzzySetsList.getLength();
+		NodeList fuzzySetsNL = knowledge.getElementsByTagName(XML_TagName.fuzzySets.toString());
+		this.numberOfDimension = fuzzySetsNL.getLength();
 
 		// make fuzzy sets
-		FuzzyTermTypeForMixed[][] fuzzySets = new FuzzyTermTypeForMixed[this.dimension][];
+		FuzzySet[][] fuzzySets = new FuzzySet[this.numberOfDimension][];
 
-		for(int dim_i=0; dim_i<this.dimension; dim_i++) {
-			Element fuzzySet  = (Element) fuzzySetsList.item(dim_i);
-			NodeList fuzzyTermList = fuzzySet.getElementsByTagName(XML_TagName.fuzzyTerm.toString());
+		for(int dim_i=0; dim_i<this.numberOfDimension; dim_i++) {
+			Element fuzzySetEL  = (Element) fuzzySetsNL.item(dim_i);
+			NodeList fuzzyTermNL = fuzzySetEL.getElementsByTagName(XML_TagName.fuzzyTerm.toString());
 
-			fuzzySets[dim_i] = new FuzzyTermTypeForMixed[fuzzyTermList.getLength()];
-			for(int fuzzyTerm_i=0; fuzzyTerm_i<fuzzyTermList.getLength(); fuzzyTerm_i++) {
-				Element fuzzyTerm = (Element) fuzzyTermList.item(fuzzyTerm_i);
+			fuzzySets[dim_i] = new FuzzySet[fuzzyTermNL.getLength()];
+			for(int fuzzyTerm_i=0; fuzzyTerm_i<fuzzyTermNL.getLength(); fuzzyTerm_i++) {
+				Element fuzzyTermEL = (Element) fuzzyTermNL.item(fuzzyTerm_i);
 
 				//FuzzyTermType 必須データ
 				int fuzzyTermID = -1;
@@ -55,11 +57,11 @@ public class KnowledgeFactoryFromXML {
 				int ShapeTypeID = -1;
 				float[] parameterSet = null;
 				//FuzzyTermTypeForMixed用 オプションデータ
-				DIVISION_TYPE divisionType = DIVISION_TYPE.entropyDivision;
+				DIVISION_TYPE divisionType = DIVISION_TYPE.equalDivision;
 				int partitionNum = 0;
 				int partition_i = 0;
 
-				NodeList fuzzyTermChildNodes = fuzzyTerm.getChildNodes();
+				NodeList fuzzyTermChildNodes = fuzzyTermEL.getChildNodes();
 				for(int i=0; i<fuzzyTermChildNodes.getLength(); i++) {
 					Element fuzzyTermComponent = (Element) fuzzyTermChildNodes.item(i);
 					if( fuzzyTermComponent.getNodeName().equals( XML_TagName.fuzzyTermID.toString()) )
@@ -81,10 +83,10 @@ public class KnowledgeFactoryFromXML {
 						{ partition_i = Integer.valueOf(fuzzyTermComponent.getTextContent());}
 
 					else if( fuzzyTermComponent.getNodeName().equals( XML_TagName.parameterSet.toString()) ) {
-						NodeList parameterList = fuzzyTermComponent.getElementsByTagName(XML_TagName.parameter.toString());
-						parameterSet = new float[parameterList.getLength()];
-						for(int j=0; j<parameterList.getLength(); j++) {
-							parameterSet[j] = Float.valueOf(parameterList.item(j).getTextContent());
+						NodeList parameterNL = fuzzyTermComponent.getElementsByTagName(XML_TagName.parameter.toString());
+						parameterSet = new float[parameterNL.getLength()];
+						for(int j=0; j<parameterNL.getLength(); j++) {
+							parameterSet[j] = Float.valueOf(parameterNL.item(j).getTextContent());
 						}
 					}
 				}
@@ -92,7 +94,7 @@ public class KnowledgeFactoryFromXML {
 				if(Objects.isNull(fuzzyTermName) || ShapeTypeID<0 || Objects.isNull(parameterSet) || Objects.isNull(divisionType)) {
 					throw new NullPointerException("Failed to read FuzzyTerm information @" + this.getClass().getSimpleName());}
 
-				fuzzySets[dim_i][fuzzyTermID] = new FuzzyTermTypeForMixed(
+				fuzzySets[dim_i][fuzzyTermID] = new FuzzySet(
 						fuzzyTermName,
 						ShapeTypeID,
 						parameterSet,

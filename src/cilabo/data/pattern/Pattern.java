@@ -1,34 +1,32 @@
 package cilabo.data.pattern;
 
-import java.util.Objects;
+import org.uma.jmetal.util.checking.Check;
+import org.w3c.dom.Element;
 
 import cilabo.data.AttributeVector;
 import cilabo.fuzzy.rule.consequent.classLabel.ClassLabel;
 
-/** パターン用データコンテナクラス．abstract pattern class<br>
- * @param <ClassLabelObject> 実装したPatternクラスが持つラベルクラス
+/** パターン用データコンテナクラス．pattern class<br>
+ * @param <ClassLabelClass> Patternクラスが扱うラベルクラス
  * @author Takigawa Hiroki
  */
-public abstract class Pattern <ClassLabelObject extends ClassLabel<?>>{
+public abstract class Pattern <ClassLabelClass extends ClassLabel<?>>{
 
 	/** このインスタンスに与えられたID．ID that is ginve to this instance */
 	protected final int id;
-	/** 属性値クラス．attribute class */
+	/** 属性値クラス．attribute vector*/
 	protected final AttributeVector attributeVector;
-	/** クラスラベル．class label*/
-	protected final ClassLabelObject targetClass;
+	/** ターゲットクラス．target class*/
+	protected final ClassLabelClass targetClass;
 
 	/** 入力されたデータを基にインスタンスを生成
-	 * @param id このインスタンスに与えられたID．ID which is ginve to this instance
-	 * @param attributeVector 属性値クラス．attribute class
-	 * @param targetClass クラスラベル．class label */
-	public Pattern(int id, AttributeVector attributeVector, ClassLabelObject targetClass) {
-		if(id < 0) {
-			throw new IllegalArgumentException("argument [id] must be positive integer @" + this.getClass().getSimpleName());}
-		else if(Objects.isNull(attributeVector)) {
-			throw new IllegalArgumentException("argument [inputVector] is null @" + this.getClass().getSimpleName());}
-		else if(Objects.isNull(targetClass)) {
-			throw new IllegalArgumentException("argument [trueClass] is null @" + this.getClass().getSimpleName());}
+	 * Initialize Pattern object by given parameter
+	 * @param id このインスタンスに与えられたID．ID that is ginve to this instance
+	 * @param attributeVector 属性値クラス．attribute vector
+	 * @param targetClass ターゲットクラス．target class */
+	public Pattern(int id, AttributeVector attributeVector, ClassLabelClass targetClass) {
+		Check.isNotNull(attributeVector);
+		Check.isNotNull(targetClass);
 		this.id = id;
 		this.attributeVector = attributeVector;
 		this.targetClass = targetClass;
@@ -36,8 +34,8 @@ public abstract class Pattern <ClassLabelObject extends ClassLabel<?>>{
 
 	/**
 	 * このインスタンスが持つIDを返します。<br>
-	 * Returns ID that this instance has.
-	 * @return 返されるこのインスタンスに与えられたID．ID which is ginve to this instance to return
+	 * Returns ID that this instance was given.
+	 * @return 返されるこのインスタンスに与えられたID．ID that was ginve to this instance
 	 */
 	public int getID() {
 		return this.id;
@@ -45,18 +43,17 @@ public abstract class Pattern <ClassLabelObject extends ClassLabel<?>>{
 
 	/**
 	 * このインスタンスが持つ属性値クラスを返します。<br>
-	 * Returns AttributeVector that this instance has.
-	 * @return 返される属性値クラス．AttributeVector to return
+	 * Returns AttributeVector class that this instance has.
+	 * @return 返される属性値クラス．AttributeVector class to return
 	 */
 	public AttributeVector getAttributeVector() {
-		if(Objects.isNull(attributeVector)) {System.err.print("attributeVector hasn't been initialised");}
 		return this.attributeVector;
 	}
 
 	/**
 	 * このインスタンスが持つ属性値配列を返します。<br>
-	 * Returns Attribute array that this instance has.
-	 * @return 返される属性値配列．Array of AttributeVector to return
+	 * Returns attribute array that this instance has.
+	 * @return 返される属性値配列．attribute array to return
 	 */
 	public double[] getAttributeArray() {
 		return this.attributeVector.getAttributeArray();
@@ -71,11 +68,20 @@ public abstract class Pattern <ClassLabelObject extends ClassLabel<?>>{
 		return this.attributeVector.getAttributeValue(index);
 	}
 
-	/**このインスタンスが持つ結論部ラベルクラスを返します。<br>
-	 * Returns conclusion label class that this instance has.
-	 * @return 返される結論部ラベルクラス．conclusion label class to return
+	/**このインスタンスが持つターゲットクラスを返します。<br>
+	 * Returns target class that this instance has.
+	 * @return 返されるターゲットクラス．target class to return
 	 */
-	public ClassLabelObject getTargetClass() {
+	public ClassLabelClass getTargetClass() {
 		return this.targetClass;
 	}
+
+	@Override
+	public abstract String toString();
+
+	public abstract Element toElement();
+
+	public abstract Pattern<ClassLabelClass> copy();
+
+	public abstract boolean equals(Pattern<?> pattern_Basic);
 }

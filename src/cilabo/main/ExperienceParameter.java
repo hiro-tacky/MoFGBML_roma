@@ -2,10 +2,8 @@ package cilabo.main;
 
 public class ExperienceParameter {
 
-	public static CLASS_LABEL classlabel = CLASS_LABEL.Single; //クラスラベル
-
 	/**データセットのクラスラベル方式 */
-	public static enum CLASS_LABEL{
+	public static enum CLASS_LABEL_TYPE{
 		Single, //単一のクラスラベル
 		Multi //複数のクラスラベル
 	}

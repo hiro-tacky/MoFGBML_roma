@@ -4,101 +4,114 @@ import java.util.Objects;
 
 import org.w3c.dom.Element;
 
+import cilabo.fuzzy.knowledge.FuzzySetBluePrintManager.FuzzySetBluePrint;
 import cilabo.main.ExperienceParameter.DIVISION_TYPE;
 import jfml.term.FuzzyTermType;
 import xml.XML_TagName;
 import xml.XML_manager;
 
-
 /**
- * ファジィ集合マネージャークラス
- * singletoneデザインパターンを採用，アプリケーション内で唯一のインスタンスを持ちます．≒グローバル変数<br>
- * Knowledge.getInstace()でインスタンスを呼出し使用．
+ * ファジィ集合マネージャークラス．fuzzy set manager class<br>
+ * fuzzy set index = 0 は Don't care で予約済み．fuzzy set index = 0 will be used for Don't care<br>
+ * singleton デザインパターンを採用．使用時はgetInstanceでプロジェクト上のどこからでも呼び出せます．
+ * this class adopts singleton design. when you use this class, you call getInstance methods anywhere.
  * @author Takigawa Hiroki
  */
 public class Knowledge {
 
-	/** Don't care 用FuzzyTermID*/
+	/** shape type ID for Don't care*/
 	public final static int DnotCare_FuzzyTermID = 99;
+	/** fuzzy set index for Don't care */
+	public final static int DnotCare_FuzzySetIndex = 0;
 	/** 自分自身のインスタンス */
 	private static Knowledge instance = new Knowledge();
 	/** ファジィ集合格納オブジェクト */
-	private FuzzyTermTypeForMixed[][] fuzzySets;
-
+	private FuzzySet[][] fuzzySetContainer;
+	/** when fuzzy set is overwrited, notice it. */
+	private boolean overwriteFuzzySetAlert = true;
+	/** コンストラクタ constructor */
 	private Knowledge() {}
 
 	/**
 	 * Knowledge のインスタンスを取得
-	 * @return Knowledge
+	 * Get Knowledge instance
+	 * @return Knowledge instance
 	 */
 	public static Knowledge getInstance() {
 		return instance;
 	}
 
 	/**
-	 * 指定された位置にあるファジィセットを返します。<br>
-	 * Returns Fuzzy Set at the specified position
-	 * @param dimension 返されるファジィセットの次元．dimension of Fuzzy Set to return
-	 * @param fuzzySet_id 返されるファジィセットのID．ID of Fuzzy Set to return
-	 * @return 指定された位置にあるファジィセット．Fuzzy Set at the specified position
+	 * ファジィ集合の配列を返します。<br>
+	 * Returns array of fuzzy set at the specified position
+	 * @return ファジィ集合配列．Array of fuzzy set at the specified position
 	 */
-	public FuzzyTermTypeForMixed getFuzzySet(int dimension, int fuzzySet_id) {
-		if(Objects.isNull(fuzzySets)) {System.err.println("Knowledge hasn't been initialised");}
-		return fuzzySets[dimension][fuzzySet_id];
+	public FuzzySet[][] getFuzzySet() {
+		this.initialisedCheck();
+		return fuzzySetContainer;
 	}
 
 	/**
-	 * 指定された位置にあるファジィセットの配列を返します。<br>
-	 * Returns Array of Fuzzy Set at the specified position
-	 * @param dimension 返されるファジィセットの次元．dimension of Fuzzy Set to return
-	 * @return 指定された位置にあるファジィセット配列．Array of Fuzzy Set at the specified position
+	 * 指定された位置にあるファジィ集合の配列を返します。<br>
+	 * Returns array of fuzzy set at the specified position
+	 * @param dimension 返されるファジィ集合の次元．dimension of fuzzy set to return
+	 * @return 指定された位置にあるファジィ集合配列．Array of fuzzy set at the specified position
 	 */
-	public FuzzyTermTypeForMixed[] getFuzzySet(int dimension) {
-		if(Objects.isNull(fuzzySets)) {System.err.println("Knowledge hasn't been initialised");}
-		return fuzzySets[dimension];
+	public FuzzySet[] getFuzzySet(int dimension) {
+		this.initialisedCheck(dimension);
+		return fuzzySetContainer[dimension];
 	}
 
 	/**
-	 * 指定された次元のファジィセットの個数を返します。<br>
-	 * Returns number of fuzzy Set that this instance has.
-	 * @param dimension ファジィセットの次元
-	 * @return 返されるファジィセットの個数．number of fuzzy Set to return
+	 * 指定された位置にあるファジィ集合を返します。<br>
+	 * Returns fuzzy set at the specified position
+	 * @param dimension 返されるファジィ集合の次元．dimension of fuzzy set to return
+	 * @param fuzzySetID 返されるファジィ集合のID．ID of fuzzy set to return
+	 * @return 指定された位置にあるファジィ集合．fuzzy set at the specified position
 	 */
-	public int getFuzzySetNum(int dimension) {
-		if(Objects.isNull(fuzzySets)) {System.err.println("Knowledge hasn't been initialised");}
-		return fuzzySets[dimension].length;
+	public FuzzySet getFuzzySet(int dimension, int fuzzySetID) {
+		this.initialisedCheck(dimension, fuzzySetID);
+		return fuzzySetContainer[dimension][fuzzySetID];
 	}
 
 	/**
-	 * ファジィセットを入力されたファジィセットで置き換えます。<br>
-	 * Replaces Fuzzy Set in this instance.
-	 * @param fuzzySets このインスタンスにに格納されるファジィセット．Fuzzy Set to be stored at this instance
+	 * このインスタンスが持つファジィセットを入力されたファジィセットで置き換えます。<br>
+	 * Replaces fuzzy set in this instance.
+	 * @param fuzzySets このインスタンスにに格納されるファジィセット．fuzzy set to be stored at this instance
 	 */
-	public void setFuzzySets(FuzzyTermTypeForMixed[][] fuzzySets) {
-		if(!Objects.isNull(this.fuzzySets)) {System.err.println("fuzzySets was overwrited");}
-		this.fuzzySets = fuzzySets;
+	public void setFuzzySets(FuzzySet[][] fuzzySets) {
+		if(!Objects.isNull(this.fuzzySetContainer) && overwriteFuzzySetAlert){
+			System.err.println("fuzzySets was overwrited");
+		}
+		this.fuzzySetContainer = fuzzySets;
 	}
 
 	/**
-	 * 指定されたファジィセットの入力された属性値に対するメンバシップ値を返す．
-	 * @param attributeValue 属性値
-	 * @param dimension  ファジィセットの次元．dimension of Fuzzy Set
-	 * @param fuzzySet_id ファジィセットのID．ID of Fuzzy Set
-	 * @return 属性値に対するメンバシップ値
+	 * 指定された次元のファジィセットを入力されたファジィセットで置き換えます。<br>
+	 * Replaces fuzzy set at the specified position.
+	 * @param dimension dimension of fuzzy set to replace
+	 * @param fuzzySet このインスタンスにに格納されるファジィセット Array of fuzzy set to be stored
 	 */
-	public double getMembershipValue(double attributeValue, int dimension, int fuzzySet_id) {
-		if(Objects.isNull(fuzzySets)) {System.err.println("Knowledge hasn't been initialised");}
-		return (double)fuzzySets[dimension][fuzzySet_id].getMembershipValue((float)attributeValue);
+	public void setFuzzySets(int dimension, FuzzySet[] fuzzySet) {
+		this.initialisedCheck();
+		if(!Objects.isNull(this.fuzzySetContainer[dimension]) && overwriteFuzzySetAlert){
+			System.err.println("fuzzySets was overwrited");}
+		this.fuzzySetContainer[dimension] = fuzzySet;
 	}
 
 	/**
-	 * don't Careファジィ集合を返す
-	 * @return don't Careファジィ集合
+	 * 指定された次元・IDのファジィセットを入力されたファジィセットで置き換えます。<br>
+	 * Replaces fuzzy set at the specified position.
+	 * @param dimension dimension of fuzzy set to replace
+	 * @param fuzzySetID ID of fuzzy set to replace
+	 * @param fuzzySet このインスタンスにに格納されるファジィセット fuzzy set to be stored
 	 */
-	public FuzzyTermTypeForMixed makeDontCare(){
-		return new FuzzyTermTypeForMixed(
-			Knowledge.makeFuzzyTermName(DIVISION_TYPE.equalDivision, FuzzyTermType.TYPE_rectangularShape, Knowledge.DnotCare_FuzzyTermID),
-			FuzzyTermType.TYPE_rectangularShape, new float[] {0f, 1f}, DIVISION_TYPE.equalDivision, 0, 0);
+	public void setFuzzySets(int dimension, int fuzzySetID, FuzzySet fuzzySet) {
+		this.initialisedCheck(dimension);
+		if(!Objects.isNull(this.fuzzySetContainer[dimension][fuzzySetID]) && overwriteFuzzySetAlert) {
+			System.err.println("fuzzySets was overwrited");
+		}
+		this.fuzzySetContainer[dimension][fuzzySetID] = fuzzySet;
 	}
 
 	/**
@@ -107,65 +120,86 @@ public class Knowledge {
 	 * @return 次元数．number of dimension
 	 */
 	public int getNumberOfDimension() {
-		if(Objects.isNull(fuzzySets)) {System.err.println("Knowledge hasn't been initialised");}
-		return fuzzySets.length;
+		this.initialisedCheck();
+		return fuzzySetContainer.length;
 	}
 
-	/** ファジィセットを初期化します */
+	/**
+	 * 指定された次元のファジィセットの個数を返します。<br>
+	 * Returns number of fuzzy set at the specified dimension.
+	 * @param dimension ファジィセットの次元 dimension
+	 * @return 返されるファジィセットの個数．number of fuzzy set
+	 */
+	public int getNumberOfFuzzySet(int dimension) {
+		this.initialisedCheck(dimension);
+		return fuzzySetContainer[dimension].length;
+	}
+
+	/**
+	 * 指定されたファジィセットの入力された属性値に対するメンバシップ値を返す．
+	 * Retrun membership value to given attribute value at the specified fuzzy set.
+	 * @param attributeValue 属性値.attribute value
+	 * @param dimension  ファジィセットの次元．dimension of fuzzy set
+	 * @param fuzzySetID ファジィセットのID．ID of fuzzy set
+	 * @return 属性値に対するメンバシップ値 membership value
+	 */
+	public double getMembershipValue(double attributeValue, int dimension, int fuzzySetID) {
+		this.initialisedCheck(dimension, fuzzySetID);
+		return (double)fuzzySetContainer[dimension][fuzzySetID].getMembershipValue((float)attributeValue);
+	}
+
+	/**
+	 * don't Careファジィ集合を返す
+	 * Generate don't care fuzzy set
+	 * @return Don't Careファジィ集合 don't care fuzzy set
+	 */
+	public FuzzySet makeDontCare(){
+		return new FuzzySet(
+			Knowledge.makeFuzzyTermName(DIVISION_TYPE.equalDivision, FuzzyTermType.TYPE_rectangularShape, Knowledge.DnotCare_FuzzyTermID),
+			FuzzyTermType.TYPE_rectangularShape, new float[] {0f, 1f}, DIVISION_TYPE.equalDivision, 0, 0);
+	}
+
+	/** このインスタンスが保持するファジィ集合を初期化 Clear fuzzy set that this instance has*/
 	public void clear() {
-		this.fuzzySets = null;
+		this.fuzzySetContainer = null;
 	}
 
 	@Override
 	public String toString() {
 		String ln = System.lineSeparator();
-		String str = "";
-
-		for(int i = 0; i < fuzzySets.length; i++) {
-			for(int j = 0; j < fuzzySets[i].length; j++) {
-				str += fuzzySets[i][j].toString() + ln;
+		String str = "Knowladge Base" + ln;
+		for(int i = 0; i < fuzzySetContainer.length; i++) {
+			str += "dimension:" + String.valueOf(i) + " ";
+			for(int j = 0; j < fuzzySetContainer[i].length; j++) {
+				str += "{" + fuzzySetContainer[i][j].toString() + "}";
 			}
+			str += ln;
 		}
-
 		return str;
 	}
 
 	public Element toElement() {
-		Element knowledge = XML_manager.getInstance().createElement(XML_TagName.knowledgeBase);
+		Element knowledgeEL = XML_manager.getInstance().createElement(XML_TagName.knowledgeBase);
 		for(int dim_i=0; dim_i<this.getNumberOfDimension(); dim_i++) {
-			FuzzyTermTypeForMixed[] fuzzyTermTypeAtDim = this.fuzzySets[dim_i];
-			Element fuzzySets = XML_manager.getInstance().createElement(XML_TagName.fuzzySets,
+			FuzzySet[] fuzzySetAtDim = this.fuzzySetContainer[dim_i];
+			Element fuzzySetsEL = XML_manager.getInstance().createElement(XML_TagName.fuzzySets,
 					XML_TagName.dimension, String.valueOf(dim_i));
-			for(int j=0; j<fuzzyTermTypeAtDim.length; j++) {
-				FuzzyTermTypeForMixed fuzzyTerm = fuzzyTermTypeAtDim[j];
-				Element fuzzyTermElement = XML_manager.getInstance().createElement(XML_TagName.fuzzyTerm);
-					XML_manager.getInstance().addElement(fuzzyTermElement, XML_TagName.fuzzyTermID, String.valueOf(j));
-					XML_manager.getInstance().addElement(fuzzyTermElement, XML_TagName.fuzzyTermName, fuzzyTerm.getName());
-					XML_manager.getInstance().addElement(fuzzyTermElement, XML_TagName.ShapeTypeID, String.valueOf(fuzzyTerm.getType()));
-					XML_manager.getInstance().addElement(fuzzyTermElement, XML_TagName.ShapeTypeName, Knowledge.getShapeTypeNameFromID(fuzzyTerm.getType()));
-					XML_manager.getInstance().addElement(fuzzyTermElement, XML_TagName.divisionType, fuzzyTerm.getDivisionType().toString());
-					XML_manager.getInstance().addElement(fuzzyTermElement, XML_TagName.partitionNum, String.valueOf(fuzzyTerm.getPartitionNum()));
-					XML_manager.getInstance().addElement(fuzzyTermElement, XML_TagName.partition_i, String.valueOf(fuzzyTerm.getPartition_i()));
-				XML_manager.getInstance().addElement(fuzzySets, fuzzyTermElement);
+			for(int j=0; j<fuzzySetAtDim.length; j++) {
+				FuzzySet fuzzySet = fuzzySetAtDim[j];
 
-				Element parameters = XML_manager.getInstance().createElement(XML_TagName.parameterSet);
-				float[] parametersList = fuzzyTerm.getParam();
-				for(int k=0; k<parametersList.length; k++) {
-					XML_manager.getInstance().addElement(parameters, XML_TagName.parameter, String.valueOf(parametersList[k]),
-							XML_TagName.id, String.valueOf(k));
-				}
-				XML_manager.getInstance().addElement(fuzzyTermElement, parameters);
-
-				XML_manager.getInstance().addElement(fuzzySets, fuzzyTermElement);
+				Element fuzzyTermEL = fuzzySet.toElement();
+				XML_manager.getInstance().addElement(fuzzyTermEL, XML_TagName.fuzzyTermID, j);
+				XML_manager.getInstance().addElement(fuzzySetsEL, fuzzyTermEL);
 			}
-			XML_manager.getInstance().addElement(knowledge, fuzzySets);
+			XML_manager.getInstance().addElement(knowledgeEL, fuzzySetsEL);
 		}
-		return knowledge;
+		return knowledgeEL;
 	}
 
-	/** ShapeTypeに対応するファジィ集合の形状名を返します
-	 * @param id ShapeTypeID
-	 * @return ファジィ集合の形状名
+	/** shape type ID に対応するファジィ集合の形状名を返します
+	 * Return fuzzy set's shape name by shape type ID
+	 * @param id ファジィ集合の形状ID shape type ID of fuzzy set
+	 * @return ファジィ集合の形状名 name of fuzzy set
 	 */
 	public static String getShapeTypeNameFromID(int id) {
 		String ShapeName =null;
@@ -187,23 +221,66 @@ public class Knowledge {
 			case 14: ShapeName = "circularDefinition"; break;
 			case 15: ShapeName = "customShape"; break;
 			case 16: ShapeName = "customMonotonicShape"; break;
-			case 99: ShapeName = "DontCare"; break;
+			case Knowledge.DnotCare_FuzzyTermID: ShapeName = "DontCare"; break;
 		}
 		return ShapeName;
 	}
 
 	/** 入力された情報を基にファジィ集合名を生成します．
-	 * @param divisionType 分割方式
-	 * @param ShapeTypeID ShapeTypeID
-	 * @param FuzzyTermID 各ファジィに与えられる固有のID
-	 * @return 生成されたファジィ集合名
+	 * Generate fuzzy set name by given information
+	 * @param divisionType 区間分割方式 division type of fuzzy set
+	 * @param shapeTypeID ファジィセット形状id shape type ID of fuzzy set
+	 * @param fuzzyTermID 各ファジィに与えられる固有のID. ID that is to be given to this fuzzy term.
+	 * @return 生成されたファジィ集合名 generated name of fuzzy set
 	 */
-	public static String makeFuzzyTermName(DIVISION_TYPE divisionType, int ShapeTypeID, int FuzzyTermID) {
-		if(ShapeTypeID == Knowledge.DnotCare_FuzzyTermID) {
+	public static String makeFuzzyTermName(DIVISION_TYPE divisionType, int shapeTypeID, int fuzzyTermID) {
+		if(shapeTypeID == Knowledge.DnotCare_FuzzyTermID) {
 			return "DontCare";
 		}else {
-			return String.format("%s_%s_%02d", Knowledge.getShapeTypeNameFromID(ShapeTypeID),
-					divisionType.toString(), FuzzyTermID);
+			return String.format("%s_%s_%02d", Knowledge.getShapeTypeNameFromID(shapeTypeID),
+					divisionType.toString(), fuzzyTermID);
+		}
+	}
+
+	/** 入力された情報を基にファジィ集合名を生成します．
+	 * Generate fuzzy set name by given information
+	 * @param FuzzyTermBP fuzzySetの設計図用クラス fuzzy set blue print class
+	 * @param fuzzyTermID 各ファジィに与えられる固有のID. ID that is to be given to this fuzzy term.
+	 * @return 生成されたファジィ集合名 generated name of fuzzy set
+	 */
+	public static String makeFuzzyTermName(FuzzySetBluePrint FuzzyTermBP, int fuzzyTermID) {
+		return Knowledge.makeFuzzyTermName(FuzzyTermBP.getDivisionType(), FuzzyTermBP.getShapeTypeID(), fuzzyTermID);
+	}
+
+	/**
+	 * fuzzySetContainerの初期化チェック Check fuzzySetContainer was already initialized
+	 * @param dimension  ファジィセットの次元．dimension of fuzzy set
+	 * @param fuzzySetID ファジィセットのID．ID of fuzzy set
+	 */
+	public void initialisedCheck(int dimension, int fuzzySetID) {
+		this.initialisedCheck(dimension);
+		if(Objects.isNull(fuzzySetContainer[dimension])) {
+			throw new NullPointerException("Knowledge hasn't been initialised");
+		}
+	}
+
+	/**
+	 * fuzzySetContainerの初期化チェック Check fuzzySetContainer was already initialized
+	 * @param dimension  ファジィセットの次元．dimension of fuzzy set
+	 */
+	public void initialisedCheck(int dimension) {
+		this.initialisedCheck();
+		if(Objects.isNull(fuzzySetContainer[dimension])) {
+			throw new NullPointerException("Knowledge hasn't been initialised");
+		}
+	}
+
+	/**
+	 * fuzzySetContainerの初期化チェック Check fuzzySetContainer was already initialized
+	 */
+	public void initialisedCheck() {
+		if(Objects.isNull(fuzzySetContainer)) {
+			throw new NullPointerException("Knowledge hasn't been initialised");
 		}
 	}
 }

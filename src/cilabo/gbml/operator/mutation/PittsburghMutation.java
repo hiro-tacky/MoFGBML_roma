@@ -76,7 +76,7 @@ public class PittsburghMutation<pittsburghSolution extends PittsburghSolution<mi
 	public void doMutation(double probability, pittsburghSolution solution) {
 		int numberOfRules = solution.getNumberOfVariables();
 		if(numberOfRules < 1) {System.err.println("incorrect input: number Of Rules is less than 1 @" + this.getClass().getSimpleName());}
-		int dimension = train.getNdim();
+		int dimension = train.getNumberOfDimension();
 
 		for(int rule_i = 0; rule_i < numberOfRules; rule_i++) {
 			/* Perform muation for rule_i */
@@ -88,11 +88,11 @@ public class PittsburghMutation<pittsburghSolution extends PittsburghSolution<mi
 
 				/* To judge which mutatedDimension is categorical or numerical  */
 				double variableOfRandomPattern = train
-												.getPattern(Random.getInstance().getGEN().nextInt(train.getDataSize()))
+												.getPattern(Random.getInstance().getGEN().nextInt(train.getDataSetSize()))
 					  							.getAttributeValue(mutatedDimension);
 				/* Attribute is Numeric */
 				if(variableOfRandomPattern >= 0.0) {
-					int numberOfCandidates = Knowledge.getInstance().getFuzzySetNum(mutatedDimension);
+					int numberOfCandidates = Knowledge.getInstance().getNumberOfFuzzySet(mutatedDimension);
 					if(numberOfCandidates <= 1) {break;}
 					//既に入力済みのファジィセットのインデックス以外の値をランダムに決定し入力する
 					int newFuzzySet = intRandomGenerator.getRandomValue(0, numberOfCandidates-2);
@@ -103,7 +103,7 @@ public class PittsburghMutation<pittsburghSolution extends PittsburghSolution<mi
 					}
 					solution.getVariable(rule_i).learning();
 
-					if(solution.getVariable(rule_i).getConsequent().isRejectedClassLabel()) {
+					if(solution.getVariable(rule_i).getRule().getConsequent().getClassLabel().isRejectedClassLabel()) {
 						solution.getVariable(rule_i).setVariable(mutatedDimension, variableBefore);
 						solution.getVariable(rule_i).learning();
 					}
@@ -113,7 +113,7 @@ public class PittsburghMutation<pittsburghSolution extends PittsburghSolution<mi
 					solution.getVariable(rule_i).setVariable( mutatedDimension, (int)variableOfRandomPattern);
 					solution.getVariable(rule_i).learning();
 
-					if(solution.getVariable(rule_i).getConsequent().isRejectedClassLabel()) {
+					if(solution.getVariable(rule_i).getRule().getConsequent().getClassLabel().isRejectedClassLabel()) {
 						solution.getVariable(rule_i).setVariable(mutatedDimension, variableBefore);
 						solution.getVariable(rule_i).learning();
 					}

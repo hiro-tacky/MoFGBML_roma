@@ -4,11 +4,12 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 import cilabo.data.DataSet;
-import cilabo.data.pattern.impl.Pattern_MultiClass;
+import cilabo.data.pattern.Pattern;
 import cilabo.fuzzy.rule.antecedent.Antecedent;
 import cilabo.fuzzy.rule.consequent.classLabel.AbstractClassLabel;
 import cilabo.fuzzy.rule.consequent.classLabel.impl.ClassLabel_Multi;
 import cilabo.fuzzy.rule.consequent.factory.ConsequentFactory;
+import cilabo.fuzzy.rule.consequent.factory.ConsequentFactoryCore;
 import cilabo.fuzzy.rule.consequent.impl.Consequent_MultiClass;
 import cilabo.fuzzy.rule.consequent.ruleWeight.impl.RuleWeight_Multi;
 import cilabo.main.impl.multiTasking.MultiTasking;
@@ -17,23 +18,22 @@ import cilabo.utility.Parallel;
 /** 入力された前件部から後件部クラスConsequent_MultiClassを生成する
  * @author Takigawa Hiroki */
 @MultiTasking
-public final class MoFGBML_Learning_MultiLabel implements ConsequentFactory <Consequent_MultiClass>{
-
-	/** 学習に用いるデータセット*/
-	protected DataSet<Pattern_MultiClass> train;
+public final class MoFGBML_Learning_MultiLabel
+		extends ConsequentFactoryCore<ClassLabel_Multi, RuleWeight_Multi, double[][]>
+		implements ConsequentFactory <Consequent_MultiClass>{
 
 	/**コンストラクタ
 	 * @param train 生成時に用いる学習用データ */
-	public MoFGBML_Learning_MultiLabel(DataSet<Pattern_MultiClass> train) {
+	public MoFGBML_Learning_MultiLabel(DataSet<Pattern<ClassLabel_Multi>> train) {
 		this.train = train;
 	}
 
 	@Override
 	public Consequent_MultiClass learning(Antecedent antecedent, int[] antecedentIndex, double limit) {
-		double[][] confidence = this.calcConfidence(antecedent, antecedentIndex);
+		double[][] confidence = this.calculateConfidence(antecedent, antecedentIndex);
 
-		ClassLabel_Multi classLabel = this.calcClassLabel(confidence);
-		RuleWeight_Multi ruleWeight = this.calcRuleWeight(classLabel, confidence, limit);
+		ClassLabel_Multi classLabel = this.calculateClassLabel(confidence);
+		RuleWeight_Multi ruleWeight = this.calculateRuleWeight(classLabel, confidence, limit);
 
 		Consequent_MultiClass consequent = new Consequent_MultiClass(classLabel, ruleWeight);
 		return consequent;
@@ -44,8 +44,9 @@ public final class MoFGBML_Learning_MultiLabel implements ConsequentFactory <Con
 		return this.learning(antecedent, antecedentIndex, defaultLimit);
 	}
 
-	public double[][] calcConfidence(Antecedent antecedent, int[] antecedentIndex) {
-		int Cnum = train.getCnum();
+	@Override
+	public double[][] calculateConfidence(Antecedent antecedent, int[] antecedentIndex) {
+		int Cnum = train.getNumberOfClass();
 		double[][] confidence = new double[Cnum][2];
 
 		for(int c = 0; c < Cnum; c++) {
@@ -88,7 +89,8 @@ public final class MoFGBML_Learning_MultiLabel implements ConsequentFactory <Con
 		return confidence;
 	}
 
-	public ClassLabel_Multi calcClassLabel(double[][] confidence) {
+	@Override
+	public ClassLabel_Multi calculateClassLabel(double[][] confidence) {
 		Integer[] classLabelBuf = new Integer[confidence.length];
 		for(int c = 0; c < confidence.length; c++) {
 			if(confidence[c][0] > confidence[c][1]) {
@@ -106,7 +108,8 @@ public final class MoFGBML_Learning_MultiLabel implements ConsequentFactory <Con
 	}
 
 	// 信頼度下限値にによる ルール生成棄却機能未実装につき limit値 不使用
-	public RuleWeight_Multi calcRuleWeight(ClassLabel_Multi classLabel, double[][] confidence, double limit) {
+	@Override
+	public RuleWeight_Multi calculateRuleWeight(ClassLabel_Multi classLabel, double[][] confidence, double limit) {
 
 		Double[] ruleWeightBuf = new Double[confidence.length];
 		for(int c = 0; c < confidence.length; c++) {

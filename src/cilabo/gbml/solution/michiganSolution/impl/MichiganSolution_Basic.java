@@ -1,46 +1,41 @@
 package cilabo.gbml.solution.michiganSolution.impl;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.Objects;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.uma.jmetal.solution.integersolution.IntegerSolution;
 import org.w3c.dom.Element;
 
 import cilabo.data.DataSet;
 import cilabo.data.DataSetManager;
 import cilabo.data.pattern.Pattern;
 import cilabo.fuzzy.rule.Rule;
-import cilabo.fuzzy.rule.Rule.RuleBuilder;
+import cilabo.fuzzy.rule.builder.RuleBuilder;
 import cilabo.gbml.solution.michiganSolution.AbstractMichiganSolution;
-import cilabo.gbml.solution.util.attribute.NumberOfClassifierPatterns;
-import cilabo.gbml.solution.util.attribute.NumberOfWinner;
 import cilabo.utility.Random;
 import xml.XML_TagName;
 import xml.XML_manager;
 
-/**基本的な機能を持つMichigan型識別器
+/**
+ * 標準的機能を持つMichigan型識別器 basic michigan solution
  * @author Takigawa Hiroki
  *
- * @param <RuleObject> このMichiganSolutionクラスが持つRuleクラス
+ * @param <RuleClass> このMichiganSolutionが持つルールクラス rule class that this class has
  */
-public final class MichiganSolution_Basic<RuleObject extends Rule<?, ?, ?, ?, ?, ?>>
-	extends AbstractMichiganSolution<RuleObject>
-	implements IntegerSolution {
+public final class MichiganSolution_Basic<RuleClass extends Rule<?, ?>>
+	extends AbstractMichiganSolution<RuleClass>{
 
-	/** コンストラクタ
-	 * @param bounds 各遺伝子が取りうる値の上限値と下限値の配列
-	 * @param numberOfObjectives 目的関数の個数
-	 * @param numberOfConstraints 制約の個数
-	 * @param ruleBuilder ルール生成器．
+	/** コンストラクタ．constructor
+	 * @param bounds 各遺伝子が取りうる値の上限値と下限値の配列 list of upper bounds and lower bounds for each variables
+	 * @param numberOfObjectives 目的関数の個数 number of objectives
+	 * @param numberOfConstraints 制約の個数 number of constraints
+	 * @param ruleBuilder ルール生成器．rule builder
 	 */
 	public MichiganSolution_Basic(List<Pair<Integer, Integer>> bounds,
 			int numberOfObjectives,
 			int numberOfConstraints,
-			RuleBuilder<RuleObject, ?, ?> ruleBuilder) {
+			RuleBuilder<RuleClass> ruleBuilder) {
 		super(bounds, numberOfObjectives, numberOfConstraints, ruleBuilder);
 		//生成不可ルールの場合は再生成
 		int cnt = 0;
@@ -48,51 +43,66 @@ public final class MichiganSolution_Basic<RuleObject extends Rule<?, ?, ?, ?, ?,
 			cnt++;
 			this.createRule();
 			if(cnt > 1000) {System.err.print("number of trials to generaete rule is more than 1000");}
-		}while(this.rule.isRejectedClassLabel());
+		}while(this.rule.getConsequent().getClassLabel().isRejectedClassLabel());
 	}
 
-	/** コンストラクタ
-	 * @param numberOfObjectives 目的関数の個数
-	 * @param numberOfConstraints 制約の個数
-	 * @param ruleBuilder ルール生成器．*/
+	/** コンストラクタ．constructor
+	 * @param numberOfObjectives 目的関数の個数 number of objectives
+	 * @param numberOfConstraints 制約の個数 number of constraints
+	 * @param ruleBuilder ルール生成器．rule builder
+	 */
 	public MichiganSolution_Basic(int numberOfObjectives,
 			int numberOfConstraints,
-			RuleBuilder<RuleObject, ?, ?> ruleBuilder) {
-		this(AbstractMichiganSolution.makeBounds(), numberOfObjectives, numberOfConstraints, ruleBuilder);
+			RuleBuilder<RuleClass> ruleBuilder) {
+		super(numberOfObjectives, numberOfConstraints, ruleBuilder);
 	}
 
-	/** コンストラクタ
-	 * @param bounds 各遺伝子が取りうる値の上限値と下限値の配列
-	 * @param numberOfObjectives 目的関数の個数
-	 * @param numberOfConstraints 制約の個数
-	 * @param ruleBuilder ルール生成器．
+	/** コンストラクタ．constructor
+	 * @param bounds 各遺伝子が取りうる値の上限値と下限値の配列 list of upper bounds and lower bounds for each variables
+	 * @param numberOfObjectives 目的関数の個数 number of objectives
+	 * @param numberOfConstraints 制約の個数 number of constraints
+	 * @param ruleBuilder ルール生成器．rule builder
+	 * @param michiganSolutionEL 読み込むXMLファイル XMLfile to load
 	 */
 	public MichiganSolution_Basic(List<Pair<Integer, Integer>> bounds,
 			int numberOfObjectives,
 			int numberOfConstraints,
-			RuleBuilder<RuleObject, ?, ?> ruleBuilder,
-			Element michiganSolution) {
+			RuleBuilder<RuleClass> ruleBuilder,
+			Element michiganSolutionEL) {
 		super(bounds, numberOfObjectives, numberOfConstraints, ruleBuilder);
 
-		this.createRule(michiganSolution);
+		this.createRule(michiganSolutionEL);
 
 		//生成不可ルールの場合は再生成
-		while(this.rule.isRejectedClassLabel()) {
+		while(this.rule.getConsequent().getClassLabel().isRejectedClassLabel()) {
 			this.createRule();
 		}
 	}
 
+	/** コンストラクタ．constructor
+	 * @param numberOfObjectives 目的関数の個数 number of objectives
+	 * @param numberOfConstraints 制約の個数 number of constraints
+	 * @param ruleBuilder ルール生成器．rule builder
+	 * @param michiganSolutionEL 読み込むXMLファイル XMLfile to load
+	 */
+	public MichiganSolution_Basic(int numberOfObjectives,
+			int numberOfConstraints,
+			RuleBuilder<RuleClass> ruleBuilder,
+			Element michiganSolutionEL) {
+		this(AbstractMichiganSolution.makeBounds(), numberOfObjectives, numberOfConstraints, ruleBuilder);
+	}
 
-	/** コンストラクタ
-	 * @param bounds 各遺伝子が取りうる値の上限値と下限値の配列
-	 * @param numberOfObjectives 目的関数の個数
-	 * @param numberOfConstraints 制約の個数
-	 * @param ruleBuilder ルール生成器．
+	/** コンストラクタ．constructor
+	 * @param bounds 各遺伝子が取りうる値の上限値と下限値の配列 list of upper bounds and lower bounds for each variables
+	 * @param numberOfObjectives 目的関数の個数 number of objectives
+	 * @param numberOfConstraints 制約の個数 number of constraints
+	 * @param ruleBuilder ルール生成器．rule builder
+	 * @param 前件部生成の学習に使用するPatternクラス pattern class to be used to generate Rule
 	 */
 	public MichiganSolution_Basic(List<Pair<Integer, Integer>> bounds,
 			int numberOfObjectives,
 			int numberOfConstraints,
-			RuleBuilder<RuleObject, ?, ?> ruleBuilder,
+			RuleBuilder<RuleClass> ruleBuilder,
 			Pattern<?> pattern) {
 		super(bounds, numberOfObjectives, numberOfConstraints, ruleBuilder);
 
@@ -100,15 +110,28 @@ public final class MichiganSolution_Basic<RuleObject extends Rule<?, ?, ?, ?, ?,
 
 		//生成不可ルールの場合はランダムなパターンをから再生成
 		DataSet<?> train = DataSetManager.getInstance().getTrains().get(0);
-		while(this.rule.isRejectedClassLabel()) {
-			int index = Random.getInstance().getGEN().nextInt(train.getDataSize());
+		while(this.rule.getConsequent().getClassLabel().isRejectedClassLabel()) {
+			int index = Random.getInstance().getGEN().nextInt(train.getDataSetSize());
 			this.createRule(train.getPattern(index));
 		}
 	}
 
-	/** コピーコンストラクタ
-	 * @param solution コピー元となるインスタンス */
-	public MichiganSolution_Basic(MichiganSolution_Basic<RuleObject> solution) {
+	/** コンストラクタ．constructor
+	 * @param numberOfObjectives 目的関数の個数 number of objectives
+	 * @param numberOfConstraints 制約の個数 number of constraints
+	 * @param ruleBuilder ルール生成器．rule builder
+	 * @param 前件部生成の学習に使用するPatternクラス pattern class to be used to generate Rule
+	 */
+	public MichiganSolution_Basic(int numberOfObjectives,
+			int numberOfConstraints,
+			RuleBuilder<RuleClass> ruleBuilder,
+			Pattern<?> pattern) {
+		this(AbstractMichiganSolution.makeBounds(), numberOfObjectives, numberOfConstraints, ruleBuilder, pattern);
+	}
+
+	/** コピーコンストラクタ．copy constructor
+	 * @param solution コピー元となるインスタンス copy instance*/
+	public MichiganSolution_Basic(MichiganSolution_Basic<RuleClass> solution) {
 	    super(solution.bounds, solution.getNumberOfObjectives(), solution.getNumberOfConstraints(),
 	    		solution.ruleBuilder);
 
@@ -125,104 +148,12 @@ public final class MichiganSolution_Basic<RuleObject extends Rule<?, ?, ?, ?, ?,
 	    }
 
 	    this.attributes = new HashMap<>(solution.attributes);
-	    this.rule = (RuleObject) solution.rule.copy();
+	    this.rule = (RuleClass) solution.getRule().copy();
 	}
 
 	@Override
-	public MichiganSolution_Basic<RuleObject> copy() {
-		return new MichiganSolution_Basic<RuleObject>(this);
-	}
-
-	public static class MichiganSolutionBuilder_Basic <RuleObject extends Rule<?, ?, ?, ?, ?, ?>>
-		extends MichiganSolutionBuilderCore<MichiganSolution_Basic<RuleObject>, RuleObject>{
-
-		public MichiganSolutionBuilder_Basic(
-				List<Pair<Integer, Integer>> bounds,
-				int numberOfObjectives,
-				int numberOfConstraints,
-				RuleBuilder<RuleObject, ?, ?> ruleBuilder) {
-			super(bounds, numberOfObjectives, numberOfConstraints, ruleBuilder);
-		}
-
-		@Override
-		public MichiganSolution_Basic<RuleObject> createMichiganSolution() {
-			List<Pair<Integer, Integer>> bounds = this.bounds;
-			if(Objects.isNull(bounds)) {
-				bounds = AbstractMichiganSolution.makeBounds();
-			}
-			MichiganSolution_Basic<RuleObject> solution = new MichiganSolution_Basic<RuleObject>(
-					bounds,
-					this.numberOfObjectives,
-					this.numberOfConstraints,
-					this.ruleBuilder);
-			String attributeId = new NumberOfWinner<MichiganSolution_Basic<RuleObject>>().getAttributeId();
-			String attributeIdFitness = new NumberOfClassifierPatterns<MichiganSolution_Basic<RuleObject>>().getAttributeId();
-			solution.setAttribute(attributeId, 0);
-			solution.setAttribute(attributeIdFitness, 0);
-			return solution;
-		}
-
-		@Override
-		public MichiganSolution_Basic<RuleObject> createMichiganSolution(Element michiganSolution) {
-			List<Pair<Integer, Integer>> bounds = this.bounds;
-			if(Objects.isNull(bounds)) {
-				bounds = AbstractMichiganSolution.makeBounds();
-			}
-			MichiganSolution_Basic<RuleObject> solution = new MichiganSolution_Basic<RuleObject>(
-					bounds,
-					this.numberOfObjectives,
-					this.numberOfConstraints,
-					this.ruleBuilder,
-					michiganSolution);
-			String attributeId = new NumberOfWinner<MichiganSolution_Basic<RuleObject>>().getAttributeId();
-			String attributeIdFitness = new NumberOfClassifierPatterns<MichiganSolution_Basic<RuleObject>>().getAttributeId();
-			solution.setAttribute(attributeId, 0);
-			solution.setAttribute(attributeIdFitness, 0);
-			return solution;
-		}
-
-		@Override
-		public MichiganSolution_Basic<RuleObject> createMichiganSolution(Pattern<?> pattern) {
-			List<Pair<Integer, Integer>> bounds = this.bounds;
-			if(Objects.isNull(bounds)) {
-				bounds = AbstractMichiganSolution.makeBounds();
-			}
-			MichiganSolution_Basic<RuleObject> solution = new MichiganSolution_Basic<RuleObject>(
-					bounds,
-					this.numberOfObjectives,
-					this.numberOfConstraints,
-					this.ruleBuilder,
-					pattern);
-			String attributeId = new NumberOfWinner<MichiganSolution_Basic<RuleObject>>().getAttributeId();
-			String attributeIdFitness = new NumberOfClassifierPatterns<MichiganSolution_Basic<RuleObject>>().getAttributeId();
-			solution.setAttribute(attributeId, 0);
-			solution.setAttribute(attributeIdFitness, 0);
-			return solution;
-		}
-
-		@Override
-		public List<MichiganSolution_Basic<RuleObject>> createMichiganSolutions(int numberOfGenerateRule) {
-			List<MichiganSolution_Basic<RuleObject>> returnObject = new ArrayList<MichiganSolution_Basic<RuleObject>>(numberOfGenerateRule);
-			for(int i=0; i<numberOfGenerateRule; i++) {
-				returnObject.add(this.createMichiganSolution());
-			}
-			return returnObject;
-		}
-
-		@Override
-		public String toString() {
-			return "MichiganSolutionBuilder_Basic [bounds=" + bounds + ", numberOfObjectives=" + numberOfObjectives
-					+ ", numberOfConstraints=" + numberOfConstraints + ", ruleBuilder=" + ruleBuilder + "]";
-		}
-
-		@Override
-		public MichiganSolutionBuilder_Basic copy() {
-			return new MichiganSolutionBuilder_Basic(
-					bounds,
-					this.numberOfObjectives,
-					this.numberOfConstraints,
-					this.ruleBuilder.copy());
-		}
+	public MichiganSolution_Basic<RuleClass> copy() {
+		return new MichiganSolution_Basic<RuleClass>(this);
 	}
 
 	@Override
@@ -231,7 +162,7 @@ public final class MichiganSolution_Basic<RuleObject extends Rule<?, ?, ?, ?, ?,
 		str += String.format("%3d", this.getVariable(0));
 		for(int i=1; i<this.getNumberOfVariables(); i++) {str += String.format(", %3d", this.getVariable(i));}
 
-		str += ",RuleWeight=," + this.rule.getRuleWeight().toString() + ",ClassLabel=," + this.rule.getClassLabel().toString();
+		str += ",RuleWeight=," + this.rule.getConsequent().getRuleWeight().getRuleWeightVariable().toString() + ",ClassLabel=," + this.rule.getConsequent().getClassLabel().toString();
 
 		str += "," + String.format("Objectives[%d]=,%.4f..", 0, this.getObjective(0));
 		for(int i=1; i<this.getNumberOfObjectives(); i++) {
@@ -259,8 +190,8 @@ public final class MichiganSolution_Basic<RuleObject extends Rule<?, ?, ?, ?, ?,
 		//新規のElementを追加する
 		Element fuzzySets = XML_manager.getInstance().createElement(XML_TagName.fuzzySetList);
 		for(int i=0; i<this.getNumberOfVariables(); i++) {
-			XML_manager.getInstance().addElement(fuzzySets, XML_TagName.fuzzySetID, String.valueOf(this.getVariable(i)),
-					XML_TagName.dimension, String.valueOf(i));
+			XML_manager.getInstance().addElement(fuzzySets, XML_TagName.fuzzySetID, this.getVariable(i),
+					XML_TagName.dimension, i);
 		}
 		XML_manager.getInstance().addElement(michiganSolution, fuzzySets);
 
@@ -271,7 +202,6 @@ public final class MichiganSolution_Basic<RuleObject extends Rule<?, ?, ?, ?, ?,
 					XML_TagName.attributeID, str2[str2.length-1]);
 		}
 		XML_manager.getInstance().addElement(michiganSolution, attribute_Element);
-
 
 		return michiganSolution;
 	}

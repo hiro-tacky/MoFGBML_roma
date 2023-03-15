@@ -4,118 +4,145 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import cilabo.data.pattern.Pattern;
+import org.uma.jmetal.util.checking.Check;
+import org.w3c.dom.Element;
 
-/**データセット用のデータコンテナクラス．<br>
- * Patternクラスを配列として持つ．
- * @param <pattern> データセットが扱うパターンクラスの型
+import cilabo.data.pattern.Pattern;
+import xml.XML_TagName;
+import xml.XML_manager;
+
+/**
+ * データセット用のデータコンテナクラス．Patternクラスのリストとデータセットに関する情報を持つ．<br>
+ * data set class. this class has pattern class ArrayList and data set's information
+ * @param <PatternClass> データセットが扱うパターンクラスの型
  * @author Takigawa Hiroki
  */
-public class DataSet<pattern extends Pattern<?>> {
-	/** Number of Patterns*/
-	private int DataSize;
-	/** Number of Features*/
-	private int Ndim;
-	/** Number of Classes*/
-	private int Cnum;
+public class DataSet<PatternClass extends Pattern<?>> {
+	/** Number of Pattern*/
+	private int dataSetSize;
+	/** Number of Feature*/
+	private int numberOfDimension;
+	/** Number of Class*/
+	private int numberOfClass;
 
-	/**	データセットのPattern実装クラスの可変長配列 */
-	private ArrayList<pattern> patterns = new ArrayList<>();
+	/**	Patternクラスのリスト. pattern class ArrayList*/
+	private ArrayList<PatternClass> patterns;
 
 	/** コンストラクタ
-	 * @param dataSize データセットのパターン数
-	 * @param ndim 属性数．次元数
-	 * @param cnum 結論部クラスのラベル種類数
+	 * @param dataSetSize データセットのパターン数 Number of pattern
+	 * @param numberOfDimension 属性数/次元数 Number of feature
+	 * @param numberOfClass ターゲットクラスのラベル種類数 Number of target class
 	 */
-	public DataSet(int dataSize, int ndim, int cnum) {
-		if(dataSize <= 0 || ndim <= 0 || cnum <= 0) {
-			System.err.println("incorect input data set information @" + this.getClass().getSimpleName());
+	public DataSet(int dataSetSize, int numberOfDimension, int numberOfClass, ArrayList<PatternClass> patterns) {
+		Check.isNotNull(patterns);
+		if(dataSetSize != patterns.size()) {
+			throw new IllegalArgumentException(String.format("Ginve dataSetSize is " + String.valueOf(dataSetSize)
+				+ ", but pattern ArrayList size is " + String.valueOf(patterns.size())));
 		}
-		DataSize = dataSize;
-		Ndim = ndim;
-		Cnum = cnum;
+		this.dataSetSize = dataSetSize;
+		this.numberOfDimension = numberOfDimension;
+		this.numberOfClass = numberOfClass;
+		this.patterns = new ArrayList<>(patterns);
 	}
 
-	/** このインスタンスが持つリストの最後に，指定されたパターン実装クラスを追加します。<br>
-	 * Appends pattern class to the end of the list that this instance has
-	 * @param pattern リストに追加されるパターン実装クラス．pattern class to be appended to the list */
-	public void addPattern(pattern pattern) {
-		this.patterns.add(pattern);
+	/** このインスタンスが持つパターンクラスのリストを返す。<br>
+	 * Returns list of pattern classes that this instance has.
+	 * @return 返されるパターンクラスのリスト．list of pattern classes to return
+	 */
+	public ArrayList<PatternClass> getPatterns(){
+		return this.patterns;
 	}
 
 	/**
-	 * このインスタンスが持つリスト内の指定された位置にあるパターン実装クラスを返します。<br>
-	 * Returns pattern class at the specified position in the list that this instance has.
-	 * @param index 返されるパターン実装クラスのインデックス．index of pattern class to return
-	 * @return リスト内の指定された位置にあるパターン実装クラス．pattern class at the specified position in the list
+	 * 指定された位置にあるパターンクラスを返す。<br>
+	 * Returns pattern class at the specified position.
+	 * @param index 返されるパターンクラスのインデックス．index of pattern class to return
+	 * @return 指定された位置にあるパターンクラス．pattern class at the specified position
 	 */
-	public pattern getPattern(int index) {
+	public PatternClass getPattern(int index) {
 		return this.patterns.get(index);
 	}
 
 	/**
-	 * このインスタンスが持つリスト内の指定された位置にあるパターン実装クラスを返します。(並列処理用)<br>
-	 * Returns pattern class at the specified position in the list that this instance has.(method for parallel processing)
-	 * @param index 返されるパターン実装クラスのインデックス．index of pattern class to return
-	 * @return リスト内の指定された位置にあるパターン実装クラス．pattern class at the specified position in the list
+	 * 指定された位置にあるパターンクラスを返す。(並列処理用)<br>
+	 * Returns pattern class at the specified position.(for parallel processing)
+	 * @param index 返されるパターンクラスのインデックス．index of pattern class to return
+	 * @return 指定された位置にあるパターンクラス．pattern class at the specified position
 	 */
-	public pattern getPatternWithID(int index) {
-		List<pattern> list = this.patterns.stream()
+	public PatternClass getPatternWithID(int index) {
+		List<PatternClass> list = this.patterns.stream()
 										.filter(p -> p.getID() == index)
 										.collect( Collectors.toList() );
 		return list.get(0);
 	}
 
-	/** このインスタンスが持つパターン実装クラスのリストを返します。<br>
-	 * Returns pattern class list that this instance has.
-	 * @return 返されるパターン実装クラスのリスト．list of pattern class to return
+	/**
+	 * データセットのパターン数を返します。<br>
+	 * Returns data set's number of pattern
+	 * @return データセットのパターン数．data set's number of pattern
 	 */
-	public ArrayList<pattern> getPatterns(){
-		return this.patterns;
+	public int getDataSetSize() {
+		return this.dataSetSize;
+	}
+
+	/**
+	 * データセットの属性数/次元を返します。
+	 * Returns deta set's number of dimension
+	 * @return データセットの属性数/次元 deta set's number of dimension
+	 */
+	public int getNumberOfDimension() {
+		return this.numberOfDimension;
+	}
+
+	/**
+	 * データセットのクラスラベル数を返します。<br>
+	 * Returns data set's number of target class
+	 * @return データセットのクラスラベル数．data set's number of target class
+	 */
+	public int getNumberOfClass() {
+		return this.numberOfClass;
 	}
 
 	@Override
 	public String toString() {
-		if(this.patterns.size() == 0) {
-			return null;
-		}
+		if(this.patterns.size() == 0) { return "null"; }
+
 		String ln = System.lineSeparator();
 		// Header
-		String str = String.format("%d,%d,%d" + ln, this.DataSize, this.Ndim, this.Cnum);
+		String str = String.format("dataSetSize:%d, numberOfDimension:%d, numberOfClass:%d" + ln, this.dataSetSize, this.numberOfDimension, this.numberOfClass);
 		// Patterns
 		for(int n = 0; n < this.patterns.size(); n++) {
-			Pattern<?> pattern = this.patterns.get(n);
-			str += pattern.toString() + ln;
+			str += this.patterns.get(n).toString() + ln;
 		}
 		return str;
 	}
 
-	/**
-	 * このインスタンスが持つ属性数．次元を返します。
-	 * @return 返される属性数．次元
-	 */
-	public int getNdim() {
-		return this.Ndim;
+	public Element toElement() {
+		Element dataSetEL = XML_manager.getInstance().createElement(XML_TagName.dataSet);
+		for(int i=0; i<this.getDataSetSize(); i++) {
+			Pattern<?> pattern = this.getPattern(i);
+			XML_manager.getInstance().addElement(dataSetEL, pattern.toElement(),
+					XML_TagName.id, pattern.getID());
+		}
+		return dataSetEL;
 	}
 
-	/**
-	 * このインスタンスが持つクラスラベル数を返します。
-	 * @return 返されるクラスラベル数
-	 */
-	public int getCnum() {
-		return this.Cnum;
+	public DataSet<PatternClass> copy() {
+		return new DataSet<PatternClass>(this.dataSetSize, this.numberOfDimension, this.numberOfClass, new ArrayList<>(this.patterns));
+
 	}
 
-	/**
-	 * このインスタンスが持つデータセットのパターン数を返します。
-	 * @return 返されるデータセットのパターン数
-	 */
-	public int getDataSize() {
-		return this.DataSize;
+	public boolean equals(DataSet<PatternClass> dataSet) {
+		if(dataSet.dataSetSize != this.dataSetSize ||
+				dataSet.numberOfDimension != this.numberOfDimension ||
+				dataSet.numberOfClass != this.numberOfClass) return false;
+
+		if(dataSet.patterns.size() != this.patterns.size()) return false;
+		for(int i=0; i<dataSet.patterns.size(); i++) {
+			if(!dataSet.getPattern(i).equals(this.getPattern(i))) return false;
+		}
+		return true;
 	}
-
-
-
 	//並列分散実装用 (ver. 21以下)
 	// ************************************************************
 	// Fields

@@ -68,11 +68,11 @@ public class MichiganMutation <michiganSolution extends MichiganSolution<?>> imp
 	  public void doMutation(double probability, michiganSolution solution) {
 		  for(int i = 0; i < solution.getNumberOfVariables(); i++) {
 			// To judge which attribute i is categorical or numerical.
-			Pattern<?> randPattern = data.getPattern(intRandomGenerator.getRandomValue(0, data.getDataSize()-1));
+			Pattern<?> randPattern = data.getPattern(intRandomGenerator.getRandomValue(0, data.getDataSetSize()-1));
 
 
 			// Decide new variable
-			int fuzzySetNum = Knowledge.getInstance().getFuzzySetNum(i);
+			int fuzzySetNum = Knowledge.getInstance().getNumberOfFuzzySet(i);
 			if(fuzzySetNum <= 1) {return;}
 			int newFuzzySet = intRandomGenerator.getRandomValue(0, fuzzySetNum-2);
 

@@ -2,39 +2,35 @@ package cilabo.fuzzy.rule.consequent.ruleWeight;
 
 import org.w3c.dom.Element;
 
-/** ルール重みクラスのインターフェイス
+/** ルール重みクラス rule weight class
  * @author Takigawa Hiroki
  *
- * @param <RuleWeightValue> RuleWeight実装クラスのフィールドでルール重みを記憶する変数
+ * @param <RuleWeightVariable> RuleWeightクラスでルール重みを保持する変数 vaiable of RuleWeight class
  */
-public interface RuleWeight <RuleWeightValue> {
-
-	/** ルール重みのコピーを取得
-	 * 実装時は取得されたインスタンスへの変更が反映されない(深いコピーとなる)ように
-	 * @return このインスタンスが持つルール重み
-	 */
-	public RuleWeightValue getRuleWeightValue();
-
-	/** ルール重みを取得
-	 * 実装時は取得されたインスタンスへの変更が反映されない(深いコピーとなる)ように
-	 * @return このインスタンスが持つルール重み
-	 */
-	public Double getRuleWeightDouble();
-
-	/** ルール重みのコピーインスタンスを代入
-	 * 実装時は代入されたインスタンスへの変更が反映されない(深いコピーとなる)ように
-	 * @param ruleWeight 代入されるルール重み
-	 */
-	public void setRuleWeightValue(RuleWeightValue ruleWeightValue);
+public interface RuleWeight <RuleWeightVariable> {
 
 	/**
-	 * このインスタンスのディープコピーを返す
-	 * @return ディープコピーされたこのインスタンス
+	 * このインスタンスが持つルール重みを返します。<br>
+	 * Returns rule weight that this instance has.
+	 * @return 返されるルール重み．rule weight to return
 	 */
-	public RuleWeight<RuleWeightValue> copy();
+	public RuleWeightVariable getRuleWeightVariable();
 
-	/**xmlファイル出力用のElementを書き出す
-	 * @return クラス内部の情報が書き込まれた Element インスタンス
+	/**
+	 * このインスタンスが持つルール重みを返します。<br>
+	 * Returns rule weight value that this instance has.
+	 * @return 返されるルール重み．rule weight value to return
 	 */
+	public Double getRuleWeightValue();
+
+	/**
+	 * ルール重みを入力されたルール重みで置き換えます。<br>
+	 * Replaces rule weight in this instance.
+	 * @param ruleWeightValue このインスタンスに格納されるルール重み．rule weight to be stored at this instance
+	 */
+	public void setRuleWeightVariable(RuleWeightVariable ruleWeightVariable);
+
+	public RuleWeight<RuleWeightVariable> copy();
+
 	public Element toElement();
 }

@@ -23,7 +23,7 @@ import cilabo.gbml.solution.michiganSolution.MichiganSolution;
 import cilabo.gbml.solution.pittsburghSolution.PittsburghSolution;
 import cilabo.gbml.solution.util.SortMichiganPopulation;
 import cilabo.gbml.solution.util.attribute.ErroredPatternsAttribute;
-import cilabo.gbml.solution.util.attribute.NumberOfClassifierPatterns;
+import cilabo.gbml.solution.util.attribute.NumberOfClassifiedPatterns;
 import cilabo.main.Consts;
 import cilabo.utility.GeneralFunctions;
 import cilabo.utility.Random;
@@ -121,7 +121,7 @@ public class MichiganCrossover <pittsburghSolution extends PittsburghSolution<mi
 			int NumberOfLack = numberOfHeuristic - erroredPatterns.size();
 			for(int i = 0; i < NumberOfLack; i++) {
 				Pattern<?> pattern = train.getPattern(Random.getInstance().getGEN()
-						.nextInt(train.getDataSize()));
+						.nextInt(train.getDataSetSize()));
 				erroredPatterns.add(pattern);
 			}
 			//Sampling patterns without replacement from erroredPatterns.
@@ -142,7 +142,7 @@ public class MichiganCrossover <pittsburghSolution extends PittsburghSolution<mi
 			/* Crossover: Uniform crossover */
 			UniformCrossover<michiganSolution> crossover = new UniformCrossover<michiganSolution>(Consts.MICHIGAN_CROSS_RT);
 			/* Mutation: Michigan-style specific mutation operation */
-			double mutationProbability = 1.0 / (double)train.getNdim();
+			double mutationProbability = 1.0 / (double)train.getNumberOfDimension();
 			MichiganMutation<michiganSolution>  mutation = new MichiganMutation<michiganSolution>(mutationProbability, train);
 			/* Mating Selection: Binray tournament */
 			int tournamentSize = 2;
@@ -156,7 +156,7 @@ public class MichiganCrossover <pittsburghSolution extends PittsburghSolution<mi
 			MatingPoolSelection<michiganSolution> selection = new NaryTournamentMatingPoolSelection<michiganSolution>(
 					tournamentSize,
 					matingPoolSize,
-					new IntegerValueAttributeComparator<michiganSolution>(new NumberOfClassifierPatterns<michiganSolution>().getAttributeId(),
+					new IntegerValueAttributeComparator<michiganSolution>(new NumberOfClassifiedPatterns<michiganSolution>().getAttributeId(),
 							AttributeComparator.Ordering.DESCENDING)
 					);
 			/* == GA START == */

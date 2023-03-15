@@ -7,7 +7,9 @@ import cilabo.fuzzy.rule.antecedent.factory.AntecedentIndexFactory;
 import cilabo.main.Consts;
 import random.MersenneTwisterFast;
 
-/**ランダムに決定されるヒューリスティックに基づいた前件部のFactory
+/**
+ * ランダムに決定される前件部のFactory<br>
+ * randomly generate array of fuzzy set index
  * @author Takigawa Hiroki
  */
 public final class RandomInitialization implements AntecedentIndexFactory{
@@ -16,19 +18,20 @@ public final class RandomInitialization implements AntecedentIndexFactory{
 	/** 学習用データ */
 	private DataSet<?> train;
 	/** 次元数 */
-	private int dimension;
+	private int numberOfDimension;
 	/** シード値 */
 	private int seed;
 
-	/** 入力された情報を基にインスタンスを生成
-	 * @param seed シード値
-	 * @param train データセット
+	/**
+	 * コンストラクタ．constructor
+	 * @param seed シード値 seed for random number generator
+	 * @param train データセット data set
 	 */
 	public RandomInitialization(int seed, DataSet<?> train) {
 		this.seed = seed;
 		this.uniqueRnd = new MersenneTwisterFast(seed);
 		this.train = train;
-		this.dimension = Knowledge.getInstance().getNumberOfDimension();
+		this.numberOfDimension = Knowledge.getInstance().getNumberOfDimension();
 	}
 
 	@Override
@@ -40,14 +43,14 @@ public final class RandomInitialization implements AntecedentIndexFactory{
 		}
 		else {
 			// (dimension - Const) / dimension
-			dcRate = (dimension - Consts.ANTECEDENT_NUMBER_DO_NOT_DONT_CARE)/(double)dimension;
+			dcRate = (numberOfDimension - Consts.ANTECEDENT_NUMBER_DO_NOT_DONT_CARE)/(double)numberOfDimension;
 		}
 
-		int[] antecedentIndex = new int[dimension];
+		int[] antecedentIndex = new int[numberOfDimension];
 
-		Pattern<?> randomPattern = train.getPattern(uniqueRnd.nextInt(train.getDataSize()));
+		Pattern<?> randomPattern = train.getPattern(uniqueRnd.nextInt(train.getDataSetSize()));
 
-		for(int n = 0; n < dimension; n++) {
+		for(int n = 0; n < numberOfDimension; n++) {
 			if(uniqueRnd.nextBoolean(dcRate)) {
 				// don't care
 				antecedentIndex[n] = 0;
@@ -60,7 +63,7 @@ public final class RandomInitialization implements AntecedentIndexFactory{
 				}
 				else {
 					// Numerical
-					antecedentIndex[n] = uniqueRnd.nextInt(Knowledge.getInstance().getFuzzySetNum(n));
+					antecedentIndex[n] = uniqueRnd.nextInt(Knowledge.getInstance().getNumberOfFuzzySet(n));
 				}
 			}
 		}
@@ -70,7 +73,7 @@ public final class RandomInitialization implements AntecedentIndexFactory{
 
 	@Override
 	public int[][] create(int numberOfGenerateRule) {
-		int[][] antecedentIndexArray = new int[numberOfGenerateRule][this.dimension];
+		int[][] antecedentIndexArray = new int[numberOfGenerateRule][this.numberOfDimension];
 		for(int i=0; i<numberOfGenerateRule; i++) {
 			antecedentIndexArray[i] = this.create();
 		}

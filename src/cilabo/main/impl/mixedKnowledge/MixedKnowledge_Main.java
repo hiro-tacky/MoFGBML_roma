@@ -25,11 +25,11 @@ import cilabo.data.DataSet;
 import cilabo.data.DataSetManager;
 import cilabo.data.Input;
 import cilabo.data.pattern.impl.Pattern_Basic;
-import cilabo.fuzzy.classifier.Classifier;
-import cilabo.fuzzy.classifier.classification.Classification;
-import cilabo.fuzzy.classifier.classification.impl.SingleWinnerRuleSelection;
-import cilabo.fuzzy.classifier.impl.Classifier_basic;
-import cilabo.fuzzy.knowledge.FuzzyTermBluePrintManager;
+import cilabo.fuzzy.classifier.pittsburgh.Classifier;
+import cilabo.fuzzy.classifier.pittsburgh.classification.Classification;
+import cilabo.fuzzy.classifier.pittsburgh.classification.impl.SingleWinnerRuleSelection;
+import cilabo.fuzzy.classifier.pittsburgh.impl.Classifier_basic;
+import cilabo.fuzzy.knowledge.FuzzySetBluePrintManager;
 import cilabo.fuzzy.knowledge.factory.MixedKnowledgeFactory;
 import cilabo.fuzzy.knowledge.membershipParams.Parameters;
 import cilabo.fuzzy.rule.Rule.RuleBuilder;
@@ -42,7 +42,7 @@ import cilabo.gbml.operator.crossover.HybridGBMLcrossover;
 import cilabo.gbml.operator.crossover.MichiganCrossover;
 import cilabo.gbml.operator.crossover.PittsburghCrossover;
 import cilabo.gbml.operator.mutation.PittsburghMutation;
-import cilabo.gbml.problem.pittsburghFGBML_Problem.impl.PittsburghFGBML_Basic;
+import cilabo.gbml.problem.pittsburghFGBML_Problem.impl.PittsburghProblem_Basic;
 import cilabo.gbml.solution.michiganSolution.AbstractMichiganSolution;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution.MichiganSolutionBuilder;
 import cilabo.gbml.solution.michiganSolution.impl.MichiganSolution_Basic;
@@ -111,7 +111,7 @@ public class MixedKnowledge_Main {
 		JMetalRandom.getInstance().setSeed(Consts.RAND_SEED);
 
 		/* Load Dataset ======================== */
-		Input.loadTrainTestFiles_Basic(MixedKnowledge_CommandLineArgs.trainFile, MixedKnowledge_CommandLineArgs.testFile);
+		Input.loadTrainTestFiles(MixedKnowledge_CommandLineArgs.trainFile, MixedKnowledge_CommandLineArgs.testFile);
 		DataSet<Pattern_Basic> test = (DataSet<Pattern_Basic>) DataSetManager.getInstance().getTests().get(0);
 		DataSet<Pattern_Basic> train = (DataSet<Pattern_Basic>) DataSetManager.getInstance().getTrains().get(0);
 
@@ -147,20 +147,20 @@ public class MixedKnowledge_Main {
 		//Consts出力用
 		XML_manager.getInstance().addElement(XML_manager.getInstance().getRoot(), Consts.toElement());
 
-		int dimension = train.getNdim();
+		int dimension = train.getNumberOfDimension();
 
 		/////////////////////////////////
 		Parameters parameters = new Parameters(train);
 		MixedKnowledgeFactory knowledgeFactory = new MixedKnowledgeFactory(parameters);
-		FuzzyTermBluePrintManager FuzzyTermBMP = new FuzzyTermBluePrintManager(dimension);
+		FuzzySetBluePrintManager FuzzyTermBMP = new FuzzySetBluePrintManager(dimension);
 		for(int dim_i=0; dim_i<dimension; dim_i++) {
 			int[] K = new int[] {2, 3, 4, 5};
-			FuzzyTermBMP.addFuzyyTermsBluePrint(DIVISION_TYPE.equalDivision, dim_i, K, FuzzyTermType.TYPE_triangularShape);
-			FuzzyTermBMP.addFuzyyTermsBluePrint(DIVISION_TYPE.equalDivision, dim_i, K, FuzzyTermType.TYPE_rectangularShape);
-			FuzzyTermBMP.addFuzyyTermsBluePrint(DIVISION_TYPE.equalDivision, dim_i, K, FuzzyTermType.TYPE_gaussianShape);
-			FuzzyTermBMP.addFuzyyTermsBluePrint(DIVISION_TYPE.entropyDivision, dim_i, K, FuzzyTermType.TYPE_triangularShape);
-			FuzzyTermBMP.addFuzyyTermsBluePrint(DIVISION_TYPE.entropyDivision, dim_i, K, FuzzyTermType.TYPE_rectangularShape);
-			FuzzyTermBMP.addFuzyyTermsBluePrint(DIVISION_TYPE.entropyDivision, dim_i, K, FuzzyTermType.TYPE_gaussianShape);
+			FuzzyTermBMP.addFuzzySetBluePrint(dim_i, DIVISION_TYPE.equalDivision, FuzzyTermType.TYPE_triangularShape, K);
+			FuzzyTermBMP.addFuzzySetBluePrint(dim_i, DIVISION_TYPE.equalDivision, FuzzyTermType.TYPE_rectangularShape, K);
+			FuzzyTermBMP.addFuzzySetBluePrint(dim_i, DIVISION_TYPE.equalDivision, FuzzyTermType.TYPE_gaussianShape, K);
+			FuzzyTermBMP.addFuzzySetBluePrint(dim_i, DIVISION_TYPE.entropyDivision, FuzzyTermType.TYPE_triangularShape, K);
+			FuzzyTermBMP.addFuzzySetBluePrint(dim_i, DIVISION_TYPE.entropyDivision, FuzzyTermType.TYPE_rectangularShape, K);
+			FuzzyTermBMP.addFuzzySetBluePrint(dim_i, DIVISION_TYPE.entropyDivision, FuzzyTermType.TYPE_gaussianShape, K);
 		}
 		knowledgeFactory.create(FuzzyTermBMP);
 
@@ -201,7 +201,7 @@ public class MixedKnowledge_Main {
 
 		/* MOP: Multi-objective Optimization Problem */
 		Problem<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>> problem =
-				new PittsburghFGBML_Basic<MichiganSolution_Basic<Rule_Basic>>(
+				new PittsburghProblem_Basic<MichiganSolution_Basic<Rule_Basic>>(
 						numberOfvariables_Pittsburgh,
 						numberOfObjectives_Pittsburgh,
 						numberOfConstraints_Pittsburgh,

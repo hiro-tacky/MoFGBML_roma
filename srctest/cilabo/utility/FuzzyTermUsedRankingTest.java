@@ -7,7 +7,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import cilabo.data.DataSetManager;
-import cilabo.fuzzy.knowledge.FuzzyTermTypeForMixed;
+import cilabo.fuzzy.knowledge.FuzzySet;
 import cilabo.fuzzy.knowledge.Knowledge;
 import cilabo.fuzzy.knowledge.factory.KnowledgeFactoryFromXML;
 import cilabo.main.Consts;
@@ -35,13 +35,13 @@ class FuzzyTermUsedRankingTest {
 	void test() {
 //		int[][] tmp = FuzzyTermUsedRanking.getUsedFuzzySetNum(XML_reader.getPopulation(Consts.TERMINATE_EVALUATION), Ndim);
 		int[] buf = new int[] {14, 14, 14, 14, 14, 14, 14, 14};
-		FuzzyTermTypeForMixed[][] tmp2 = FuzzyTermUsedRanking.getUsedFuzzySetID(XML_reader.getPopulation(Consts.TERMINATE_EVALUATION), Ndim, buf);
+		FuzzySet[][] tmp2 = FuzzyTermUsedRanking.getUsedFuzzySetID(XML_reader.getPopulation(Consts.TERMINATE_EVALUATION), Ndim, buf);
 	}
 
 	@Test
 	void test2() {
-		FuzzyTermTypeForMixed[][] tmp = FuzzyTermUsedRanking.getUsedFuzzyStyle(XML_reader.getPopulation(Consts.TERMINATE_EVALUATION), Ndim);
-		FuzzyTermTypeForMixed[][] tmp2 = FuzzyTermUsedRanking.getUsedFuzzyStyle(XML_reader.getPopulation(Consts.TERMINATE_EVALUATION), Ndim);
+		FuzzySet[][] tmp = FuzzyTermUsedRanking.getUsedFuzzyStyle(XML_reader.getPopulation(Consts.TERMINATE_EVALUATION), Ndim);
+		FuzzySet[][] tmp2 = FuzzyTermUsedRanking.getUsedFuzzyStyle(XML_reader.getPopulation(Consts.TERMINATE_EVALUATION), Ndim);
 	}
 
 	@AfterAll

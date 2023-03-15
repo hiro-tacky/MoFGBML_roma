@@ -7,12 +7,12 @@ import org.uma.jmetal.solution.util.attribute.Attribute;
 import org.uma.jmetal.solution.util.attribute.util.attributecomparator.AttributeComparator;
 import org.uma.jmetal.solution.util.attribute.util.attributecomparator.impl.IntegerValueAttributeComparator;
 
-public class NumberOfClassifierPatterns<S extends Solution<?>>  implements Attribute<S> {
+public class NumberOfClassifiedPatterns<S extends Solution<?>>  implements Attribute<S> {
 
 	private String attributeId = getClass().getName();
 	private Comparator<S> solutionComparator;
 
-	public NumberOfClassifierPatterns() {
+	public NumberOfClassifiedPatterns() {
 		// The higher value is better.
 		solutionComparator = new IntegerValueAttributeComparator<>(attributeId, AttributeComparator.Ordering.DESCENDING);
 	}

@@ -10,10 +10,14 @@ import cilabo.gbml.solution.pittsburghSolution.PittsburghSolution;
  */
 public final class NumberOfRules <S extends PittsburghSolution<?>>{
 
-	public NumberOfRules() {}
+	public int objectiveID;
 
-	public Integer function(S solution) {
-		return solution.getNumberOfVariables();
+	public NumberOfRules(int objectiveID) {
+		this.objectiveID = objectiveID;
+	}
+
+	public Integer calculateObjective(S solution) {
+		return solution.getNumberOfRule();
 	}
 
 }

@@ -37,7 +37,7 @@ import org.w3c.dom.Element;
 
 import cilabo.fuzzy.knowledge.Knowledge;
 import cilabo.gbml.component.variation.CrossoverAndMutationAndPittsburghLearningVariation;
-import cilabo.gbml.problem.pittsburghFGBML_Problem.AbstractPittsburghFGBML;
+import cilabo.gbml.problem.pittsburghFGBML_Problem.AbstractPittsburghProblem;
 import cilabo.gbml.solution.pittsburghSolution.PittsburghSolution;
 import cilabo.util.fileoutput.PittsburghSolutionListOutput;
 import xml.XML_TagName;
@@ -268,7 +268,7 @@ public class HybridMoFGBMLwithNSGAII <S extends PittsburghSolution<?>>
 	protected List<S> removeNoWinnerMichiganSolution(List<S> population) {
 		/* 未勝利個体削除*/
 	    IntStream.range(0, population.size())
-	        .forEach(i -> ((AbstractPittsburghFGBML)problem).removeNoWinnerMichiganSolution(population.get(i)));
+	        .forEach(i -> ((AbstractPittsburghProblem)problem).removeNoWinnerMichiganSolution(population.get(i)));
 		return population;
 	}
 

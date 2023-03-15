@@ -1,67 +1,62 @@
 package cilabo.fuzzy.knowledge.factory;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
-import cilabo.fuzzy.knowledge.FuzzyTermBluePrintManager;
-import cilabo.fuzzy.knowledge.FuzzyTermBluePrintManager.FuzzyTermsBluePrint;
-import cilabo.fuzzy.knowledge.FuzzyTermTypeForMixed;
+import org.uma.jmetal.util.checking.Check;
+
+import cilabo.fuzzy.knowledge.FuzzySet;
+import cilabo.fuzzy.knowledge.FuzzySetBluePrintManager;
+import cilabo.fuzzy.knowledge.FuzzySetBluePrintManager.FuzzySetBluePrint;
 import cilabo.fuzzy.knowledge.Knowledge;
 import cilabo.fuzzy.knowledge.membershipParams.Parameters;
 
 /**
- * 多種混合分割条件部によるによるKnowledgeBaseを生成する．
+ * 様々な形状のファジィ集合によるKnowledgeBaseを生成する．<br>
+ * Generate various-division amd various-shape fuzzy sets
  * @author Takigawa Hiroki
  */
 public class MixedKnowledgeFactory {
 
 	/** Number of features */
-	int dimension;
-
+	int numberOfDimension;
 	/** Parameters of membership functions */
 	Parameters parameters;
 
 	/**
-	 * インスタンスを生成
-	 * @param parameters 分割区間のパラメータ
+	 * コンストラクタ．Initialize MixedKnowledgeFactory by Parameters class
+	 * @param parameters ファジィ集合パラメータクラス Parameters of membership functions
 	 */
 	public MixedKnowledgeFactory(Parameters parameters) {
-		if(Objects.isNull(parameters)) {
-			throw new IllegalArgumentException("argument [parameters] is null @MixedKnowledgeFactory.MixedKnowledgeFactory");
-		}
+		Check.isNotNull(parameters);
 		this.parameters = parameters;
-		this.dimension = parameters.getNumberOfDimension();
+		this.numberOfDimension = parameters.getNumberOfDimension();
 	}
 
 	/**
-	 * 設計図を基にKnowledgeBaseを生成する
-	 * @param FuzzyTermBPM 生成するFuzzyTermType設計図
+	 * ファジィ集合設計図を基にKnowledgeBaseを生成する<br>
+	 * Create Knowledge Base by given fuzzy set blue print
+	 * @param fuzzySetBluePrintManager ファジィ集合設計図管理クラス this class has fuzzy set blue prints
 	 */
-	public void create(FuzzyTermBluePrintManager FuzzyTermBPM) {
-		if(Objects.isNull(parameters)) {
-			throw new IllegalArgumentException("argument [FuzzyTermBPM] is null @" + this.getClass().getSimpleName());
-		}
+	public void create(FuzzySetBluePrintManager fuzzySetBluePrintManager) {
 		// make fuzzy sets
-		FuzzyTermTypeForMixed[][] fuzzySets = new FuzzyTermTypeForMixed[this.dimension][];
+		FuzzySet[][] fuzzySets = new FuzzySet[this.numberOfDimension][];
 
-		for(int dim_i=0; dim_i<this.dimension; dim_i++) {
-			fuzzySets[dim_i] = new FuzzyTermTypeForMixed[FuzzyTermBPM.getfuzyyTermsNum(dim_i)+1];
+		for(int dim_i=0; dim_i<this.numberOfDimension; dim_i++) {
+			fuzzySets[dim_i] = new FuzzySet[fuzzySetBluePrintManager.getNumberOfFuzzySets(dim_i)+1];
 			//Don't care をセット
-			fuzzySets[dim_i][0] = Knowledge.getInstance().makeDontCare();
+			fuzzySets[dim_i][Knowledge.DnotCare_FuzzySetIndex] = Knowledge.getInstance().makeDontCare();
 
 			//設計図読み込み
-			ArrayList<FuzzyTermsBluePrint> FuzzyTermBP = FuzzyTermBPM.getFuzzyTermsBluePrint(dim_i);
-			if(Objects.isNull(FuzzyTermBP)) {
-				throw new IllegalArgumentException("FuzzyTermsBluePrint of FuzzyTermBPM is null@" + this.getClass().getSimpleName());
-			}
+			ArrayList<FuzzySetBluePrint> fuzzyTermBP = fuzzySetBluePrintManager.getFuzzySetBluePrint(dim_i);
+			Check.isNotNull(fuzzyTermBP);
 
 			int cnt = 1;
 			//設計図を基にFuzzyTermTypeを生成
-			for(FuzzyTermsBluePrint FuzzyTermBP_i : FuzzyTermBP) {
-				float[][] param = parameters.getParameter(FuzzyTermBP_i.getDivisionType(), dim_i, FuzzyTermBP_i.getK(), FuzzyTermBP_i.getFuzzyTermType());
+			for(FuzzySetBluePrint FuzzyTermBP_i : fuzzyTermBP) {
+				float[][] param = parameters.getParameter(FuzzyTermBP_i);
 				for(int k_i=0; k_i<FuzzyTermBP_i.getK(); k_i++) {
-					String name = Knowledge.makeFuzzyTermName(FuzzyTermBP_i.getDivisionType(), FuzzyTermBP_i.getFuzzyTermType(), cnt);
-					fuzzySets[dim_i][cnt] = new FuzzyTermTypeForMixed(name, FuzzyTermBP_i.getFuzzyTermType(), param[k_i], FuzzyTermBP_i.getDivisionType(), FuzzyTermBP_i.getK(), k_i);
+					String name = Knowledge.makeFuzzyTermName(FuzzyTermBP_i, cnt);
+					fuzzySets[dim_i][cnt] = new FuzzySet(name, FuzzyTermBP_i, param[k_i], k_i);
 					cnt++;
 				}
 			}

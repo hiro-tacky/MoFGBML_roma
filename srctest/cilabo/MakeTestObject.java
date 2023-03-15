@@ -9,10 +9,10 @@ import cilabo.data.DataSet;
 import cilabo.data.DataSetManager;
 import cilabo.data.Input;
 import cilabo.data.pattern.impl.Pattern_Basic;
-import cilabo.fuzzy.classifier.Classifier;
-import cilabo.fuzzy.classifier.classification.Classification;
-import cilabo.fuzzy.classifier.classification.impl.SingleWinnerRuleSelection;
-import cilabo.fuzzy.classifier.impl.Classifier_basic;
+import cilabo.fuzzy.classifier.pittsburgh.Classifier;
+import cilabo.fuzzy.classifier.pittsburgh.classification.Classification;
+import cilabo.fuzzy.classifier.pittsburgh.classification.impl.SingleWinnerRuleSelection;
+import cilabo.fuzzy.classifier.pittsburgh.impl.Classifier_basic;
 import cilabo.fuzzy.knowledge.Knowledge;
 import cilabo.fuzzy.knowledge.factory.HomoTriangleKnowledgeFactory;
 import cilabo.fuzzy.knowledge.membershipParams.Parameters;
@@ -20,7 +20,7 @@ import cilabo.fuzzy.rule.Rule.RuleBuilder;
 import cilabo.fuzzy.rule.antecedent.factory.impl.HeuristicRuleGenerationMethod;
 import cilabo.fuzzy.rule.consequent.factory.impl.MoFGBML_Learning;
 import cilabo.fuzzy.rule.impl.Rule_Basic;
-import cilabo.gbml.problem.pittsburghFGBML_Problem.impl.PittsburghFGBML_Basic;
+import cilabo.gbml.problem.pittsburghFGBML_Problem.impl.PittsburghProblem_Basic;
 import cilabo.gbml.solution.michiganSolution.AbstractMichiganSolution;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution.MichiganSolutionBuilder;
 import cilabo.gbml.solution.michiganSolution.impl.MichiganSolution_Basic;
@@ -34,7 +34,7 @@ public class MakeTestObject {
 	MichiganSolutionBuilder<MichiganSolution_Basic<Rule_Basic>> michiganSolutionBuilder = null;
 	Classification<MichiganSolution_Basic<Rule_Basic>> classification = null;
 	Classifier<MichiganSolution_Basic<Rule_Basic>> classifier = null;
-	PittsburghFGBML_Basic<MichiganSolution_Basic<Rule_Basic>> problem = null;
+	PittsburghProblem_Basic<MichiganSolution_Basic<Rule_Basic>> problem = null;
 
 	String dataSetName;
 	int x;
@@ -54,7 +54,7 @@ public class MakeTestObject {
 			String trainFileName = String.format("dataset/%s/a%d_%d_%s-10tra.dat", this.dataSetName, this.x, this.y, this.dataSetName);
 			String testFileName = String.format("dataset/%s/a%d_%d_%s-10tst.dat", this.dataSetName, this.x, this.y, this.dataSetName);
 			/* Load Dataset ======================== */
-			Input.loadTrainTestFiles_Basic(trainFileName, trainFileName);
+			Input.loadTrainTestFiles(trainFileName, trainFileName);
 			train = (DataSet<Pattern_Basic>) DataSetManager.getInstance().getTrains().get(0);
 		}
 		return train;
@@ -67,7 +67,7 @@ public class MakeTestObject {
 	public Parameters getParameters() {
 		if(Objects.isNull(parameters)) {
 			parameters = new Parameters(this.getTrain());
-			for(int dim_i=0; dim_i<train.getNdim(); dim_i++) {
+			for(int dim_i=0; dim_i<train.getNumberOfDimension(); dim_i++) {
 				parameters.makeHomePartition(dim_i, new int[] {2, 3, 4, 5});
 			}
 		}
@@ -138,15 +138,15 @@ public class MakeTestObject {
 		this.classifier = classifier;
 	}
 
-	public PittsburghFGBML_Basic<MichiganSolution_Basic<Rule_Basic>> getProblem() {
+	public PittsburghProblem_Basic<MichiganSolution_Basic<Rule_Basic>> getProblem() {
 		if(Objects.isNull(problem)) {
-			problem = new PittsburghFGBML_Basic<MichiganSolution_Basic<Rule_Basic>>(
+			problem = new PittsburghProblem_Basic<MichiganSolution_Basic<Rule_Basic>>(
 					60, 2, 0, this.getTrain(), this.getMichiganSolutionBuilder(), this.getClassifier());
 		}
 		return problem;
 	}
 
-	public void setProblem(PittsburghFGBML_Basic<MichiganSolution_Basic<Rule_Basic>> problem) {
+	public void setProblem(PittsburghProblem_Basic<MichiganSolution_Basic<Rule_Basic>> problem) {
 		this.problem = problem;
 	}
 

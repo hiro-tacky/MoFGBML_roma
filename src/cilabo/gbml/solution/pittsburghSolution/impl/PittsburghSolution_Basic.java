@@ -9,27 +9,42 @@ import org.w3c.dom.NodeList;
 
 import cilabo.data.DataSetManager;
 import cilabo.data.pattern.Pattern;
-import cilabo.fuzzy.classifier.Classifier;
+import cilabo.fuzzy.classifier.pittsburgh.Classifier;
 import cilabo.gbml.objectivefunction.pittsburgh.ErrorRate;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution;
-import cilabo.gbml.solution.michiganSolution.MichiganSolution.MichiganSolutionBuilder;
+import cilabo.gbml.solution.michiganSolution.builder.MichiganSolutionBuilder;
 import cilabo.gbml.solution.pittsburghSolution.AbstractPittsburghSolution;
 import cilabo.gbml.solution.util.attribute.ErroredPatternsAttribute;
 import cilabo.main.ExperienceParameter.OBJECTIVES_FOR_PITTSBURGH;
 import xml.XML_TagName;
 import xml.XML_manager;
 
-public final class PittsburghSolution_Basic <michiganSolution extends MichiganSolution<?>>
-		extends AbstractPittsburghSolution<michiganSolution>{
+/**
+ * 標準的Pittsburgh型識別器クラス basic pittsburgh solution class
+ * @author Takigawa Hiroki
+ *
+ * @param <MichiganSolutionClass> このPittsburgh型識別器が持つMichigan型識別器クラス michigan solution class that this class has
+ */
+public final class PittsburghSolution_Basic <MichiganSolutionClass extends MichiganSolution<?>>
+		extends AbstractPittsburghSolution<MichiganSolutionClass>{
 
+	/** pittsuburgh型識別器のメソッドクラス methods of pittsburgh solution */
+	private Classifier<PittsburghSolution_Basic<MichiganSolutionClass>> classifier;
+
+	/** コンストラクタ constructor
+	 * @param numberOfVariables Michigan型識別器の個数 number of variables
+	 * @param numberOfObjectives 目的関数の個数 number of objectives
+	 * @param numberOfConstraints 制約の個数 number of constraints
+	 * @param michiganSolutionBuilder ミシガン型識別器生成器 michigan solution builder
+	 * @param classifier pittsuburgh型識別器のメソッドクラス methods of pittsburgh solution */
 	public PittsburghSolution_Basic(int numberOfVariables,
 			int numberOfObjectives,
 			int numberOfConstraints,
-			MichiganSolutionBuilder<michiganSolution> michiganSolutionBuilder,
-			Classifier<michiganSolution> classifier) {
-		super(numberOfVariables, numberOfObjectives, numberOfConstraints,
-				michiganSolutionBuilder, classifier);
-		List<michiganSolution> michiganSolutionList = michiganSolutionBuilder.createMichiganSolutions(numberOfVariables);
+			MichiganSolutionBuilder<MichiganSolutionClass> michiganSolutionBuilder,
+			Classifier<PittsburghSolution_Basic<MichiganSolutionClass>> classifier) {
+		super(numberOfVariables, numberOfObjectives, numberOfConstraints, michiganSolutionBuilder);
+		this.classifier = classifier;
+		List<MichiganSolutionClass> michiganSolutionList = michiganSolutionBuilder.createMichiganSolutions(numberOfVariables);
 		for(int i=0; i<this.getNumberOfVariables(); i++) {
 			this.setVariable(i, michiganSolutionList.get(i));
 		}
@@ -37,24 +52,25 @@ public final class PittsburghSolution_Basic <michiganSolution extends MichiganSo
 
 	public PittsburghSolution_Basic(int numberOfObjectives,
 			int numberOfConstraints,
-			MichiganSolutionBuilder<michiganSolution> michiganSolutionBuilder,
-			Classifier<michiganSolution> classifier,
-			Element pittsburghSolution) {
-		super(numberOfObjectives, numberOfConstraints,
-				michiganSolutionBuilder, classifier, pittsburghSolution);
-		NodeList michiganSolutionList = pittsburghSolution.getElementsByTagName(XML_TagName.michiganSolution.toString());
+			MichiganSolutionBuilder<MichiganSolutionClass> michiganSolutionBuilder,
+			Classifier<PittsburghSolution_Basic<MichiganSolutionClass>> classifier,
+			Element pittsburghSolutionEL) {
+		super(AbstractPittsburghSolution.getNumberOfVariables(pittsburghSolutionEL),
+				numberOfObjectives, numberOfConstraints, michiganSolutionBuilder);
+		this.classifier = classifier;
+		NodeList michiganSolutionList = pittsburghSolutionEL.getElementsByTagName(XML_TagName.michiganSolution.toString());
 		for(int i=0; i<michiganSolutionList.getLength(); i++) {
-			michiganSolution michiganSolution = michiganSolutionBuilder.createMichiganSolution((Element)michiganSolutionList.item(i));
+			MichiganSolutionClass michiganSolution = michiganSolutionBuilder.createMichiganSolution((Element)michiganSolutionList.item(i));
 			this.setVariable(i, michiganSolution);
 		}
 	}
 
-	private PittsburghSolution_Basic(PittsburghSolution_Basic<michiganSolution> solution) {
+	private PittsburghSolution_Basic(PittsburghSolution_Basic<MichiganSolutionClass> solution) {
 	    super(solution.getNumberOfVariables(), solution.getNumberOfObjectives(), solution.getNumberOfConstraints(),
-	    		solution.michiganSolutionBuilder, solution.classifier.copy());
+	    		solution.michiganSolutionBuilder);
 
 	    for (int i = 0; i < solution.getNumberOfVariables(); i++) {
-	      setVariable(i, (michiganSolution) solution.getVariable(i).copy());
+	      setVariable(i, (MichiganSolutionClass) solution.getVariable(i).copy());
 	    }
 
 	    for (int i = 0; i < solution.getNumberOfObjectives(); i++) {
@@ -69,13 +85,13 @@ public final class PittsburghSolution_Basic <michiganSolution extends MichiganSo
 	}
 
 	@Override
-	public PittsburghSolution_Basic<michiganSolution> copy() {
-		return new PittsburghSolution_Basic<michiganSolution>(this);
+	public PittsburghSolution_Basic<MichiganSolutionClass> copy() {
+		return new PittsburghSolution_Basic<MichiganSolutionClass>(this);
 	}
 
 	@Override
-	public michiganSolution classify(Pattern<?> pattern) {
-		return this.classifier.classify(this.getVariables(), pattern);
+	public MichiganSolution<?> classify(Pattern<?> pattern) {
+		return this.classifier.classify(this, pattern);
 	}
 
 	@Override
@@ -89,7 +105,7 @@ public final class PittsburghSolution_Basic <michiganSolution extends MichiganSo
 		}
 		str += ln;
 
-		for(michiganSolution tmp: this.variables) {
+		for(MichiganSolutionClass tmp: this.variables) {
 			str += " ->" + tmp + ln;
 		}
 
@@ -135,8 +151,10 @@ public final class PittsburghSolution_Basic <michiganSolution extends MichiganSo
 			f2_.setAttribute(XML_TagName.objectiveName.toString(), OBJECTIVES_FOR_PITTSBURGH.NumberOfRule.toString());
 			XML_manager.getInstance().addElement(objectives, f2_);
 
-			ErrorRate<PittsburghSolution_Basic<michiganSolution>> errorRate = new ErrorRate<>();
-			double f3 = errorRate.function(this, DataSetManager.getInstance().getTests().get(0));
+			ErrorRate<PittsburghSolution_Basic<MichiganSolutionClass>> errorRate =
+					new ErrorRate<PittsburghSolution_Basic<MichiganSolutionClass>>(
+							OBJECTIVES_FOR_PITTSBURGH.ErrorRateDtst.toInt());
+			double f3 = errorRate.calculateObjective(this, DataSetManager.getInstance().getTests().get(0));
 			Element f3_ = XML_manager.getInstance().createElement(XML_TagName.objective, String.valueOf(f3));
 			f3_.setAttribute(XML_TagName.id.toString(), String.valueOf(OBJECTIVES_FOR_PITTSBURGH.ErrorRateDtst.toInt()));
 			f3_.setAttribute(XML_TagName.objectiveName.toString(), OBJECTIVES_FOR_PITTSBURGH.ErrorRateDtst.toString());
@@ -156,6 +174,16 @@ public final class PittsburghSolution_Basic <michiganSolution extends MichiganSo
 		}
 		XML_manager.getInstance().addElement(pittsburghSolution, attribute_Element);
 		return pittsburghSolution;
+	}
+
+	@Override
+	public int getRuleLength() {
+		return this.classifier.getRuleLength(this);
+	}
+
+	@Override
+	public int getNumberOfRule() {
+		return this.classifier.getNumberOfRule(this);
 	}
 
 }

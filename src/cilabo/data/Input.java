@@ -5,64 +5,67 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.uma.jmetal.util.checking.Check;
 
 import cilabo.data.pattern.impl.Pattern_Basic;
 import cilabo.data.pattern.impl.Pattern_MultiClass;
 import cilabo.fuzzy.rule.consequent.classLabel.impl.ClassLabel_Basic;
 import cilabo.fuzzy.rule.consequent.classLabel.impl.ClassLabel_Multi;
 import cilabo.main.Consts;
-import cilabo.main.ExperienceParameter;
+import cilabo.main.ExperienceParameter.CLASS_LABEL_TYPE;
 
 /**
- * データセット入力用メソッド群
+ * データセット入力用メソッド群 this class define methods to load data set file
  * @author Takigawa Hiroki
  */
 public class Input {
 
 	/**
-	 * <h1>Input File for Classification Dataset</h1>
-	 * @param fileName : String
-	 * @return 入力済みDataSet
+	 * データセットファイルを読み込む
+	 * Read sata set file
+	 * @param filePath データセットのパス
+	 * @param classLabelType ターゲットクラスのタイプ
+	 * @return 読み込み済みDataSet
 	 */
-	public static DataSet<?> inputDataSet(String fileName) {
-		switch(ExperienceParameter.classlabel) {
+	public static DataSet<?> inputDataSet(String filePath, CLASS_LABEL_TYPE classLabelType) {
+		switch(classLabelType) {
 			case Multi:
-				return inputDataSet_MultiLabel(fileName);
+				return inputDataSet_MultiLabel(filePath);
 			case Single:
 			default:
-				return inputDataSet_Basic(fileName);
+				return inputDataSet_Basic(filePath);
 		}
 	}
 
 	/**
-	 * <h1>Input File for Single-Label Classification Dataset</h1>
-	 * @param fileName : String
-	 * @return 入力済みDataSet
+	 * 単一クラスラベル用データセットファイルを読み込む
+	 * Read data set file for single target class
+	 * @param filePath データセットのパス
+	 * @return 読み込み済みDataSet
 	 */
-	public static DataSet<Pattern_Basic> inputDataSet_Basic(String fileName) {
-		List<double[]> lines = inputDataAsList(fileName);
+	private static DataSet<Pattern_Basic> inputDataSet_Basic(String filePath) {
+		List<double[]> lines = inputDataAsList(filePath);
 
-		// The first row is parameters of dataset
-		DataSet<Pattern_Basic> data = new DataSet<Pattern_Basic>(
-				(int)lines.get(0)[0],
-				(int)lines.get(0)[1],
-				(int)lines.get(0)[2]);
+		int dataSetSize = (int)lines.get(0)[0];
+		int numberOfDimension = (int)lines.get(0)[1];
+		int numberOfClass = (int)lines.get(0)[2];
 		lines.remove(0);
 
 		// Later second row are patterns
-		for(int n = 0; n < data.getDataSize(); n++) {
+		ArrayList<Pattern_Basic> patterns = new ArrayList<Pattern_Basic>();
+		for(int n = 0; n < dataSetSize; n++) {
 			double[] line = lines.get(n);
 
 			int id = n;
-			double[] vector = new double[data.getNdim()];
+			double[] vector = new double[numberOfDimension];
 			Integer C;
-			for(int i = 0; i < vector.length; i++) {
+			for(int i = 0; i < numberOfDimension; i++) {
 				vector[i] = line[i];
 			}
-			C = (int)line[data.getNdim()];
+			C = (int)line[numberOfDimension];
 
 			AttributeVector inputVector = new AttributeVector(vector);
 			ClassLabel_Basic classLabel = new ClassLabel_Basic(C);
@@ -71,38 +74,46 @@ public class Input {
 					id,
 					inputVector,
 					classLabel);
-			data.addPattern(pattern);
+			patterns.add(pattern);
 		}
-		return data;
+
+		DataSet<Pattern_Basic> dataSet = new DataSet<Pattern_Basic>(
+				dataSetSize,
+				numberOfDimension,
+				numberOfClass,
+				patterns);
+
+		return dataSet;
 	}
 
 	/**
-	 * <h1>Input File for Multi-Label Classification Dataset</h1>
-	 * @param fileName : String
-	 * @return 入力済みDataSet
+	 * マルチクラスラベル用データセットファイルを読み込む
+	 * Read data set file for multi target classes
+	 * @param filePath データセットのパス
+	 * @return 読み込み済みDataSet
 	 */
-	public static DataSet<Pattern_MultiClass> inputDataSet_MultiLabel(String fileName) {
-		List<double[]> lines = inputDataAsList(fileName);
+	private static DataSet<Pattern_MultiClass> inputDataSet_MultiLabel(String filePath) {
+		List<double[]> lines = inputDataAsList(filePath);
 
 		// The first row is parameters of dataset
-		DataSet<Pattern_MultiClass> data = new DataSet<Pattern_MultiClass>(
-				(int)lines.get(0)[0],
-				(int)lines.get(0)[1],
-				(int)lines.get(0)[2]);
+		int dataSetSize = (int)lines.get(0)[0];
+		int numberOfDimension = (int)lines.get(0)[1];
+		int numberOfClass = (int)lines.get(0)[2];
 		lines.remove(0);
 
 		// Later second row are patterns
-		for(int n = 0; n < data.getDataSize(); n++) {
+		ArrayList<Pattern_MultiClass> patterns = new ArrayList<Pattern_MultiClass>();
+		for(int n = 0; n < dataSetSize; n++) {
 			double[] line = lines.get(n);
 
 			int id = n;
-			double[] vector = new double[data.getNdim()];
-			Integer[] cVec = new Integer[data.getCnum()];
-			for(int i = 0; i < vector.length; i++) {
+			double[] vector = new double[numberOfDimension];
+			Integer[] cVec = new Integer[numberOfClass];
+			for(int i = 0; i < numberOfDimension; i++) {
 				vector[i] = line[i];
 			}
-			for(int i = 0; i < data.getCnum(); i++) {
-				cVec[i] = (int)line[i + data.getNdim()];
+			for(int i = 0; i < numberOfClass; i++) {
+				cVec[i] = (int)line[i + numberOfDimension];
 			}
 
 			AttributeVector inputVector = new AttributeVector(vector);
@@ -112,66 +123,42 @@ public class Input {
 					id,
 					inputVector,
 					classLabel);
-			data.addPattern(pattern);
+
+			patterns.add(pattern);
 		}
-		return data;
+
+		DataSet<Pattern_MultiClass> dataSet = new DataSet<Pattern_MultiClass>(
+				dataSetSize,
+				numberOfDimension,
+				numberOfClass,
+				patterns);
+
+		return dataSet;
 	}
 
 	/**
-	 * ファイル名を指定して複数クラスラベルのデータセットをロード
-	 * @param trainFile 学習用データセットのパス
-	 * @param testFile 評価用データセットのパス
+	 * 学習用及び評価用データセットファイルを読み込む
+	 * Load training and test data set file for
+	 * @param trainFile 学習用データセットのパス training data set file's path
+	 * @param testFile 評価用データセットのパス test data set file's path
 	 */
-	public static void loadTrainTestFiles_Basic(String trainFile, String testFile) {
+	public static void loadTrainTestFiles(String trainFile, String testFile, CLASS_LABEL_TYPE classLabelType) {
 
 		/* Load Dataset ======================== */
-		if(Objects.isNull(DataSetManager.getInstance().getTrains())) {
-			throw new IllegalArgumentException("argument [trainFile] is null @" + "TrainTestDatasetManager.loadTrainTestFiles()");}
-		if(Objects.isNull(DataSetManager.getInstance().getTrains())) {
-			throw new IllegalArgumentException("argument [testFile] is null @" + "TrainTestDatasetManager.loadTrainTestFiles()");}
+		Check.isNotNull(trainFile);
+		Check.isNotNull(testFile);
 
-		DataSet<Pattern_Basic> train = Input.inputDataSet_Basic(trainFile);
+		DataSet<?> train = Input.inputDataSet(trainFile, classLabelType);
 		DataSetManager.getInstance().addTrains(train);
-		Consts.DATA_SIZE = train.getDataSize();
-		Consts.ATTRIBUTE_NUMBER = train.getNdim();
-		Consts.CLASS_LABEL_NUMBER = train.getCnum();
+		Consts.DATA_SIZE = train.getDataSetSize();
+		Consts.ATTRIBUTE_NUMBER = train.getNumberOfDimension();
+		Consts.CLASS_LABEL_NUMBER = train.getNumberOfClass();
 
-		DataSet<Pattern_Basic> test = Input.inputDataSet_Basic(testFile);
+		DataSet<?> test = Input.inputDataSet(trainFile, classLabelType);
 		DataSetManager.getInstance().addTests(test);
 
-		if(Objects.isNull(DataSetManager.getInstance().getTrains())) {
-			throw new IllegalArgumentException("failed to initialise trains@TrainTestDatasetManager.loadTrainTestFiles()");}
-		else if(Objects.isNull(DataSetManager.getInstance().getTests())) {
-			throw new IllegalArgumentException("failed to initialise tests@TrainTestDatasetManager.loadTrainTestFiles()");}
-		return;
-	}
-
-	/**
-	 * ファイル名を指定して単一クラスラベルのデータセットをロード
-	 * @param trainFile 学習用データセットのパス
-	 * @param testFile 評価用データセットのパス
-	 */
-	public static void loadTrainTestFiles_MultiClass(String trainFile, String testFile) {
-
-		/* Load Dataset ======================== */
-		if(Objects.isNull(DataSetManager.getInstance().getTrains())) {
-			throw new IllegalArgumentException("argument [trainFile] is null @TrainTestDatasetManager.loadTrainTestFiles()");}
-		if(Objects.isNull(DataSetManager.getInstance().getTrains())) {
-			throw new IllegalArgumentException("argument [testFile] is null @TrainTestDatasetManager.loadTrainTestFiles()");}
-
-		DataSet<Pattern_MultiClass> train = Input.inputDataSet_MultiLabel(trainFile);
-		DataSetManager.getInstance().addTrains(train);
-		Consts.DATA_SIZE = train.getDataSize();
-		Consts.ATTRIBUTE_NUMBER = train.getNdim();
-		Consts.CLASS_LABEL_NUMBER = train.getCnum();
-
-		DataSet<Pattern_MultiClass> test = Input.inputDataSet_MultiLabel(testFile);
-		DataSetManager.getInstance().addTests(test);
-
-		if(Objects.isNull(DataSetManager.getInstance().getTrains())) {
-			throw new IllegalArgumentException("failed to initialise trains@TrainTestDatasetManager.loadTrainTestFiles()");}
-		else if(Objects.isNull(DataSetManager.getInstance().getTests())) {
-			throw new IllegalArgumentException("failed to initialise tests@TrainTestDatasetManager.loadTrainTestFiles()");}
+		Check.isNotNull(DataSetManager.getInstance().getTrains());
+		Check.isNotNull(DataSetManager.getInstance().getTests());
 		return;
 	}
 

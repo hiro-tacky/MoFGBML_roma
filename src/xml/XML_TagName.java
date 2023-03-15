@@ -40,5 +40,10 @@ public enum XML_TagName {
 					divisionType,
 					partitionNum,
 					partition_i,
+
+	dataSet,
+		pattern,
+			attributeVector,
+
 	consts,
 }

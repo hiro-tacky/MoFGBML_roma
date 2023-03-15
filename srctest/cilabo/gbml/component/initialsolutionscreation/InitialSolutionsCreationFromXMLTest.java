@@ -13,20 +13,21 @@ import cilabo.MakeTestObject;
 import cilabo.data.DataSet;
 import cilabo.data.DataSetManager;
 import cilabo.data.pattern.impl.Pattern_Basic;
-import cilabo.fuzzy.classifier.Classifier;
-import cilabo.fuzzy.classifier.classification.Classification;
-import cilabo.fuzzy.classifier.classification.impl.SingleWinnerRuleSelection;
-import cilabo.fuzzy.classifier.impl.Classifier_basic;
+import cilabo.fuzzy.classifier.pittsburgh.Classifier;
+import cilabo.fuzzy.classifier.pittsburgh.classification.Classification;
+import cilabo.fuzzy.classifier.pittsburgh.classification.impl.SingleWinnerRuleSelection;
+import cilabo.fuzzy.classifier.pittsburgh.impl.Classifier_basic;
 import cilabo.fuzzy.knowledge.Knowledge;
 import cilabo.fuzzy.knowledge.factory.HomoTriangleKnowledgeFactory;
 import cilabo.fuzzy.knowledge.membershipParams.Parameters;
-import cilabo.fuzzy.rule.Rule.RuleBuilder;
 import cilabo.fuzzy.rule.antecedent.factory.impl.HeuristicRuleGenerationMethod;
+import cilabo.fuzzy.rule.builder.RuleBuilder;
+import cilabo.fuzzy.rule.builder.impl.RuleBuilder_Basic;
 import cilabo.fuzzy.rule.consequent.factory.impl.MoFGBML_Learning;
 import cilabo.fuzzy.rule.impl.Rule_Basic;
-import cilabo.gbml.problem.pittsburghFGBML_Problem.impl.PittsburghFGBML_Basic;
+import cilabo.gbml.problem.pittsburghFGBML_Problem.impl.PittsburghProblem_Basic;
 import cilabo.gbml.solution.michiganSolution.AbstractMichiganSolution;
-import cilabo.gbml.solution.michiganSolution.MichiganSolution.MichiganSolutionBuilder;
+import cilabo.gbml.solution.michiganSolution.builder.MichiganSolutionBuilder;
 import cilabo.gbml.solution.michiganSolution.impl.MichiganSolution_Basic;
 import cilabo.gbml.solution.pittsburghSolution.impl.PittsburghSolution_Basic;
 import cilabo.main.Consts;
@@ -49,7 +50,7 @@ class InitialSolutionsCreationFromXMLTest {
 		HomoTriangleKnowledgeFactory KnowledgeFactory = new HomoTriangleKnowledgeFactory(parameters);
 		KnowledgeFactory.create2_3_4_5();
 
-		RuleBuilder<Rule_Basic, ?, ?> ruleBuilder = new Rule_Basic.RuleBuilder_Basic(
+		RuleBuilder<Rule_Basic> ruleBuilder = new RuleBuilder_Basic(
 				new HeuristicRuleGenerationMethod(train),
 				new MoFGBML_Learning(train));
 
@@ -63,8 +64,8 @@ class InitialSolutionsCreationFromXMLTest {
 		Classifier<MichiganSolution_Basic<Rule_Basic>> classifier = new Classifier_basic<>(classification);
 
 		/* MOP: Multi-objective Optimization Problem */
-		PittsburghFGBML_Basic<MichiganSolution_Basic<Rule_Basic>> problem =
-				new PittsburghFGBML_Basic<MichiganSolution_Basic<Rule_Basic>>(
+		PittsburghProblem_Basic<MichiganSolution_Basic<Rule_Basic>> problem =
+				new PittsburghProblem_Basic<MichiganSolution_Basic<Rule_Basic>>(
 						60, 2, 0, null, michiganSolutionBuilder, classifier);
 
 		try {

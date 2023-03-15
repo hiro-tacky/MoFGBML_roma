@@ -1,22 +1,23 @@
 package cilabo.fuzzy.rule.consequent.ruleWeight;
 
-/**RuleWeightクラスの抽象クラス<br>
- * 実装クラスではルール重みを記憶するオブジェクトとしてRuleWeightValueクラスの変数の宣言の実装
- * @author hirot
+/**
+ * ルール重み抽象クラス abstract rule weight class
+ * @author Takigawa Hiroki
  *
- * @param <RuleWeightValue> RuleWeight実装クラスのフィールドでルール重みを記憶する変数
+ * @param <RuleWeightVariable> RuleWeightクラスでルール重みを保持する変数 vaiable of RuleWeight class
  */
-public abstract class AbstractRuleWeight <RuleWeightValue> implements RuleWeight <RuleWeightValue>{
+public abstract class AbstractRuleWeight <RuleWeightVariable> implements RuleWeight <RuleWeightVariable>{
 
-	protected RuleWeightValue ruleWeight;
+	/** ルール重み格納変数 vaiable of rule weight */
+	protected RuleWeightVariable ruleWeight;
 
 	@Override
-	public RuleWeightValue getRuleWeightValue() {
+	public RuleWeightVariable getRuleWeightVariable() {
 		return ruleWeight;
 	}
 
 @	Override
-	public void setRuleWeightValue(RuleWeightValue ruleWeight) {
+	public void setRuleWeightVariable(RuleWeightVariable ruleWeight) {
 		this.ruleWeight = ruleWeight;
 	}
 }

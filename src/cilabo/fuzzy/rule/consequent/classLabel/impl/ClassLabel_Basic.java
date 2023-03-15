@@ -1,7 +1,5 @@
 package cilabo.fuzzy.rule.consequent.classLabel.impl;
 
-import java.util.Objects;
-
 import org.w3c.dom.Element;
 
 import cilabo.fuzzy.rule.consequent.classLabel.AbstractClassLabel;
@@ -9,28 +7,37 @@ import cilabo.fuzzy.rule.consequent.classLabel.ClassLabel;
 import xml.XML_TagName;
 import xml.XML_manager;
 
+/**
+ * 標準的ラベルクラス．basic label class
+ * @author Takigawa Hiroki
+ */
 public final class ClassLabel_Basic extends AbstractClassLabel <Integer>{
 
 	/**
-	 * 入力されたクラスラベルを持つインスタンスを生成する
-	 * @param classLabel クラスラベル
+	 * コンストラクタ．constructor
+	 * @param classLabel クラスラベル class label
 	 */
 	public ClassLabel_Basic(Integer classLabel) {
 		this.classLabel = classLabel;
 	}
 
-	@Override
-	public boolean equalsClassLabel(ClassLabel<?> classLabel) {
-		//同じクラスのオブィエクトか調べる
-		if(!(classLabel instanceof ClassLabel_Basic)) {return false;}
+	/**
+	 * 入力された ClassLabel インスタンス と このインスタンスを比較する
+	 * Comapre this instance and given class label. when given one equals own, return true, otherwise return false.
+	 * @param classLabel 比較したいClassLabel class label to be compared
+	 * @return 同値である場合(equal):true 同値でない場合(not equal):false */
+	public boolean equalsClassLabel(int classLabel) {
 		//クラスラベルの値が同値か調べる
-		if( !((ClassLabel_Basic)classLabel).getClassLabelValue().equals(this.getClassLabelValue())){return false;}
-		return true;
+		return this.getClassLabelVariable().equals(classLabel);
 	}
 
 	@Override
-	public boolean equalsClassLabel(int classLabel) {
-		return this.classLabel.equals(classLabel);
+	public boolean equals(ClassLabel<?> classLabel) {
+		//同じクラスのオブィエクトか調べる
+		if(!(classLabel instanceof ClassLabel_Basic)) {return false;}
+		//クラスラベルの値が同値か調べる
+		if( !((ClassLabel_Basic)classLabel).getClassLabelVariable().equals(this.getClassLabelVariable())){return false;}
+		return true;
 	}
 
 	@Override
@@ -40,7 +47,7 @@ public final class ClassLabel_Basic extends AbstractClassLabel <Integer>{
 
 	@Override
 	public void setRejectedClassLabel(){
-		this.setClassLabelValue(RejectedClassLabel);
+		this.setClassLabelVariable(RejectedClassLabel);
 	}
 
 	@Override
@@ -50,16 +57,13 @@ public final class ClassLabel_Basic extends AbstractClassLabel <Integer>{
 
 	@Override
 	public String toString() {
-		if( Objects.isNull(this.classLabel) ) {
-			throw new NullPointerException();
-		}
 		String str = String.format("%2d", this.classLabel);
 		return str;
 	}
 
 	@Override
 	public Element toElement() {
-		Element classLabel = XML_manager.getInstance().createElement(XML_TagName.classLabel, String.valueOf(this.classLabel));
+		Element classLabel = XML_manager.getInstance().createElement(XML_TagName.classLabel, this.classLabel);
 		return classLabel;
 	}
 }

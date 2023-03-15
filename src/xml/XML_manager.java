@@ -43,10 +43,6 @@ public class XML_manager {
 		return instance;
 	}
 
-	public static void setInstance(XML_manager instance) {
-		XML_manager.instance = instance;
-	}
-
 	private XML_manager(){
 		xmlFileName = Consts.XML_FILE_NAME;
 		if(!(xmlFileName.endsWith(".xml"))) {
@@ -85,18 +81,6 @@ public class XML_manager {
 	}
 
 	/**
-	 * 親ノードに子ノードを追加する．生成された子ノードを返す
-	 * @param parent 追加先の親ノード
-	 * @param nodeName 生成したい子ノードの名
-	 * @return 生成された子ノード(Element型)
-	 */
-	public Element addElement(Element parent, XML_TagName nodeName) {
-		Element v = document.createElement(nodeName.toString());
-		parent.appendChild(v);
-		return v;
-	}
-
-	/**
 	 * 親ノードに子ノードを追加する．子ノードに値を追加 生成された子ノードを返す
 	 * @param parent 追加先の親ノード
 	 * @param nodeName 生成したい子ノードの名
@@ -112,19 +96,16 @@ public class XML_manager {
 	}
 
 	/**
-	 * 親ノードに子ノードを追加する. 属性値を追加 生成された子ノードを返す
+	 * 親ノードに子ノードを追加する．子ノードに値を追加 生成された子ノードを返す
 	 * @param parent 追加先の親ノード
 	 * @param nodeName 生成したい子ノードの名
-	 * @param attributeName 属性値名
-	 * @param attributeValue 属性の持つ値
+	 * @param nodeValue 要素の持つ値
 	 * @return 生成された子ノード(Element型)
 	 */
-	public Element addElement(Element parent, XML_TagName nodeName, XML_TagName attributeName, String attributeValue) {
-		Element v = document.createElement(nodeName.toString());
-		v.setAttribute(attributeName.toString(), attributeValue);
-		parent.appendChild(v);
-		return v;
+	public Element addElement(Element parent, XML_TagName nodeName, Number nodeValue) {
+		return this.addElement(parent, nodeName, String.valueOf(nodeValue));
 	}
+
 	/**
 	 * 親ノードに子ノードを追加する. 値を追加．属性値を追加  生成された子ノードを返す
 	 * @param parent 追加先の親ノード
@@ -141,6 +122,45 @@ public class XML_manager {
 		v.setAttribute(attributeName.toString(), attributeValue);
 		parent.appendChild(v);
 		return v;
+	}
+
+	/**
+	 * 親ノードに子ノードを追加する. 値を追加．属性値を追加  生成された子ノードを返す
+	 * @param parent 追加先の親ノード
+	 * @param nodeName 生成したい子ノードの名
+	 * @param nodeValue 要素の持つ値
+	 * @param attributeName 属性値名
+	 * @param attributeValue 属性の持つ値
+	 * @return 生成された子ノード(Element型)
+	 */
+	public Element addElement(Element parent, XML_TagName nodeName, Number nodeValue, XML_TagName attributeName, String attributeValue) {
+		return this.addElement(parent, nodeName, String.valueOf(nodeValue), attributeName, attributeValue);
+	}
+
+	/**
+	 * 親ノードに子ノードを追加する. 値を追加．属性値を追加  生成された子ノードを返す
+	 * @param parent 追加先の親ノード
+	 * @param nodeName 生成したい子ノードの名
+	 * @param nodeValue 要素の持つ値
+	 * @param attributeName 属性値名
+	 * @param attributeValue 属性の持つ値
+	 * @return 生成された子ノード(Element型)
+	 */
+	public Element addElement(Element parent, XML_TagName nodeName, String nodeValue, XML_TagName attributeName, Number attributeValue) {
+		return this.addElement(parent, nodeName, nodeValue, attributeName, String.valueOf(attributeValue));
+	}
+
+	/**
+	 * 親ノードに子ノードを追加する. 値を追加．属性値を追加  生成された子ノードを返す
+	 * @param parent 追加先の親ノード
+	 * @param nodeName 生成したい子ノードの名
+	 * @param nodeValue 要素の持つ値
+	 * @param attributeName 属性値名
+	 * @param attributeValue 属性の持つ値
+	 * @return 生成された子ノード(Element型)
+	 */
+	public Element addElement(Element parent, XML_TagName nodeName, Number nodeValue, XML_TagName attributeName, Number attributeValue) {
+		return this.addElement(parent, nodeName, String.valueOf(nodeValue), attributeName, String.valueOf(attributeValue));
 	}
 
 	/**
@@ -164,6 +184,11 @@ public class XML_manager {
 	}
 
 	//新規のElementを追加する
+	public Element createElement(XML_TagName nodeName, Number nodeValue) {
+		return this.createElement(nodeName, String.valueOf(nodeValue));
+	}
+
+	//新規のElementを追加する.Consts専用．その他非推奨
 	public Element createElement(String nodeName, String nodeValue) {
 		Element v = document.createElement(nodeName);
 		Text textContents = document.createTextNode(nodeValue);
@@ -179,12 +204,32 @@ public class XML_manager {
 	}
 
 	//Elementを追加する
+	public Element createElement(XML_TagName nodeName, XML_TagName attributeName, Number attributeValue) {
+		return this.createElement(nodeName, attributeName, String.valueOf(attributeValue));
+	}
+
+	//Elementを追加する
 	public Element createElement(XML_TagName nodeName, String nodeValue, XML_TagName attributeName, String attributeValue) {
 		Element v = document.createElement(nodeName.toString());
 		Text textContents = document.createTextNode(nodeValue);
 		v.setAttribute(attributeName.toString(), attributeValue);
 		v.appendChild(textContents);
 		return v;
+	}
+
+	//Elementを追加する
+	public Element createElement(XML_TagName nodeName, String nodeValue, XML_TagName attributeName, Number attributeValue) {
+		return this.createElement(nodeName, nodeValue, attributeName, String.valueOf(attributeValue));
+	}
+
+	//Elementを追加する
+	public Element createElement(XML_TagName nodeName, Number nodeValue, XML_TagName attributeName, String attributeValue) {
+		return this.createElement(nodeName, String.valueOf(nodeValue), attributeName, attributeValue);
+	}
+
+	//Elementを追加する
+	public Element createElement(XML_TagName nodeName, Number nodeValue, XML_TagName attributeName, Number attributeValue) {
+		return this.createElement(nodeName, String.valueOf(nodeValue), attributeName, String.valueOf(attributeValue));
 	}
 
 	//Elementを追加する
@@ -196,6 +241,13 @@ public class XML_manager {
 	//Elementを追加する
 	public Element addElement(Element parent, Element child, XML_TagName attributeName, String attributeValue) {
 		child.setAttribute(attributeName.toString(), attributeValue);
+		parent.appendChild(child);
+		return parent;
+	}
+
+	//Elementを追加する
+	public Element addElement(Element parent, Element child, XML_TagName attributeName, Number attributeValue) {
+		child.setAttribute(attributeName.toString(), String.valueOf(attributeValue));
 		parent.appendChild(child);
 		return parent;
 	}
@@ -232,7 +284,7 @@ public class XML_manager {
 	 * @param parent
 	 * @return 子ノード(Element型)
 	 */
-	public Element getChildElement(Element parent, XML_TagName nodeName) {
+	public Element findChildElement(Element parent, XML_TagName nodeName) {
 		NodeList nodelist = parent.getChildNodes();
 		for(int i=0; i<nodelist.getLength(); i++) {
 			Node node = nodelist.item(i);
@@ -251,7 +303,7 @@ public class XML_manager {
 	 * @param parent
 	 * @return 子ノード(Element型)
 	 */
-	public Element getChildElement(Element parent, XML_TagName nodeName, XML_TagName attributeName, String attributeValue) {
+	public Element findChildElement(Element parent, XML_TagName nodeName, XML_TagName attributeName, String attributeValue) {
 		NodeList nodelist = parent.getChildNodes();
 		for(int i=0; i<nodelist.getLength(); i++) {
 			Node node = nodelist.item(i);

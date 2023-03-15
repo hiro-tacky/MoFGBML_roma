@@ -8,7 +8,7 @@ import java.util.Map.Entry;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import cilabo.fuzzy.knowledge.FuzzyTermTypeForMixed;
+import cilabo.fuzzy.knowledge.FuzzySet;
 import cilabo.fuzzy.knowledge.Knowledge;
 import cilabo.main.ExperienceParameter.DIVISION_TYPE;
 import jfml.term.FuzzyTermType;
@@ -21,7 +21,7 @@ public class FuzzyTermUsedRanking {
 		int[][] UsedFuzzySetNum = new int[dimension][];
 
 		for(int dim_i=0; dim_i<dimension; dim_i++) {
-			int tmp = Knowledge.getInstance().getFuzzySetNum(dim_i);
+			int tmp = Knowledge.getInstance().getNumberOfFuzzySet(dim_i);
 			UsedFuzzySetNum[dim_i] = new int[tmp];
 		}
 
@@ -70,7 +70,7 @@ public class FuzzyTermUsedRanking {
 					int ID = Integer.valueOf(fuzzySetID.getTextContent());
 
 					if(ID != 0) {
-						FuzzyTermTypeForMixed fuzzyTremBuf = Knowledge.getInstance().getFuzzySet(dim, ID);
+						FuzzySet fuzzyTremBuf = Knowledge.getInstance().getFuzzySet(dim, ID);
 						if(UsedFuzzySetNum.get(dim).containsKey( new FuzzyStyle(fuzzyTremBuf.getDivisionType(), fuzzyTremBuf.getType()) )) {
 							int tmp = UsedFuzzySetNum.get(dim).get( new FuzzyStyle(fuzzyTremBuf.getDivisionType(), fuzzyTremBuf.getType()) );
 							UsedFuzzySetNum.get(dim).put(new FuzzyStyle(fuzzyTremBuf.getDivisionType(), fuzzyTremBuf.getType()), tmp+1);
@@ -122,13 +122,13 @@ public class FuzzyTermUsedRanking {
 	}
 
 
-	public static FuzzyTermTypeForMixed[][] getUsedFuzzySetID(int[][] fuzzySetUsedRank, int[] fuzzyTermNum){
+	public static FuzzySet[][] getUsedFuzzySetID(int[][] fuzzySetUsedRank, int[] fuzzyTermNum){
 
-		FuzzyTermTypeForMixed[][] fuzzyTerms = new FuzzyTermTypeForMixed[fuzzySetUsedRank.length][];
+		FuzzySet[][] fuzzyTerms = new FuzzySet[fuzzySetUsedRank.length][];
 
 		for(int dim_i=0; dim_i<fuzzySetUsedRank.length; dim_i++) {
-			List<FuzzyTermTypeForMixed> buf = new ArrayList<FuzzyTermTypeForMixed>();
-			buf.add( new FuzzyTermTypeForMixed(
+			List<FuzzySet> buf = new ArrayList<FuzzySet>();
+			buf.add( new FuzzySet(
 					Knowledge.makeFuzzyTermName(DIVISION_TYPE.equalDivision, FuzzyTermType.TYPE_rectangularShape, Knowledge.DnotCare_FuzzyTermID),
 					FuzzyTermType.TYPE_rectangularShape, new float[] {0f, 1f}, DIVISION_TYPE.equalDivision, 0, 0) );
 
@@ -150,7 +150,7 @@ public class FuzzyTermUsedRanking {
 					fuzzySetUsedRank[dim_i][id] = 0;
 				}
 			}
-			fuzzyTerms[dim_i] = new FuzzyTermTypeForMixed[buf.size()];
+			fuzzyTerms[dim_i] = new FuzzySet[buf.size()];
 			for(int x=0; x<buf.size(); x++) {
 				fuzzyTerms[dim_i][x] = buf.get(x);
 			}
@@ -158,18 +158,18 @@ public class FuzzyTermUsedRanking {
 		return fuzzyTerms;
 	}
 
-	public static FuzzyTermTypeForMixed[][] getUsedFuzzySetID(Element population, int dimension, int[] fuzzyTermNum){
+	public static FuzzySet[][] getUsedFuzzySetID(Element population, int dimension, int[] fuzzyTermNum){
 		int[][] tmp = FuzzyTermUsedRanking.getUsedFuzzySetNum(population, dimension);
 		return FuzzyTermUsedRanking.getUsedFuzzySetID(tmp, fuzzyTermNum);
 	}
 
-	public static FuzzyTermTypeForMixed[][] getUsedFuzzyStyle(ArrayList<HashMap<FuzzyStyle, Integer>> fuzzySetUsedRank){
+	public static FuzzySet[][] getUsedFuzzyStyle(ArrayList<HashMap<FuzzyStyle, Integer>> fuzzySetUsedRank){
 
-		FuzzyTermTypeForMixed[][] fuzzyTerms = new FuzzyTermTypeForMixed[fuzzySetUsedRank.size()][];
+		FuzzySet[][] fuzzyTerms = new FuzzySet[fuzzySetUsedRank.size()][];
 
 		for(int dim_i=0; dim_i<fuzzySetUsedRank.size(); dim_i++) {
-			List<FuzzyTermTypeForMixed> buf = new ArrayList<FuzzyTermTypeForMixed>();
-			buf.add( new FuzzyTermTypeForMixed(
+			List<FuzzySet> buf = new ArrayList<FuzzySet>();
+			buf.add( new FuzzySet(
 					Knowledge.makeFuzzyTermName(DIVISION_TYPE.equalDivision, FuzzyTermType.TYPE_rectangularShape, Knowledge.DnotCare_FuzzyTermID),
 					FuzzyTermType.TYPE_rectangularShape, new float[] {0f, 1f}, DIVISION_TYPE.equalDivision, 0, 0) );
 
@@ -190,13 +190,13 @@ public class FuzzyTermUsedRanking {
 				fuzzyStyle = pool.get(index);
 			}
 
-			for(FuzzyTermTypeForMixed fuzzyTerm: Knowledge.getInstance().getFuzzySet(dim_i)) {
+			for(FuzzySet fuzzyTerm: Knowledge.getInstance().getFuzzySet(dim_i)) {
 				if(fuzzyTerm.divisionType == fuzzyStyle.division_type && fuzzyTerm.getType() == fuzzyStyle.shapeTypeID) {
 					buf.add(fuzzyTerm);
 				}
 			}
 
-			fuzzyTerms[dim_i] = new FuzzyTermTypeForMixed[buf.size()];
+			fuzzyTerms[dim_i] = new FuzzySet[buf.size()];
 			for(int x=0; x<buf.size(); x++) {
 				fuzzyTerms[dim_i][x] = buf.get(x);
 			}
@@ -204,7 +204,7 @@ public class FuzzyTermUsedRanking {
 		return fuzzyTerms;
 	}
 
-	public static FuzzyTermTypeForMixed[][] getUsedFuzzyStyle(Element population, int dimension){
+	public static FuzzySet[][] getUsedFuzzyStyle(Element population, int dimension){
 		ArrayList<HashMap<FuzzyStyle, Integer>> tmp = FuzzyTermUsedRanking.getUsedFuzzyStyleNum(population, dimension);
 		return FuzzyTermUsedRanking.getUsedFuzzyStyle(tmp);
 	}

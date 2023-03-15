@@ -103,7 +103,7 @@ public class HybridGBMLcrossover <pittsburghSolution extends PittsburghSolution<
 				List<pittsburghSolution> parents = new ArrayList<>();
 				parents.add((pittsburghSolution) parent1.copy());
 				offspring = michiganX.execute(parents);
-				if(!GeneralFunctions.checkRule((PittsburghSolution<MichiganSolution<?>>) offspring.get(0))) {
+				if(!GeneralFunctions.checkRule((PittsburghSolution<?>) offspring.get(0))) {
 					System.err.println("michiganX");
 				}
 			}
@@ -113,7 +113,7 @@ public class HybridGBMLcrossover <pittsburghSolution extends PittsburghSolution<
 				parents.add((pittsburghSolution) parent1.copy());
 				parents.add((pittsburghSolution) parent2.copy());
 				offspring = pittsburghX.execute(parents);
-				if(!GeneralFunctions.checkRule((PittsburghSolution<MichiganSolution<?>>) offspring.get(0))) {
+				if(!GeneralFunctions.checkRule((PittsburghSolution<?>) offspring.get(0))) {
 					System.err.println("pittsburghX");
 				}
 			}

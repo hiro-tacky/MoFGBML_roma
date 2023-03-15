@@ -5,28 +5,29 @@ import org.w3c.dom.Element;
 import cilabo.fuzzy.rule.consequent.classLabel.ClassLabel;
 import cilabo.fuzzy.rule.consequent.ruleWeight.RuleWeight;
 
-/** 後件部クラスのインターフェイス．基本的なsetter及びgetter機能を持つ
+/** 後件部クラス．consequent class
  * @author Takigawa Hiroki
  *
- * @param <ClassLabelObject> 実装した後件部クラスが持つ結論部クラス
- * @param <T1> 結論部クラスが扱うクラスラベル変数クラス
- * @param <RuleWeightObject> 実装した後件部クラスが持つルール重みクラス
- * @param <T2> ルール重みクラスが扱うルール重み変数クラス
+ * @param <ClassLabelClass> 後件部クラスが持つ結論部ラベルクラス conclusion label class that this class has
+ * @param <RuleWeightClass> 後件部クラスが持つルール重みクラス rule weight class that this class has
  */
-public interface Consequent<ClassLabelObject extends ClassLabel<T1>, T1,  RuleWeightObject extends RuleWeight<T2>, T2>
-	extends ClassLabel<T1>, RuleWeight<T2>{
+public interface Consequent<ClassLabelClass extends ClassLabel<?>,  RuleWeightClass extends RuleWeight<?>>{
 
-	/** クラスラベルのコピーインスタンスを取得
-	 * @return このインスタンスが持つクラスラベルのコピーインスタンス
+	/**
+	 * このインスタンスが持つ結論部ラベルクラスを返します。<br>
+	 * Returns class label that this instance has.
+	 * @return 返される結論部ラベルクラス．class label to return
 	 */
-	public ClassLabelObject getClassLabel();
+	public ClassLabelClass getClassLabel();
 
-	/** ルール重みのコピーインスタンスを取得
-	 * @return このインスタンスが持つルール重みのコピーインスタンス
+	/**
+	 * このインスタンスが持つルール重みを返します。<br>
+	 * Returns rule weight that this instance has.
+	 * @return 返されるルール重み．rule weight to return
 	 */
-	public RuleWeightObject getRuleWeight();
+	public RuleWeightClass getRuleWeight();
 
-	public Consequent<ClassLabelObject, T1, RuleWeightObject, T2> copy();
+	public Consequent<ClassLabelClass, RuleWeightClass> copy();
 
 	public Element toElement();
 }

@@ -1,83 +1,81 @@
 package cilabo.fuzzy.rule.consequent.classLabel.impl;
 
-import java.util.Objects;
-
 import org.w3c.dom.Element;
 
 import cilabo.fuzzy.rule.consequent.classLabel.AbstractClassLabel;
 import cilabo.fuzzy.rule.consequent.classLabel.ClassLabel;
-import cilabo.main.impl.multiTasking.MultiTasking;
 import xml.XML_TagName;
 import xml.XML_manager;
 
-@MultiTasking
+/**
+ * マルチラベル用ラベルクラス．label class for multi-label
+ * @author Takigawa Hiroki
+ */
 public final class ClassLabel_Multi extends AbstractClassLabel <Integer[]> {
 
 	/**
-	 * 入力されたクラスラベルの配列を持つインスタンスを生成する
-	 * @param classLabel クラスラベルの配列
+	 * コンストラクタ．constructor
+	 * @param classLabel クラスラベル配列 array of class label
 	 */
 	public ClassLabel_Multi(Integer[] classLabel) {
 		this.classLabel = classLabel;
 	}
 
-	/** 指定したインデックスのクラスラベルを取得
-	 * @param index クラスラベルの配列のインデックス
-	 * @return 指定されたインデックスにあるクラスラベル
+	/**
+	 * 指定された位置にあるクラスラベルを返します。<br>
+	 * Returns class label at the specified position
+	 * @param index 返されるクラスラベルのインデックス．index of class label to return
+	 * @return 指定された位置にあるクラスラベル．class label at the specified position in the list
 	 */
 	public Integer getClassLabel(int index) {
-		if( Objects.isNull(this.classLabel) ) {
-			throw new NullPointerException();
-		}
 		return this.classLabel[index];
 	}
 
-	/** 指定したインデックスのクラスラベルを置き換える
-	 * @param index 置き換えるクラスラベルのインデックス
-	 * @param classLabel 指定されたインデックスに格納されるクラスラベル
+	/**
+	 * 指定された位置にあるクラスラベルを、入力されたクラスラベルで置き換えます。<br>
+	 * Replaces class label at the specified position in the list with the specified class label.
+	 * @param index 置換されるクラスラベルのインデックス．index of class label to replace
+	 * @param classLabel 指定された位置に格納されるクラスラベル．class labelt to be stored at the specified position
 	 */
 	public void setClassLabel(int index, int classLabel) {
 		this.classLabel[index] = classLabel;
 	}
 
-	/** 結論部クラスの個数を取得する
-	 * @return 結論部クラスの個数
+	/**
+	 * このインスタンスが持つクラスラベル配列長を返します。<br>
+	 * Returns length of class label array that this instance has.
+	 * @return 返されるクラスラベル配列長．length of class label array to return
 	 */
 	public int getClassLabelLength() {
 		return this.classLabel.length;
 	}
 
 	@Override
-	public boolean equalsClassLabel(ClassLabel<?> classLabel) {
+	public boolean equals(ClassLabel<?> classLabel) {
 		//同じクラスのオブィエクトか調べる
 		if(!(classLabel instanceof ClassLabel_Multi)) {return false;}
 		else {
 			ClassLabel_Multi classLabel_tmp = (ClassLabel_Multi)classLabel;
 			//配列長の検証
-			if( classLabel_tmp.getClassLabelValue().length != this.classLabel.length ) {return false;}
+			if( classLabel_tmp.getClassLabelVariable().length != this.classLabel.length ) {return false;}
 
 			for(int i=0; i<this.classLabel.length; i++) {
 				//クラスラベルの値が同値か調べる
-				if( !classLabel_tmp.getClassLabelValue()[i].equals(this.getClassLabelValue()[i]) ){return false;}
+				if( !classLabel_tmp.getClassLabelVariable()[i].equals(this.getClassLabelVariable()[i]) ){return false;}
 			}
 			return true;
 		}
 	}
 
 	/**
-	 * 入力されたインデックスに対応するのクラスラベルを比較する
-	 * @param index 比較するクラスラベルのインデックス
-	 * @param classLabel 比較対象となるクラスラベル
-	 * @return 同値である場合:true 同値でない場合:false
-	 */
+	 * 入力された ClassLabel インスタンス と このインスタンスを比較する
+	 * Comapre this instance and given instance. when given one equals own, return true, otherwise return false.
+	 * @param index 比較するクラスラベルのインデックス index of class label to be compared
+	 * @param classLabel 比較したいClassLabel class label to be compared
+	 * @return 同値である場合(equal):true 同値でない場合(not equal):false */
 	public boolean equalsClassLabel(int index, int classLabel) {
 		//クラスラベルの値が同値か調べる
-		return this.getClassLabelValue()[index].equals(classLabel);
-	}
-
-	@Override
-	public boolean equalsClassLabel(int classLabel) {
-		return this.classLabel[0].equals(classLabel);
+		return this.getClassLabelVariable()[index].equals(classLabel);
 	}
 
 	@Override
@@ -101,27 +99,18 @@ public final class ClassLabel_Multi extends AbstractClassLabel <Integer[]> {
 
 	@Override
 	public String toString() {
-		//null check
-		if( Objects.isNull(this.classLabel) ) {
-			throw new NullPointerException();
-		}
-
 		String str = String.format("%2d", this.classLabel[0]);
-		if(this.classLabel.length < 2) {
-			return str;
-		}else {
-			for(int i=1; i<this.classLabel.length; i++) {
-				str += String.format(", %2d", this.classLabel[i]);
-			}
-			return str;
+		for(int i=1; i<this.classLabel.length; i++) {
+			str += String.format(", %2d", this.classLabel[i]);
 		}
+		return str;
 	}
 
 	@Override
 	public Element toElement() {
 		Element classLabel = XML_manager.getInstance().createElement(XML_TagName.classLabelMulti);
 		for(int i=0; i<this.classLabel.length; i++) {
-			XML_manager.getInstance().addElement(classLabel, XML_TagName.classLabel, String.valueOf(this.classLabel[i]),
+			XML_manager.getInstance().addElement(classLabel, XML_TagName.classLabel, this.classLabel[i],
 					XML_TagName.id, String.valueOf(i));
 		}
 		return classLabel;

@@ -8,19 +8,24 @@ import cilabo.fuzzy.rule.consequent.ruleWeight.impl.RuleWeight_Basic;
 import xml.XML_TagName;
 import xml.XML_manager;
 
-/** 単結論部クラスと単一ルール重みを持つ後件部クラス
+/**
+ * 標準的後件部クラス basic consequent class
  * @author Takigawa Hiroki
  */
-public final class Consequent_Basic extends AbstractConsequent <ClassLabel_Basic, Integer, RuleWeight_Basic, Double>{
+public final class Consequent_Basic extends AbstractConsequent <ClassLabel_Basic, RuleWeight_Basic>{
 
-	/** 入力された結論部クラスとルール重みを持つインスタンスを生成する
-	 * @param classLabel 代入される結論部クラス
-	 * @param ruleWeight 代入されるルール重み
+	/** コンストラクタ．constructor
+	 * @param classLabel 結論部ラベルクラス conclusion label class
+	 * @param ruleWeight ルール重みクラス rule weight class
 	 */
 	public Consequent_Basic(ClassLabel_Basic classLabel, RuleWeight_Basic ruleWeight) {
 		super(classLabel, ruleWeight);
 	}
 
+	/** コンストラクタ．constructor
+	 * @param classLabel 結論部ラベルクラス conclusion label class
+	 * @param ruleWeight ルール重みクラス rule weight class
+	 */
 	public Consequent_Basic(int classLabel, double ruleWeight) {
 		super(new ClassLabel_Basic(classLabel), new RuleWeight_Basic(ruleWeight));
 	}
@@ -32,12 +37,9 @@ public final class Consequent_Basic extends AbstractConsequent <ClassLabel_Basic
 
 	@Override
 	public String toString() {
-		String str = null;
-
-		str += String.format("class:[%s]", this.classLabel.toString()); //ClassLabel
-		str += " ";
-		str += String.format("weight:[%s]", this.ruleWeight.toString()); //RuleWeight
-
+		String str = this.getClass().getSimpleName();
+		str += String.format("class:%s, ", this.classLabel.toString()); //ClassLabel
+		str += String.format("weight:%s", this.ruleWeight.toString()); //RuleWeight
 		return str;
 	}
 
@@ -56,5 +58,4 @@ public final class Consequent_Basic extends AbstractConsequent <ClassLabel_Basic
 
 		return consequent;
 	}
-
 }

@@ -30,7 +30,7 @@ class HomoTriangleKnowledgeFactoryTest {
 
 	@Test
 	void test() {
-		int dimension = train.getNdim();
+		int dimension = train.getNumberOfDimension();
 		knowledgeFactory.create2_3_4_5();
 
 		int len = 2+3+4+5;
