@@ -25,7 +25,7 @@ import cilabo.fuzzy.rule.builder.RuleBuilder;
 import cilabo.fuzzy.rule.builder.impl.RuleBuilder_Basic;
 import cilabo.fuzzy.rule.consequent.factory.impl.MoFGBML_Learning;
 import cilabo.fuzzy.rule.impl.Rule_Basic;
-import cilabo.gbml.problem.pittsburghFGBML_Problem.impl.PittsburghProblem_Basic;
+import cilabo.gbml.problem.pittsburgh.impl.PittsburghProblem_Basic;
 import cilabo.gbml.solution.michiganSolution.AbstractMichiganSolution;
 import cilabo.gbml.solution.michiganSolution.builder.MichiganSolutionBuilder;
 import cilabo.gbml.solution.michiganSolution.impl.MichiganSolution_Basic;

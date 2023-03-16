@@ -1,4 +1,4 @@
-package cilabo.gbml.problem.michiganFGBML_Problem;
+package cilabo.gbml.problem.michigan;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package cilabo.gbml.problem.pittsburghFGBML_Problem;
+package cilabo.gbml.problem.pittsburgh;
 
 import org.uma.jmetal.problem.AbstractGenericProblem;
 import org.uma.jmetal.problem.Problem;

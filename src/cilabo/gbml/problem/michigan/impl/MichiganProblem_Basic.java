@@ -1,4 +1,4 @@
-package cilabo.gbml.problem.michiganFGBML_Problem.impl;
+package cilabo.gbml.problem.michigan.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +10,7 @@ import cilabo.data.pattern.Pattern;
 import cilabo.fuzzy.classifier.michigan.classification.Classification;
 import cilabo.fuzzy.rule.Rule;
 import cilabo.fuzzy.rule.builder.RuleBuilder;
-import cilabo.gbml.problem.michiganFGBML_Problem.AbstractMichiganProblem;
+import cilabo.gbml.problem.michigan.AbstractMichiganProblem;
 import cilabo.gbml.solution.michiganSolution.AbstractMichiganSolution;
 import cilabo.gbml.solution.michiganSolution.impl.MichiganSolution_Basic;
 

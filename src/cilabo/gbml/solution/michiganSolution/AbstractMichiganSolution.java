@@ -21,7 +21,7 @@ import cilabo.fuzzy.rule.builder.RuleBuilder;
  *
  * @param <RuleClass> このMichiganSolutionが持つルールクラス rule class that this class has
  */
-public abstract class AbstractMichiganSolution<RuleClass extends Rule<?, ?>>
+public abstract class AbstractMichiganSolution <RuleClass extends Rule<?, ?>>
 		extends AbstractSolution<Integer>
 		implements MichiganSolution<RuleClass>{
 

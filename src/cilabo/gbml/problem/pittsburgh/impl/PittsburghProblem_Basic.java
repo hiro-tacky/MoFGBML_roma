@@ -1,4 +1,4 @@
-package cilabo.gbml.problem.pittsburghFGBML_Problem.impl;
+package cilabo.gbml.problem.pittsburgh.impl;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import cilabo.data.DataSet;
 import cilabo.fuzzy.classifier.pittsburgh.Classifier;
 import cilabo.gbml.objectivefunction.pittsburgh.ErrorRate;
 import cilabo.gbml.objectivefunction.pittsburgh.NumberOfRules;
-import cilabo.gbml.problem.pittsburghFGBML_Problem.AbstractPittsburghProblem;
+import cilabo.gbml.problem.pittsburgh.AbstractPittsburghProblem;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution;
 import cilabo.gbml.solution.michiganSolution.builder.MichiganSolutionBuilder;
 import cilabo.gbml.solution.pittsburghSolution.impl.PittsburghSolution_Basic;

@@ -11,8 +11,10 @@ import cilabo.gbml.solution.pittsburghSolution.PittsburghSolution;
  *
  * @param <PittsburghSolutionClass> 識別器が扱うpittsuburgh型識別器
  */
-public final class SingleWinnerRuleSelection <PittsburghSolutionClass extends PittsburghSolution<?>>
-		implements Classification <PittsburghSolutionClass> {
+public final class SingleWinnerRuleSelection
+		<PittsburghSolutionClass extends PittsburghSolution<MichiganSolutionClass>,
+		MichiganSolutionClass extends MichiganSolution<?>>
+		implements Classification <PittsburghSolutionClass, MichiganSolutionClass> {
 
 	/**
 	 * 単一勝利ルールに基づいて適合度が最大値となるMichiganSolutionを返す．<br>
@@ -23,7 +25,7 @@ public final class SingleWinnerRuleSelection <PittsburghSolutionClass extends Pi
 	 * @return 勝利となったMichiganSolution 但し，識別不能となった場合はnullを返す
 	 */
 	@Override
-	public MichiganSolution<?> classify(PittsburghSolutionClass pittsburghSolution, Pattern<?> pattern) {
+	public MichiganSolutionClass classify(PittsburghSolutionClass pittsburghSolution, Pattern<?> pattern) {
 		if(pittsburghSolution.getNumberOfVariables() < 1) {
 			throw new IllegalArgumentException("argument [pittsburghSolution] has no michiganSolution @" + this.getClass().getSimpleName());}
 
@@ -63,8 +65,8 @@ public final class SingleWinnerRuleSelection <PittsburghSolutionClass extends Pi
 	}
 
 	@Override
-	public Classification<PittsburghSolutionClass> copy() {
-		return new SingleWinnerRuleSelection<PittsburghSolutionClass>();
+	public Classification<PittsburghSolutionClass, MichiganSolutionClass> copy() {
+		return new SingleWinnerRuleSelection<PittsburghSolutionClass, MichiganSolutionClass>();
 	}
 
 	@Override

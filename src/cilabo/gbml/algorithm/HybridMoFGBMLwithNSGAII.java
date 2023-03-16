@@ -37,7 +37,7 @@ import org.w3c.dom.Element;
 
 import cilabo.fuzzy.knowledge.Knowledge;
 import cilabo.gbml.component.variation.CrossoverAndMutationAndPittsburghLearningVariation;
-import cilabo.gbml.problem.pittsburghFGBML_Problem.AbstractPittsburghProblem;
+import cilabo.gbml.problem.pittsburgh.AbstractPittsburghProblem;
 import cilabo.gbml.solution.pittsburghSolution.PittsburghSolution;
 import cilabo.util.fileoutput.PittsburghSolutionListOutput;
 import xml.XML_TagName;

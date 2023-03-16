@@ -43,7 +43,7 @@ import cilabo.gbml.operator.crossover.HybridGBMLcrossover;
 import cilabo.gbml.operator.crossover.MichiganCrossover;
 import cilabo.gbml.operator.crossover.PittsburghCrossover;
 import cilabo.gbml.operator.mutation.PittsburghMutation;
-import cilabo.gbml.problem.pittsburghFGBML_Problem.impl.PittsburghProblem_Basic;
+import cilabo.gbml.problem.pittsburgh.impl.PittsburghProblem_Basic;
 import cilabo.gbml.solution.michiganSolution.AbstractMichiganSolution;
 import cilabo.gbml.solution.michiganSolution.builder.MichiganSolutionBuilder;
 import cilabo.gbml.solution.michiganSolution.builder.impl.MichiganSolutionBuilder_Basic;
@@ -168,9 +168,15 @@ public class MoFGBML_Basic_Main {
 					numberOfConstraints_Michigan,
 					ruleBuilder);
 
-		Classification<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>> classification = new SingleWinnerRuleSelection<>();
+		Classification
+			<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>,
+			MichiganSolution_Basic<Rule_Basic>> classification
+				= new SingleWinnerRuleSelection<>();
 
-		Classifier<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>> classifier = new Classifier_basic(classification);
+		Classifier
+			<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>,
+			MichiganSolution_Basic<Rule_Basic>> classifier =
+				new Classifier_basic<>(classification);
 
 		/* MOP: Multi-objective Optimization Problem */
 		Problem<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>> problem =

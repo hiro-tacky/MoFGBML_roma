@@ -7,7 +7,7 @@ import org.uma.jmetal.component.initialsolutioncreation.InitialSolutionsCreation
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import cilabo.gbml.problem.pittsburghFGBML_Problem.impl.PittsburghProblem_Basic;
+import cilabo.gbml.problem.pittsburgh.impl.PittsburghProblem_Basic;
 import cilabo.gbml.solution.pittsburghSolution.PittsburghSolution;
 import xml.XML_TagName;
 

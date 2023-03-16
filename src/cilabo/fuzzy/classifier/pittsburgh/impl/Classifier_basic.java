@@ -15,23 +15,25 @@ import cilabo.gbml.solution.pittsburghSolution.PittsburghSolution;
  *
  * @param <PittsburghSolutionClass> このクラスが扱うpittsuburgh型識別器
  */
-public final class Classifier_basic<PittsburghSolutionClass extends PittsburghSolution<?>>
-		implements Classifier<PittsburghSolutionClass> {
+public final class Classifier_basic
+		<PittsburghSolutionClass extends PittsburghSolution<MichiganSolutionClass>,
+		MichiganSolutionClass extends MichiganSolution<?>>
+		implements Classifier<PittsburghSolutionClass, MichiganSolutionClass> {
 
 	/** 識別方式定義クラス method to decide a single winner rule*/
-	protected Classification<PittsburghSolutionClass> classification;
+	protected Classification<PittsburghSolutionClass, MichiganSolutionClass> classification;
 
 	/**
 	 * コンストラクタ．Initialize Classifier_basic
 	 * @param classification 識別方式定義クラス method to decide a single winner rule
 	 */
-	public Classifier_basic(Classification<PittsburghSolutionClass> classification) {
+	public Classifier_basic(Classification<PittsburghSolutionClass, MichiganSolutionClass> classification) {
 		Check.isNotNull(classification);
 		this.classification = classification;
 	}
 
 	@Override
-	public MichiganSolution<?> classify(PittsburghSolutionClass pittsburghSolution, Pattern<?> pattern) {
+	public MichiganSolutionClass classify(PittsburghSolutionClass pittsburghSolution, Pattern<?> pattern) {
 		return this.classification.classify(pittsburghSolution, pattern);
 	}
 
@@ -51,8 +53,8 @@ public final class Classifier_basic<PittsburghSolutionClass extends PittsburghSo
 	}
 
 	@Override
-	public Classifier<PittsburghSolutionClass> copy(){
-		return new Classifier_basic<PittsburghSolutionClass>(this.classification.copy());
+	public Classifier<PittsburghSolutionClass, MichiganSolutionClass> copy(){
+		return new Classifier_basic<PittsburghSolutionClass, MichiganSolutionClass>(this.classification.copy());
 	}
 
 	@Override

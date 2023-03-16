@@ -18,8 +18,10 @@ import cilabo.main.Consts;
 import cilabo.utility.GeneralFunctions;
 import cilabo.utility.Random;
 
-public class PittsburghCrossover <pittsburghSolution extends PittsburghSolution<michiganSolution>,michiganSolution extends MichiganSolution<?>>
-	implements CrossoverOperator<pittsburghSolution> {
+public class PittsburghCrossover
+		<pittsburghSolution extends PittsburghSolution<michiganSolution>,
+		michiganSolution extends MichiganSolution<?>>
+		implements CrossoverOperator<pittsburghSolution> {
 	private double crossoverProbability;
 	private RandomGenerator<Double> crossoverRandomGenerator;
 	BoundedRandomGenerator<Integer> selectRandomGenerator;

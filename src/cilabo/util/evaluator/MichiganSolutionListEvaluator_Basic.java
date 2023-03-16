@@ -5,7 +5,7 @@ import java.util.List;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
 
-import cilabo.gbml.problem.michiganFGBML_Problem.impl.MichiganProblem_Basic;
+import cilabo.gbml.problem.michigan.impl.MichiganProblem_Basic;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution;
 import cilabo.main.ExperienceParameter.OBJECTIVES_FOR_MICHIGAN;
 
