@@ -12,8 +12,8 @@ import cilabo.gbml.solution.pittsburghSolution.PittsburghSolution;
 import cilabo.gbml.solution.util.attribute.NumberOfWinner;
 import cilabo.main.ExperienceParameter.OBJECTIVES_FOR_PITTSBURGH;
 
-public abstract class AbstractPittsburghProblem <
-		PittsburghSolutionClass extends PittsburghSolution<MichiganSolutionClass>,
+public abstract class AbstractPittsburghProblem
+		<PittsburghSolutionClass extends PittsburghSolution<MichiganSolutionClass>,
 		MichiganSolutionClass extends MichiganSolution<?>>
 		extends AbstractGenericProblem <PittsburghSolutionClass>
 		implements Problem<PittsburghSolutionClass>{
@@ -24,7 +24,7 @@ public abstract class AbstractPittsburghProblem <
 	protected MichiganSolutionBuilder<MichiganSolutionClass> michiganSolutionBuilder;
 	/** pittsuburgh型識別器のメソッドクラス．methods for pittsuburgh classifier.
 	 * @see cilabo.fuzzy.classifier.classification */
-	protected Classifier<PittsburghSolutionClass> classifier;
+	protected Classifier<PittsburghSolutionClass, MichiganSolutionClass> classifier;
 
 	protected NumberOfWinner<PittsburghSolutionClass> numberOfWinner;
 
@@ -42,7 +42,7 @@ public abstract class AbstractPittsburghProblem <
 			int numberOfConstraints,
 			DataSet<?> train,
 			MichiganSolutionBuilder<MichiganSolutionClass> michiganSolutionBuilder,
-			Classifier<PittsburghSolutionClass> classifier) {
+			Classifier<PittsburghSolutionClass,MichiganSolutionClass> classifier) {
 		setNumberOfVariables(numberOfVariables);
 		setNumberOfObjectives(numberOfObjectives);
 		setNumberOfConstraints(numberOfConstraints);
@@ -112,7 +112,7 @@ public abstract class AbstractPittsburghProblem <
 	 * Returns methods for pittsuburgh classifier that this instance has.
 	 * @return 返されるpittsuburgh型識別器のメソッドクラス．methods for pittsuburgh classifier to return
 	 */
-	public Classifier<PittsburghSolutionClass> getClassifier() {
+	public Classifier<PittsburghSolutionClass, MichiganSolutionClass> getClassifier() {
 		return classifier;
 	}
 
@@ -121,7 +121,7 @@ public abstract class AbstractPittsburghProblem <
 	 * Replaces methods for pittsuburgh classifier in this instance.
 	 * @param classifier このインスタンスに格納されるpittsuburgh型識別器のメソッドクラス．methods for pittsuburgh classifier to be stored at this instance
 	 */
-	public void setClassifier(Classifier<PittsburghSolutionClass> classifier) {
+	public void setClassifier(Classifier<PittsburghSolutionClass, MichiganSolutionClass> classifier) {
 		this.classifier = classifier;
 	}
 }

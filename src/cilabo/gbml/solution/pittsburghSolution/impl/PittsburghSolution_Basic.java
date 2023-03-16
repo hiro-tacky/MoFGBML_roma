@@ -25,11 +25,12 @@ import xml.XML_manager;
  *
  * @param <MichiganSolutionClass> このPittsburgh型識別器が持つMichigan型識別器クラス michigan solution class that this class has
  */
-public final class PittsburghSolution_Basic <MichiganSolutionClass extends MichiganSolution<?>>
+public final class PittsburghSolution_Basic
+		<MichiganSolutionClass extends MichiganSolution<?>>
 		extends AbstractPittsburghSolution<MichiganSolutionClass>{
 
 	/** pittsuburgh型識別器のメソッドクラス methods of pittsburgh solution */
-	private Classifier<PittsburghSolution_Basic<MichiganSolutionClass>> classifier;
+	private Classifier<PittsburghSolution_Basic<MichiganSolutionClass>, MichiganSolutionClass> classifier;
 
 	/** コンストラクタ constructor
 	 * @param numberOfVariables Michigan型識別器の個数 number of variables
@@ -41,7 +42,7 @@ public final class PittsburghSolution_Basic <MichiganSolutionClass extends Michi
 			int numberOfObjectives,
 			int numberOfConstraints,
 			MichiganSolutionBuilder<MichiganSolutionClass> michiganSolutionBuilder,
-			Classifier<PittsburghSolution_Basic<MichiganSolutionClass>> classifier) {
+			Classifier<PittsburghSolution_Basic<MichiganSolutionClass>, MichiganSolutionClass> classifier) {
 		super(numberOfVariables, numberOfObjectives, numberOfConstraints, michiganSolutionBuilder);
 		this.classifier = classifier;
 		List<MichiganSolutionClass> michiganSolutionList = michiganSolutionBuilder.createMichiganSolutions(numberOfVariables);
@@ -53,7 +54,7 @@ public final class PittsburghSolution_Basic <MichiganSolutionClass extends Michi
 	public PittsburghSolution_Basic(int numberOfObjectives,
 			int numberOfConstraints,
 			MichiganSolutionBuilder<MichiganSolutionClass> michiganSolutionBuilder,
-			Classifier<PittsburghSolution_Basic<MichiganSolutionClass>> classifier,
+			Classifier<PittsburghSolution_Basic<MichiganSolutionClass>,MichiganSolutionClass> classifier,
 			Element pittsburghSolutionEL) {
 		super(AbstractPittsburghSolution.getNumberOfVariables(pittsburghSolutionEL),
 				numberOfObjectives, numberOfConstraints, michiganSolutionBuilder);
@@ -90,7 +91,7 @@ public final class PittsburghSolution_Basic <MichiganSolutionClass extends Michi
 	}
 
 	@Override
-	public MichiganSolution<?> classify(Pattern<?> pattern) {
+	public MichiganSolutionClass classify(Pattern<?> pattern) {
 		return this.classifier.classify(this, pattern);
 	}
 

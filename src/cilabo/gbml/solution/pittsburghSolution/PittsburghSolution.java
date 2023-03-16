@@ -81,7 +81,7 @@ public interface PittsburghSolution <MichiganSolutionClass extends MichiganSolut
 	 * @param pattern 識別対象となるパターンクラス pattern to be classified
 	 * @return 勝者となったミシガン型識別器 識別不能時はnullを返す the winner michigan solution. When winner rule doesn't exist, return null.
 	 */
-	public MichiganSolution<?> classify(Pattern<?> pattern);
+	public MichiganSolutionClass classify(Pattern<?> pattern);
 
 	/**
 	 * pittsuburgh型識別器のルール長を返します。<br>

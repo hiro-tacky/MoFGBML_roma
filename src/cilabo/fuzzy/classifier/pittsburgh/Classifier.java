@@ -1,6 +1,7 @@
 package cilabo.fuzzy.classifier.pittsburgh;
 
 import cilabo.fuzzy.classifier.pittsburgh.classification.Classification;
+import cilabo.gbml.solution.michiganSolution.MichiganSolution;
 import cilabo.gbml.solution.pittsburghSolution.PittsburghSolution;
 
 /** pittsuburgh型識別器のメソッドクラス．識別を行う為のClassificationを持つ．
@@ -8,8 +9,10 @@ import cilabo.gbml.solution.pittsburghSolution.PittsburghSolution;
  * @author Takigawa Hiroki
  * @param <PittsburghSolutionClass> このクラスが扱うpittsuburgh型識別器
  */
-public interface Classifier <PittsburghSolutionClass extends PittsburghSolution<?>>
-		extends Classification<PittsburghSolutionClass>{
+public interface Classifier
+		<PittsburghSolutionClass extends PittsburghSolution<MichiganSolutionClass>,
+		MichiganSolutionClass extends MichiganSolution<?>>
+		extends Classification<PittsburghSolutionClass, MichiganSolutionClass>{
 
 	/**
 	 * 与えられたpittsuburgh型識別器のルール長を返します。<br>
@@ -28,7 +31,7 @@ public interface Classifier <PittsburghSolutionClass extends PittsburghSolution<
 	public int getNumberOfRule(PittsburghSolutionClass pittsburghSolution);
 
 	@Override
-	public Classifier<PittsburghSolutionClass> copy();
+	public Classifier<PittsburghSolutionClass, MichiganSolutionClass> copy();
 
 	@Override
 	public String toString();

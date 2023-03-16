@@ -34,7 +34,7 @@ public class PittsburghProblem_Basic <MichiganSolutionClass extends MichiganSolu
 			int numberOfVariables,
 			DataSet<?> train,
 			MichiganSolutionBuilder<MichiganSolutionClass> michiganSolutionBuilder,
-			Classifier<PittsburghSolution_Basic<MichiganSolutionClass>> classifier) {
+			Classifier<PittsburghSolution_Basic<MichiganSolutionClass>, MichiganSolutionClass> classifier) {
 		super(numberOfVariables,
 				PittsburghProblem_Basic.numberOfObjectives,
 				PittsburghProblem_Basic.numberOfConstraints,
